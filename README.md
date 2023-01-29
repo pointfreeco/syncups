@@ -21,7 +21,16 @@ it in the style of their choice.
 
 Don’t like to use an `ObservableObject` for each screen? Prefer to use `@StateObject` instead of 
 `@ObservedObject`? Want to use an architectural pattern such as VIPER? Have a different way of 
-handling dependencies? [Please show us!](https://github.com/pointfreeco/standups/fork)
+handling dependencies? 
+
+Please show us! Just complete the following steps:
+
+1. [Fork](https://github.com/pointfreeco/standups/fork) our repo and rebuild the app any way you 
+see fit. If you want to start with Apple’s code rather than ours, you can [download it 
+here][scrumdinger-dl].
+2. Update the Readme.md to describe your choices in rebuilding the app (see [below](#modern-swiftui)
+for ours).
+3. Open a PR to this repo where you add a link to your port in this readme.
 
 We will collect links to the other ports so that there can be a single place to reference many 
 different approaches for building the same application.
@@ -82,8 +91,15 @@ some key additions:
     screen pops off the stack and a new transcript is added to the standup. Such a test would be
     very difficult, if not impossible, without controlling dependencies.
 
+## Ports
+
+Here is a list of ports of the app:
+
+* [https://github.com/nashysolutions/standups](https://github.com/nashysolutions/standups)
+
 [modern-swiftui-collection]: https://www.pointfree.co/collections/swiftui/modern-swiftui
 [scrumdinger]: https://developer.apple.com/tutorials/app-dev-training/getting-started-with-scrumdinger
+[scrumdinger-dl]: https://docs-assets.developer.apple.com/published/1ea2eec121b90031e354288912a76357/TranscribingSpeechToText.zip
 [tagged-gh]: http://github.com/pointfreeco/swift-tagged
 [identified-collections-gh]: http://github.com/pointfreeco/swift-identified-collections 
 [swiftui-nav-gh]: http://github.com/pointfreeco/swiftui-navigation
