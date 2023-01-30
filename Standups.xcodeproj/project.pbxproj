@@ -8,9 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		CA350C752984506E00434F8A /* StandupsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350C742984506E00434F8A /* StandupsApp.swift */; };
-		CA350C792984506F00434F8A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CA350C782984506F00434F8A /* Assets.xcassets */; };
 		CA350C7C2984506F00434F8A /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CA350C7B2984506F00434F8A /* Preview Assets.xcassets */; };
-		CA350CAD298450BF00434F8A /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CA350C9F298450BF00434F8A /* Preview Assets.xcassets */; };
 		CA350CAF298450BF00434F8A /* StandupDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350CA1298450BF00434F8A /* StandupDetail.swift */; };
 		CA350CB0298450BF00434F8A /* RecordMeeting.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350CA2298450BF00434F8A /* RecordMeeting.swift */; };
 		CA350CB1298450BF00434F8A /* StandupForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350CA3298450BF00434F8A /* StandupForm.swift */; };
@@ -54,11 +52,9 @@
 /* Begin PBXFileReference section */
 		CA350C712984506E00434F8A /* Standups.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Standups.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA350C742984506E00434F8A /* StandupsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StandupsApp.swift; sourceTree = "<group>"; };
-		CA350C782984506F00434F8A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CA350C7B2984506F00434F8A /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		CA350C812984506F00434F8A /* StandupsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StandupsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA350C8B2984506F00434F8A /* StandupsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StandupsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		CA350C9F298450BF00434F8A /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		CA350CA1298450BF00434F8A /* StandupDetail.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StandupDetail.swift; sourceTree = "<group>"; };
 		CA350CA2298450BF00434F8A /* RecordMeeting.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecordMeeting.swift; sourceTree = "<group>"; };
 		CA350CA3298450BF00434F8A /* StandupForm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StandupForm.swift; sourceTree = "<group>"; };
@@ -139,10 +135,8 @@
 				CA350CA9298450BF00434F8A /* StandupsList.swift */,
 				CA350CAC298450BF00434F8A /* Assets.xcassets */,
 				CA350CA4298450BF00434F8A /* Dependencies */,
-				CA350C9E298450BF00434F8A /* Preview Content */,
 				CA350C7A2984506F00434F8A /* Preview Content */,
 				CA350CD0298452F300434F8A /* Resources */,
-				CA350C782984506F00434F8A /* Assets.xcassets */,
 			);
 			path = Standups;
 			sourceTree = "<group>";
@@ -172,14 +166,6 @@
 				CA350CCE2984518A00434F8A /* StandupsListUITests.swift */,
 			);
 			path = StandupsUITests;
-			sourceTree = "<group>";
-		};
-		CA350C9E298450BF00434F8A /* Preview Content */ = {
-			isa = PBXGroup;
-			children = (
-				CA350C9F298450BF00434F8A /* Preview Assets.xcassets */,
-			);
-			path = "Preview Content";
 			sourceTree = "<group>";
 		};
 		CA350CA4298450BF00434F8A /* Dependencies */ = {
@@ -321,9 +307,7 @@
 			files = (
 				CA350CD2298452F300434F8A /* ding.wav in Resources */,
 				CA350C7C2984506F00434F8A /* Preview Assets.xcassets in Resources */,
-				CA350CAD298450BF00434F8A /* Preview Assets.xcassets in Resources */,
 				CA350CB9298450BF00434F8A /* Assets.xcassets in Resources */,
-				CA350C792984506F00434F8A /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
