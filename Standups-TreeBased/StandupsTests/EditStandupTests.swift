@@ -2,7 +2,7 @@ import CustomDump
 import Dependencies
 import XCTest
 
-@testable import Standups
+@testable import Standups_TreeBased
 
 @MainActor
 final class StandupFormTests: XCTestCase {
