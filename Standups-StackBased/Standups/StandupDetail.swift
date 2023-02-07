@@ -34,7 +34,7 @@ class StandupDetailModel: Hashable, ObservableObject {
   init(
     destination: Destination? = nil,
     standup: Standup
-) {
+  ) {
     self.destination = destination
     self.standup = standup
   }
