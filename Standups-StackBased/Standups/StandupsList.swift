@@ -121,23 +121,6 @@ extension AlertState where Action == StandupsListModel.AlertAction {
 struct StandupsList: View {
   @ObservedObject var model: StandupsListModel
 
-  /*
-   destination: .detail(
-     destination: .record(
-       …
-
-   [
-   .detail,
-   .record,
-   .detail,
-   .record,
-   .detail,
-   .record,
-    ...
-   ]
-
-   */
-
   var body: some View {
     List {
       ForEach(self.model.standups) { standup in
