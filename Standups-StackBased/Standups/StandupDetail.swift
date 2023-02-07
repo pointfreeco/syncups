@@ -312,7 +312,7 @@ struct StandupDetail_Previews: PreviewProvider {
       message: """
         This preview demonstrates an "unhappy path" of the application where the speech \
         recognizer mysteriously fails after 2 seconds of recording. This gives us an opportunity \
-        to see how the application deals with this rare occurence. To see the behavior, run the \
+        to see how the application deals with this rare occurrence. To see the behavior, run the \
         preview, tap the "Start Meeting" button and wait 2 seconds.
         """
     ) {
