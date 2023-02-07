@@ -34,73 +34,73 @@ class AppModel: ObservableObject {
 
   private func bind() {
     self.standupsList.onStandupTapped = { [weak self] standup in
-      guard let self else { return }
-
-      self.path.append(
-        .detail(
-          StandupDetailModel(standup: standup)
-        )
-      )
+      self?.path.append(.detail(StandupDetailModel(standup: standup)))
     }
 
     for destination in self.path {
       switch destination {
       case let .detail(detailModel):
-        detailModel.onMeetingStarted = { [weak self] standup in
-          guard let self else { return }
-
-          self.path.append(
-            .record(
-              RecordMeetingModel(standup: standup)
-            )
-          )
-        }
-        detailModel.onConfirmDeletion = { [weak detailModel, weak self] in
-          guard let self, let detailModel else { return }
-          self.standupsList.standups.remove(id: detailModel.standup.id)
-          _ = self.path.popLast()
-        }
-        detailModel.onMeetingTapped = { [weak detailModel, weak self] meeting in
-          guard let self, let detailModel else { return }
-
-          self.path.append(.meeting(meeting, standup: detailModel.standup))
-        }
-
-        self.detailCancellable = detailModel.$standup
-          .sink { [weak self] standup in
-          self?.standupsList.standups[id: standup.id] = standup
-        }
+        self.bindDetail(model: detailModel)
 
       case .meeting:
         break
 
       case let .record(recordModel):
-        recordModel.onDiscardMeeting = { [weak self] in
-          guard let self else { return }
-          _ = self.path.popLast()
-        }
-        recordModel.onMeetingFinished = { [weak self] transcript in
-          guard let self else { return }
+        self.bindRecord(model: recordModel)
+      }
+    }
+  }
 
-          let meeting = Meeting(
-            id: Meeting.ID(self.uuid()),
-            date: self.now,
-            transcript: transcript
-          )
+  private func bindDetail(model: StandupDetailModel) {
+    model.onMeetingStarted = { [weak self] standup in
+      self?.path.append(
+        .record(
+          RecordMeetingModel(standup: standup)
+        )
+      )
+    }
 
-          guard
-            case let .some(.detail(detailModel)) = self.path.dropLast().last
-          else {
-            return
-          }
+    model.onConfirmDeletion = { [weak model, weak self] in
+      guard let model else { return }
+      self?.standupsList.standups.remove(id: model.standup.id)
+      self?.path.removeLast()
+    }
 
-          _ = self.path.popLast()
-          let didCancel = (try? await self.clock.sleep(for: .milliseconds(400))) == nil
-          _ = withAnimation(didCancel ? nil : .default) {
-            detailModel.standup.meetings.insert(meeting, at: 0)
-          }
-        }
-        break
+    model.onMeetingTapped = { [weak model, weak self] meeting in
+      guard let model else { return }
+      self?.path.append(.meeting(meeting, standup: model.standup))
+    }
+
+    self.detailCancellable = model.$standup
+      .sink { [weak self] standup in
+        self?.standupsList.standups[id: standup.id] = standup
+      }
+  }
+
+  private func bindRecord(model: RecordMeetingModel) {
+    model.onDiscardMeeting = { [weak self] in
+      self?.path.removeLast()
+    }
+
+    model.onMeetingFinished = { [weak self] transcript in
+      guard let self else { return }
+
+      guard
+        case let .some(.detail(detailModel)) = self.path.dropLast().last
+      else {
+        return
+      }
+
+      let meeting = Meeting(
+        id: Meeting.ID(self.uuid()),
+        date: self.now,
+        transcript: transcript
+      )
+
+      self.path.removeLast()
+      let didCancel = (try? await self.clock.sleep(for: .milliseconds(400))) == nil
+      _ = withAnimation(didCancel ? nil : .default) {
+        detailModel.standup.meetings.insert(meeting, at: 0)
       }
     }
   }
