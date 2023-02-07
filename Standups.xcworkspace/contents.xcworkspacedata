@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+   version = "1.0">
+   <FileRef
+      location = "group:/Users/brandon/projects/standups/Standups-StackBased/Standups-StackBased.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:/Users/brandon/projects/standups/Standups-TreeBased/Standups-TreeBased.xcodeproj">
+   </FileRef>
+</Workspace>

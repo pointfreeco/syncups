@@ -1,10 +1,11 @@
+
 import CasePaths
 import CustomDump
 import Dependencies
 import IdentifiedCollections
 import XCTest
 
-@testable import Standups
+@testable import Standups_StackBased
 
 @MainActor
 final class StandupsListTests: XCTestCase {
@@ -96,77 +97,6 @@ final class StandupsListTests: XCTestCase {
               id: Attendee.ID(uuidString: "00000000-0000-0000-0000-000000000000")!,
               name: ""
             )
-          ],
-          title: "Design"
-        )
-      ]
-    )
-  }
-
-  func testDelete() async throws {
-    let model = try withDependencies { dependencies in
-      dependencies.dataManager = .mock(
-        initialData: try JSONEncoder().encode([Standup.mock])
-      )
-      dependencies.mainQueue = mainQueue.eraseToAnyScheduler()
-    } operation: {
-      StandupsListModel()
-    }
-
-    model.standupTapped(standup: model.standups[0])
-
-    let detailModel = try XCTUnwrap(model.destination, case: /StandupsListModel.Destination.detail)
-
-    detailModel.deleteButtonTapped()
-
-    let alert = try XCTUnwrap(detailModel.destination, case: /StandupDetailModel.Destination.alert)
-
-    XCTAssertNoDifference(alert, .deleteStandup)
-
-    await detailModel.alertButtonTapped(.confirmDeletion)
-
-    XCTAssertNil(model.destination)
-    XCTAssertEqual(model.standups, [])
-    XCTAssertEqual(detailModel.isDismissed, true)
-  }
-
-  func testDetailEdit() async throws {
-    let model = try withDependencies { dependencies in
-      dependencies.dataManager = .mock(
-        initialData: try JSONEncoder().encode([
-          Standup(
-            id: Standup.ID(uuidString: "00000000-0000-0000-0000-000000000000")!,
-            attendees: [
-              Attendee(id: Attendee.ID(uuidString: "00000000-0000-0000-0000-000000000001")!)
-            ]
-          )
-        ])
-      )
-      dependencies.mainQueue = mainQueue.eraseToAnyScheduler()
-    } operation: {
-      StandupsListModel()
-    }
-
-    model.standupTapped(standup: model.standups[0])
-
-    let detailModel = try XCTUnwrap(model.destination, case: /StandupsListModel.Destination.detail)
-
-    detailModel.editButtonTapped()
-
-    let editModel = try XCTUnwrap(
-      detailModel.destination, case: /StandupDetailModel.Destination.edit)
-
-    editModel.standup.title = "Design"
-    detailModel.doneEditingButtonTapped()
-
-    XCTAssertNil(detailModel.destination)
-    XCTAssertEqual(
-      model.standups,
-      [
-        Standup(
-          id: Standup.ID(uuidString: "00000000-0000-0000-0000-000000000000")!,
-          attendees: [
-            Attendee(id: Attendee.ID(uuidString: "00000000-0000-0000-0000-000000000001")!)
           ],
           title: "Design"
         )
