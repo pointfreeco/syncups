@@ -3,19 +3,30 @@ import Dependencies
 import IdentifiedCollections
 import SwiftUI
 import SwiftUINavigation
+import Observation
 
 @MainActor
-final class StandupsListModel: ObservableObject {
-  @Published var destination: Destination? {
+@Observable
+final class StandupsListModel {
+  var destination: Destination? = nil {
     didSet { self.bind() }
   }
-  @Published var standups: IdentifiedArrayOf<Standup>
+  var standups: IdentifiedArrayOf<Standup> = [] {
+    didSet {
+      self.standupsChanged()
+    }
+  }
 
-  private var destinationCancellable: AnyCancellable?
+  @ObservationIgnored
+  private var destinationCancellable: AnyCancellable? = nil
+  @ObservationIgnored
   private var cancellables: Set<AnyCancellable> = []
 
+  @ObservationIgnored
   @Dependency(\.dataManager) var dataManager
+  @ObservationIgnored
   @Dependency(\.mainQueue) var mainQueue
+  @ObservationIgnored
   @Dependency(\.uuid) var uuid
 
   enum Destination {
@@ -30,7 +41,6 @@ final class StandupsListModel: ObservableObject {
   init(
     destination: Destination? = nil
   ) {
-    defer { self.bind() }
     self.destination = destination
     self.standups = []
 
@@ -43,14 +53,18 @@ final class StandupsListModel: ObservableObject {
       self.destination = .alert(.dataFailedToLoad)
     } catch {
     }
+    defer { self.bind() }
+  }
 
-    self.$standups
-      .dropFirst()
-      .debounce(for: .seconds(1), scheduler: self.mainQueue)
-      .sink { [weak self] standups in
-        try? self?.dataManager.save(JSONEncoder().encode(standups), .standups)
-      }
-      .store(in: &self.cancellables)
+  @ObservationIgnored
+  var standupsChangedTask: Task<Void, Error>? = nil
+  func standupsChanged() {
+    self.standupsChangedTask?.cancel()
+    self.standupsChangedTask = Task { @MainActor [weak self] in
+      guard let self else { return }
+      try await self.mainQueue.sleep(for: .seconds(1))
+      try self.dataManager.save(JSONEncoder().encode(self.standups), .standups)
+    }
   }
 
   func addStandupButtonTapped() {
@@ -145,7 +159,7 @@ extension AlertState where Action == StandupsListModel.AlertAction {
 }
 
 struct StandupsList: View {
-  @ObservedObject var model: StandupsListModel
+  @Bindable var model: StandupsListModel
 
   var body: some View {
     NavigationStack {
@@ -168,26 +182,36 @@ struct StandupsList: View {
       }
       .navigationTitle("Daily Standups")
       .sheet(
-        unwrapping: self.$model.destination,
-        case: /StandupsListModel.Destination.add
-      ) { $model in
-        NavigationStack {
-          StandupFormView(model: model)
-            .navigationTitle("New standup")
-            .toolbar {
-              ToolbarItem(placement: .cancellationAction) {
-                Button("Dismiss") {
-                  self.model.dismissAddStandupButtonTapped()
-                }
-              }
-              ToolbarItem(placement: .confirmationAction) {
-                Button("Add") {
-                  self.model.confirmAddStandupButtonTapped()
-                }
-              }
-            }
-        }
+        isPresented: Binding(
+          get: { self.model.destination != nil },
+          set: { _ in 
+            self.model.destination = nil
+          }
+        )
+      ) {
+        Text("Hi!")
       }
+//      .sheet(
+//        unwrapping: self.$model.destination,
+//        case: /StandupsListModel.Destination.add
+//      ) { $model in
+//        NavigationStack {
+//          StandupFormView(model: model)
+//            .navigationTitle("New standup")
+//            .toolbar {
+//              ToolbarItem(placement: .cancellationAction) {
+//                Button("Dismiss") {
+//                  self.model.dismissAddStandupButtonTapped()
+//                }
+//              }
+//              ToolbarItem(placement: .confirmationAction) {
+//                Button("Add") {
+//                  self.model.confirmAddStandupButtonTapped()
+//                }
+//              }
+//            }
+//        }
+//      }
       .navigationDestination(
         unwrapping: self.$model.destination,
         case: /StandupsListModel.Destination.detail
