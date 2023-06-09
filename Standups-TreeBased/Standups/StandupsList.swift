@@ -5,31 +5,6 @@ import SwiftUI
 import SwiftUINavigation
 import Observation
 
-
-
-@Observable
-class ChildFeature {}
-
-@Observable
-class Feature {
-  var child: ChildFeature? = nil
-  init(child: ChildFeature? = nil) {
-    self.child = child
-    _ = self.child
-  }
-}
-struct FeatureView: View {
-  @Bindable var model: Feature
-  var body: some View {
-    Button("Present") {
-      self.model.child = .init()
-    }
-    .sheet(unwrapping: self.$model.child) { _ in
-      Text("Hi!")
-    }
-  }
-}
-
 @MainActor
 @Observable
 final class StandupsListModel {
@@ -44,11 +19,6 @@ final class StandupsListModel {
       self.standupsChanged()
     }
   }
-
-  @ObservationIgnored
-  private var destinationCancellable: AnyCancellable? = nil
-  @ObservationIgnored
-  private var cancellables: Set<AnyCancellable> = []
 
   @ObservationIgnored
   @Dependency(\.continuousClock) var clock
@@ -100,7 +70,7 @@ final class StandupsListModel {
   func addStandupButtonTapped() {
     self.destination = .add(
       withDependencies(from: self) {
-        StandupFormModel(standup: Standup(id: Standup.ID(UUID())))
+        StandupFormModel(standup: Standup(id: Standup.ID(self.uuid())))
       }
     )
   }
@@ -120,7 +90,7 @@ final class StandupsListModel {
       attendee.name.allSatisfy(\.isWhitespace)
     }
     if standup.attendees.isEmpty {
-      standup.attendees.append(Attendee(id: Attendee.ID(UUID())))
+      standup.attendees.append(Attendee(id: Attendee.ID(self.uuid())))
     }
     self.standups.append(standup)
   }
@@ -142,13 +112,6 @@ final class StandupsListModel {
           self?.destination = nil
         }
       }
-
-      // TODO: todo
-//      self.destinationCancellable = standupDetailModel.$standup
-//        .dropFirst()
-//        .sink { [weak self] standup in
-//          self?.standups[id: standup.id] = standup
-//        }
 
     case .add, .alert, .none:
       break
