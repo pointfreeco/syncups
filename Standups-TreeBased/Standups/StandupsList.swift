@@ -5,11 +5,39 @@ import SwiftUI
 import SwiftUINavigation
 import Observation
 
+
+
+@Observable
+class ChildFeature {}
+
+@Observable
+class Feature {
+  var child: ChildFeature? = nil
+  init(child: ChildFeature? = nil) {
+    self.child = child
+    _ = self.child
+  }
+}
+struct FeatureView: View {
+  @Bindable var model: Feature
+  var body: some View {
+    Button("Present") {
+      self.model.child = .init()
+    }
+    .sheet(unwrapping: self.$model.child) { _ in
+      Text("Hi!")
+    }
+  }
+}
+
 @MainActor
 @Observable
 final class StandupsListModel {
   var destination: Destination? = nil {
-    didSet { self.bind() }
+    didSet {
+      // TODO: cannot call immediately. see init for more details
+      Task { self.bind(previousValue: oldValue) }
+    }
   }
   var standups: IdentifiedArrayOf<Standup> = [] {
     didSet {
@@ -23,9 +51,9 @@ final class StandupsListModel {
   private var cancellables: Set<AnyCancellable> = []
 
   @ObservationIgnored
-  @Dependency(\.dataManager) var dataManager
+  @Dependency(\.continuousClock) var clock
   @ObservationIgnored
-  @Dependency(\.mainQueue) var mainQueue
+  @Dependency(\.dataManager) var dataManager
   @ObservationIgnored
   @Dependency(\.uuid) var uuid
 
@@ -41,6 +69,8 @@ final class StandupsListModel {
   init(
     destination: Destination? = nil
   ) {
+    // TODO: cannot call immediately. it seems that accessing any state inside an init causes it to not be observed properly.
+    defer { Task { self.bind() } }
     self.destination = destination
     self.standups = []
 
@@ -53,7 +83,6 @@ final class StandupsListModel {
       self.destination = .alert(.dataFailedToLoad)
     } catch {
     }
-    defer { self.bind() }
   }
 
   @ObservationIgnored
@@ -62,15 +91,16 @@ final class StandupsListModel {
     self.standupsChangedTask?.cancel()
     self.standupsChangedTask = Task { @MainActor [weak self] in
       guard let self else { return }
-      try await self.mainQueue.sleep(for: .seconds(1))
+      try await self.clock.sleep(for: .seconds(1))
       try self.dataManager.save(JSONEncoder().encode(self.standups), .standups)
+      print("Save!")
     }
   }
 
   func addStandupButtonTapped() {
     self.destination = .add(
       withDependencies(from: self) {
-        StandupFormModel(standup: Standup(id: Standup.ID(self.uuid())))
+        StandupFormModel(standup: Standup(id: Standup.ID(UUID())))
       }
     )
   }
@@ -90,7 +120,7 @@ final class StandupsListModel {
       attendee.name.allSatisfy(\.isWhitespace)
     }
     if standup.attendees.isEmpty {
-      standup.attendees.append(Attendee(id: Attendee.ID(self.uuid())))
+      standup.attendees.append(Attendee(id: Attendee.ID(UUID())))
     }
     self.standups.append(standup)
   }
@@ -103,7 +133,7 @@ final class StandupsListModel {
     )
   }
 
-  private func bind() {
+  private func bind(previousValue: Destination? = nil) {
     switch self.destination {
     case let .detail(standupDetailModel):
       standupDetailModel.onConfirmDeletion = { [weak self, id = standupDetailModel.standup.id] in
@@ -113,13 +143,24 @@ final class StandupsListModel {
         }
       }
 
-      self.destinationCancellable = standupDetailModel.$standup
-        .sink { [weak self] standup in
-          self?.standups[id: standup.id] = standup
-        }
+      // TODO: todo
+//      self.destinationCancellable = standupDetailModel.$standup
+//        .dropFirst()
+//        .sink { [weak self] standup in
+//          self?.standups[id: standup.id] = standup
+//        }
 
     case .add, .alert, .none:
       break
+    }
+
+    if let previousDestination = previousValue, self.destination == nil {
+      switch previousDestination {
+      case let .detail(previousDetailModel):
+        self.standups[id: previousDetailModel.standup.id] = previousDetailModel.standup
+      case .add, .alert:
+        break
+      }
     }
   }
 
@@ -182,36 +223,26 @@ struct StandupsList: View {
       }
       .navigationTitle("Daily Standups")
       .sheet(
-        isPresented: Binding(
-          get: { self.model.destination != nil },
-          set: { _ in 
-            self.model.destination = nil
-          }
-        )
-      ) {
-        Text("Hi!")
+        unwrapping: self.$model.destination,
+        case: /StandupsListModel.Destination.add
+      ) { $model in
+        NavigationStack {
+          StandupFormView(model: model)
+            .navigationTitle("New standup")
+            .toolbar {
+              ToolbarItem(placement: .cancellationAction) {
+                Button("Dismiss") {
+                  self.model.dismissAddStandupButtonTapped()
+                }
+              }
+              ToolbarItem(placement: .confirmationAction) {
+                Button("Add") {
+                  self.model.confirmAddStandupButtonTapped()
+                }
+              }
+            }
+        }
       }
-//      .sheet(
-//        unwrapping: self.$model.destination,
-//        case: /StandupsListModel.Destination.add
-//      ) { $model in
-//        NavigationStack {
-//          StandupFormView(model: model)
-//            .navigationTitle("New standup")
-//            .toolbar {
-//              ToolbarItem(placement: .cancellationAction) {
-//                Button("Dismiss") {
-//                  self.model.dismissAddStandupButtonTapped()
-//                }
-//              }
-//              ToolbarItem(placement: .confirmationAction) {
-//                Button("Add") {
-//                  self.model.confirmAddStandupButtonTapped()
-//                }
-//              }
-//            }
-//        }
-//      }
       .navigationDestination(
         unwrapping: self.$model.destination,
         case: /StandupsListModel.Destination.detail

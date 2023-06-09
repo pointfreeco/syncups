@@ -1,11 +1,14 @@
 import Dependencies
 import SwiftUI
 import SwiftUINavigation
+import Observation
 
-class StandupFormModel: ObservableObject {
-  @Published var focus: Field?
-  @Published var standup: Standup
+@Observable
+class StandupFormModel {
+  var focus: Field? = nil
+  var standup: Standup = .init(id: Standup.ID(UUID()))
 
+  @ObservationIgnored
   @Dependency(\.uuid) var uuid
 
   enum Field: Hashable {
@@ -44,7 +47,7 @@ class StandupFormModel: ObservableObject {
 
 struct StandupFormView: View {
   @FocusState var focus: StandupFormModel.Field?
-  @ObservedObject var model: StandupFormModel
+  @Bindable var model: StandupFormModel
 
   var body: some View {
     Form {

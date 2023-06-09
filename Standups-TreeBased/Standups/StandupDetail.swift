@@ -4,21 +4,29 @@ import Dependencies
 import SwiftUI
 import SwiftUINavigation
 import XCTestDynamicOverlay
+import Observation
 
 @MainActor
-class StandupDetailModel: ObservableObject {
-  @Published var destination: Destination? {
+@Observable
+class StandupDetailModel {
+  var destination: Destination? = nil {
     didSet { self.bind() }
   }
-  @Published var isDismissed = false
-  @Published var standup: Standup
+  var isDismissed = false
+  var standup: Standup = { Standup(id: Standup.ID(UUID())) }()
 
+  @ObservationIgnored
   @Dependency(\.continuousClock) var clock
+  @ObservationIgnored
   @Dependency(\.date.now) var now
+  @ObservationIgnored
   @Dependency(\.openSettings) var openSettings
+  @ObservationIgnored
   @Dependency(\.speechClient.authorizationStatus) var authorizationStatus
+  @ObservationIgnored
   @Dependency(\.uuid) var uuid
 
+  @ObservationIgnored
   var onConfirmDeletion: () -> Void = unimplemented("StandupDetailModel.onConfirmDeletion")
 
   enum Destination {
@@ -39,7 +47,7 @@ class StandupDetailModel: ObservableObject {
   ) {
     self.destination = destination
     self.standup = standup
-    self.bind()
+    Task { self.bind() }
   }
 
   func deleteMeetings(atOffsets indices: IndexSet) {
@@ -143,7 +151,7 @@ class StandupDetailModel: ObservableObject {
 
 struct StandupDetailView: View {
   @Environment(\.dismiss) var dismiss
-  @ObservedObject var model: StandupDetailModel
+  @Bindable var model: StandupDetailModel
 
   var body: some View {
     List {
