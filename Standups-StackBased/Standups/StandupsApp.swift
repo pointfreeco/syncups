@@ -12,7 +12,12 @@ struct StandupsApp: App {
       if ProcessInfo.processInfo.environment["UITesting"] == "true" {
         UITestingView()
       } else {
-        AppView(model: AppModel(standupsList: StandupsListModel()))
+        AppView(
+          model: AppModel(
+            path: [.detail(StandupDetailModel(standup: .mock))],
+            standupsList: StandupsListModel()
+          )
+        )
       }
     }
   }

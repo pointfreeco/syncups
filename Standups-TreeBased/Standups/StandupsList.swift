@@ -63,7 +63,6 @@ final class StandupsListModel {
       guard let self else { return }
       try await self.clock.sleep(for: .seconds(1))
       try self.dataManager.save(JSONEncoder().encode(self.standups), .standups)
-      print("Save!")
     }
   }
 

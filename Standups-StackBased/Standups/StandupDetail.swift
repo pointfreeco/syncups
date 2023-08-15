@@ -6,19 +6,28 @@ import SwiftUINavigation
 import XCTestDynamicOverlay
 
 @MainActor
-class StandupDetailModel: Hashable, ObservableObject {
-  @Published var destination: Destination?
-  @Published var isDismissed = false
-  @Published var standup: Standup
+@Observable
+class StandupDetailModel {
+  var destination: Destination?
+  var isDismissed = false
+  var standup: Standup
 
+  @ObservationIgnored
   @Dependency(\.continuousClock) var clock
+  @ObservationIgnored
   @Dependency(\.date.now) var now
+  @ObservationIgnored
   @Dependency(\.openSettings) var openSettings
+  @ObservationIgnored
   @Dependency(\.speechClient.authorizationStatus) var authorizationStatus
+  @ObservationIgnored
   @Dependency(\.uuid) var uuid
 
+  @ObservationIgnored
   var onConfirmDeletion: () -> Void = unimplemented("StandupDetailModel.onConfirmDeletion")
+  @ObservationIgnored
   var onMeetingTapped: (Meeting) -> Void = unimplemented("StandupDetailModel.onMeetingTapped")
+  @ObservationIgnored
   var onMeetingStarted: (Standup) -> Void = unimplemented("StandupDetailModel.onMeetingStarted")
 
   enum Destination {
@@ -37,13 +46,6 @@ class StandupDetailModel: Hashable, ObservableObject {
   ) {
     self.destination = destination
     self.standup = standup
-  }
-
-  nonisolated static func == (lhs: StandupDetailModel, rhs: StandupDetailModel) -> Bool {
-    lhs === rhs
-  }
-  nonisolated func hash(into hasher: inout Hasher) {
-    hasher.combine(ObjectIdentifier(self))
   }
 
   func deleteMeetings(atOffsets indices: IndexSet) {
@@ -112,8 +114,17 @@ class StandupDetailModel: Hashable, ObservableObject {
   }
 }
 
+extension StandupDetailModel: Hashable {
+  nonisolated static func == (lhs: StandupDetailModel, rhs: StandupDetailModel) -> Bool {
+    lhs === rhs
+  }
+  nonisolated func hash(into hasher: inout Hasher) {
+    hasher.combine(ObjectIdentifier(self))
+  }
+}
+
 struct StandupDetailView: View {
-  @ObservedObject var model: StandupDetailModel
+  @State var model: StandupDetailModel
 
   var body: some View {
     List {

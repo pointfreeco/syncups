@@ -3,18 +3,23 @@ import Dependencies
 import SwiftUI
 
 @MainActor
-class AppModel: ObservableObject {
-  @Published var path: [Destination] {
+@Observable
+class AppModel {
+  var path: [Destination] {
     didSet { self.bind() }
   }
-  @Published var standupsList: StandupsListModel {
+  var standupsList: StandupsListModel {
     didSet { self.bind() }
   }
 
+  @ObservationIgnored
   @Dependency(\.continuousClock) var clock
+  @ObservationIgnored
   @Dependency(\.date.now) var now
+  @ObservationIgnored
   @Dependency(\.uuid) var uuid
 
+  @ObservationIgnored
   private var detailCancellable: AnyCancellable?
 
   enum Destination: Hashable {
@@ -71,10 +76,11 @@ class AppModel: ObservableObject {
       self?.path.append(.meeting(meeting, standup: model.standup))
     }
 
-    self.detailCancellable = model.$standup
-      .sink { [weak self] standup in
-        self?.standupsList.standups[id: standup.id] = standup
-      }
+    // TODO
+//    self.detailCancellable = model.$standup
+//      .sink { [weak self] standup in
+//        self?.standupsList.standups[id: standup.id] = standup
+//      }
   }
 
   private func bindRecord(model: RecordMeetingModel) {
@@ -107,9 +113,10 @@ class AppModel: ObservableObject {
 }
 
 struct AppView: View {
-  @ObservedObject var model: AppModel
+  @State var model: AppModel
 
   var body: some View {
+    let _ = Self._printChanges()
     NavigationStack(path: self.$model.path) {
       StandupsList(model: self.model.standupsList)
         .navigationDestination(for: AppModel.Destination.self) { destination in

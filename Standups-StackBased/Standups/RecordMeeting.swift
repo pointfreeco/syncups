@@ -1,24 +1,30 @@
 import Clocks
 import Dependencies
-import Speech
+@preconcurrency import Speech
 import SwiftUI
 import SwiftUINavigation
 import XCTestDynamicOverlay
 
 @MainActor
-class RecordMeetingModel: Hashable, ObservableObject {
-  @Published var destination: Destination?
-  @Published var secondsElapsed = 0
-  @Published var speakerIndex = 0
+@Observable
+class RecordMeetingModel {
+  var destination: Destination?
+  var secondsElapsed = 0
+  var speakerIndex = 0
   let standup: Standup
   private var transcript = ""
 
+  @ObservationIgnored
   @Dependency(\.continuousClock) var clock
+  @ObservationIgnored
   @Dependency(\.soundEffectClient) var soundEffectClient
+  @ObservationIgnored
   @Dependency(\.speechClient) var speechClient
 
+  @ObservationIgnored
   var onMeetingFinished: (String) async -> Void = unimplemented(
     "RecordMeetingModel.onMeetingFinished")
+  @ObservationIgnored
   var onDiscardMeeting: () -> Void = unimplemented(
     "RecordMeetingModel.onDiscardMeeting")
 
@@ -37,13 +43,6 @@ class RecordMeetingModel: Hashable, ObservableObject {
   ) {
     self.destination = destination
     self.standup = standup
-  }
-
-  nonisolated static func == (lhs: RecordMeetingModel, rhs: RecordMeetingModel) -> Bool {
-    lhs === rhs
-  }
-  nonisolated func hash(into hasher: inout Hasher) {
-    hasher.combine(ObjectIdentifier(self))
   }
 
   var durationRemaining: Duration {
@@ -138,6 +137,15 @@ class RecordMeetingModel: Hashable, ObservableObject {
   }
 }
 
+extension RecordMeetingModel: Hashable {
+  nonisolated static func == (lhs: RecordMeetingModel, rhs: RecordMeetingModel) -> Bool {
+    lhs === rhs
+  }
+  nonisolated func hash(into hasher: inout Hasher) {
+    hasher.combine(ObjectIdentifier(self))
+  }
+}
+
 extension AlertState where Action == RecordMeetingModel.AlertAction {
   static func endMeeting(isDiscardable: Bool) -> Self {
     Self {
@@ -178,7 +186,7 @@ extension AlertState where Action == RecordMeetingModel.AlertAction {
 }
 
 struct RecordMeetingView: View {
-  @ObservedObject var model: RecordMeetingModel
+  @State var model: RecordMeetingModel
 
   var body: some View {
     ZStack {
