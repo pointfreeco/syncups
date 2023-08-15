@@ -1,5 +1,6 @@
 import Combine
 import Dependencies
+import Observation
 import SwiftUI
 
 @MainActor
