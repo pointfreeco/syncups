@@ -95,6 +95,7 @@ some key additions:
 
 Here is a list of ports of the app:
 
+* [Scrumdinger](https://developer.apple.com/tutorials/app-dev-training/getting-started-with-scrumdinger): Apple's original Scrumdinger application.
 * [Composable Architecture](https://github.com/pointfreeco/swift-composable-architecture/tree/223e46bdc05c90845869f9e03f4898821f30fa7e/Examples/Standups): A port of the Standups app to the Composable Architecture.
 * [https://github.com/nashysolutions/standups](https://github.com/nashysolutions/standups)
 
