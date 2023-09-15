@@ -5,17 +5,29 @@ import SwiftUI
 import SwiftUINavigation
 
 @MainActor
-final class StandupsListModel: ObservableObject {
-  @Published var destination: Destination? {
-    didSet { self.bind() }
+@Observable
+final class StandupsListModel {
+  var saveTask: Task<Void, Error>?
+  var destination: Destination? {
+    didSet {
+      self.bind()
+      self.saveTask?.cancel()
+      self.saveTask = Task {
+        try await self.mainQueue.sleep(for: .seconds(1))
+        try? self.dataManager.save(JSONEncoder().encode(self.standups), .standups)
+      }
+    }
   }
-  @Published var standups: IdentifiedArrayOf<Standup>
+  var standups: IdentifiedArrayOf<Standup>
 
   private var destinationCancellable: AnyCancellable?
   private var cancellables: Set<AnyCancellable> = []
 
+  @ObservationIgnored
   @Dependency(\.dataManager) var dataManager
+  @ObservationIgnored
   @Dependency(\.mainQueue) var mainQueue
+  @ObservationIgnored
   @Dependency(\.uuid) var uuid
 
   enum Destination {
@@ -43,14 +55,6 @@ final class StandupsListModel: ObservableObject {
       self.destination = .alert(.dataFailedToLoad)
     } catch {
     }
-
-    self.$standups
-      .dropFirst()
-      .debounce(for: .seconds(1), scheduler: self.mainQueue)
-      .sink { [weak self] standups in
-        try? self?.dataManager.save(JSONEncoder().encode(standups), .standups)
-      }
-      .store(in: &self.cancellables)
   }
 
   func addStandupButtonTapped() {
@@ -98,14 +102,22 @@ final class StandupsListModel: ObservableObject {
           self?.destination = nil
         }
       }
-
-      self.destinationCancellable = standupDetailModel.$standup
-        .sink { [weak self] standup in
-          self?.standups[id: standup.id] = standup
-        }
+      self.observe(standupDetailModel: standupDetailModel)
 
     case .add, .alert, .none:
       break
+    }
+  }
+
+  func observe(standupDetailModel: StandupDetailModel) {
+    withObservationTracking {
+      _ = standupDetailModel.standup
+    } onChange: { [weak standupDetailModel] in
+      DispatchQueue.main.async { [weak standupDetailModel] in
+        guard let standupDetailModel else { return }
+        self.standups[id: standupDetailModel.standup.id] = standupDetailModel.standup
+        self.observe(standupDetailModel: standupDetailModel)
+      }
     }
   }
 
@@ -145,7 +157,7 @@ extension AlertState where Action == StandupsListModel.AlertAction {
 }
 
 struct StandupsList: View {
-  @ObservedObject var model: StandupsListModel
+  @State var model: StandupsListModel
 
   var body: some View {
     NavigationStack {
