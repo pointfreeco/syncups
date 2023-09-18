@@ -9,8 +9,10 @@ import SwiftUINavigation
 final class StandupsListModel {
   var saveTask: Task<Void, Error>?
   var destination: Destination? {
+    didSet { self.bind() }
+  }
+  var standups: IdentifiedArrayOf<Standup> {
     didSet {
-      self.bind()
       self.saveTask?.cancel()
       self.saveTask = Task {
         try await self.mainQueue.sleep(for: .seconds(1))
@@ -18,7 +20,6 @@ final class StandupsListModel {
       }
     }
   }
-  var standups: IdentifiedArrayOf<Standup>
 
   private var destinationCancellable: AnyCancellable?
   private var cancellables: Set<AnyCancellable> = []

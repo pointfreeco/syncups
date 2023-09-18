@@ -3,16 +3,20 @@ import Dependencies
 import SwiftUI
 
 @MainActor
-class AppModel: ObservableObject {
-  @Published var path: [Destination] {
+@Observable
+class AppModel {
+  var path: [Destination] {
     didSet { self.bind() }
   }
-  @Published var standupsList: StandupsListModel {
+  var standupsList: StandupsListModel {
     didSet { self.bind() }
   }
 
+  @ObservationIgnored
   @Dependency(\.continuousClock) var clock
+  @ObservationIgnored
   @Dependency(\.date.now) var now
+  @ObservationIgnored
   @Dependency(\.uuid) var uuid
 
   private var detailCancellable: AnyCancellable?
@@ -71,10 +75,20 @@ class AppModel: ObservableObject {
       self?.path.append(.meeting(meeting, standup: model.standup))
     }
 
-    self.detailCancellable = model.$standup
-      .sink { [weak self] standup in
-        self?.standupsList.standups[id: standup.id] = standup
+    self.observe(standupDetailModel: model)
+  }
+
+  func observe(standupDetailModel: StandupDetailModel) {
+    withObservationTracking {
+      _ = standupDetailModel.standup
+    } onChange: { [weak standupDetailModel] in
+      DispatchQueue.main.async { [weak standupDetailModel] in
+        guard let standupDetailModel else { return }
+        self.standupsList.standups[id: standupDetailModel.standup.id] = standupDetailModel.standup
+        self.observe(standupDetailModel: standupDetailModel)
       }
+    }
+
   }
 
   private func bindRecord(model: RecordMeetingModel) {
@@ -107,7 +121,7 @@ class AppModel: ObservableObject {
 }
 
 struct AppView: View {
-  @ObservedObject var model: AppModel
+  @State var model: AppModel
 
   var body: some View {
     NavigationStack(path: self.$model.path) {

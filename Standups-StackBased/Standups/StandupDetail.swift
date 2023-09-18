@@ -6,15 +6,21 @@ import SwiftUINavigation
 import XCTestDynamicOverlay
 
 @MainActor
-class StandupDetailModel: Hashable, ObservableObject {
-  @Published var destination: Destination?
-  @Published var isDismissed = false
-  @Published var standup: Standup
+@Observable
+class StandupDetailModel: Hashable {
+  var destination: Destination?
+  var isDismissed = false
+  var standup: Standup
 
+  @ObservationIgnored
   @Dependency(\.continuousClock) var clock
+  @ObservationIgnored
   @Dependency(\.date.now) var now
+  @ObservationIgnored
   @Dependency(\.openSettings) var openSettings
+  @ObservationIgnored
   @Dependency(\.speechClient.authorizationStatus) var authorizationStatus
+  @ObservationIgnored
   @Dependency(\.uuid) var uuid
 
   var onConfirmDeletion: () -> Void = unimplemented("StandupDetailModel.onConfirmDeletion")
@@ -113,7 +119,7 @@ class StandupDetailModel: Hashable, ObservableObject {
 }
 
 struct StandupDetailView: View {
-  @ObservedObject var model: StandupDetailModel
+  @State var model: StandupDetailModel
 
   var body: some View {
     List {

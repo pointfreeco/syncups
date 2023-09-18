@@ -119,6 +119,7 @@ final class AppTests: XCTestCase {
     detailModel.doneEditingButtonTapped()
 
     XCTAssertNil(detailModel.destination)
+    await Task.yield()
     XCTAssertEqual(
       model.standupsList.standups,
       [

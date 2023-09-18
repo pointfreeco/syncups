@@ -5,15 +5,28 @@ import SwiftUI
 import SwiftUINavigation
 
 @MainActor
-final class StandupsListModel: ObservableObject {
-  @Published var destination: Destination?
-  @Published var standups: IdentifiedArrayOf<Standup>
+@Observable
+final class StandupsListModel {
+  var saveTask: Task<Void, Error>?
+  var destination: Destination?
+  var standups: IdentifiedArrayOf<Standup> {
+    didSet {
+      self.saveTask?.cancel()
+      self.saveTask = Task {
+        try await self.mainQueue.sleep(for: .seconds(1))
+        try? self.dataManager.save(JSONEncoder().encode(self.standups), .standups)
+      }
+    }
+  }
 
   private var destinationCancellable: AnyCancellable?
   private var cancellables: Set<AnyCancellable> = []
 
+  @ObservationIgnored
   @Dependency(\.dataManager) var dataManager
+  @ObservationIgnored
   @Dependency(\.mainQueue) var mainQueue
+  @ObservationIgnored
   @Dependency(\.uuid) var uuid
 
   var onStandupTapped: (Standup) -> Void = unimplemented("StandupsListModel.onStandupTapped")
@@ -42,13 +55,13 @@ final class StandupsListModel: ObservableObject {
     } catch {
     }
 
-    self.$standups
-      .dropFirst()
-      .debounce(for: .seconds(1), scheduler: self.mainQueue)
-      .sink { [weak self] standups in
-        try? self?.dataManager.save(JSONEncoder().encode(standups), .standups)
-      }
-      .store(in: &self.cancellables)
+//    self.$standups
+//      .dropFirst()
+//      .debounce(for: .seconds(1), scheduler: self.mainQueue)
+//      .sink { [weak self] standups in
+//        try? self?.dataManager.save(JSONEncoder().encode(standups), .standups)
+//      }
+//      .store(in: &self.cancellables)
   }
 
   func addStandupButtonTapped() {
@@ -119,7 +132,7 @@ extension AlertState where Action == StandupsListModel.AlertAction {
 }
 
 struct StandupsList: View {
-  @ObservedObject var model: StandupsListModel
+  @State var model: StandupsListModel
 
   var body: some View {
     List {
