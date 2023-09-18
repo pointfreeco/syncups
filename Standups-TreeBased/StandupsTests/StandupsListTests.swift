@@ -205,4 +205,31 @@ final class StandupsListTests: XCTestCase {
 
     XCTAssertNil(model.destination)
   }
+
+  func testSave() async throws {
+    let expectation = self.expectation(description: "DataManager.save")
+    let savedData = LockIsolated<Data>(Data())
+
+    let mainQueue = DispatchQueue.test
+    let model = withDependencies {
+      $0.dataManager.load = { _ in try JSONEncoder().encode([Standup]()) }
+      $0.dataManager.save = { data, url in
+        savedData.setValue(data)
+        expectation.fulfill()
+      }
+      $0.mainQueue = mainQueue.eraseToAnyScheduler()
+    } operation: {
+      StandupsListModel(
+        destination: .add(StandupFormModel(standup: .mock))
+      )
+    }
+
+    model.confirmAddStandupButtonTapped()
+    await mainQueue.advance(by: .seconds(1))
+    XCTAssertEqual(
+      try JSONDecoder().decode([Standup].self, from: savedData.value),
+      [.mock]
+    )
+    await self.fulfillment(of: [expectation], timeout: 1)
+  }
 }
