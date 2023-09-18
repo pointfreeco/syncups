@@ -221,7 +221,7 @@ struct RecordMeetingView: View {
       await self.model.alertButtonTapped(action)
     }
     .task { await self.model.task() }
-    .onChange(of: self.model.isDismissed) { _ in self.dismiss() }
+    .onChange(of: self.model.isDismissed) { _, _ in self.dismiss() }
   }
 }
 
