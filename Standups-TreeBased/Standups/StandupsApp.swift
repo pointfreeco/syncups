@@ -26,11 +26,27 @@ struct UITestingView: View {
       $0.continuousClock = ContinuousClock()
       $0.date = DateGenerator { Date() }
       $0.mainQueue = DispatchQueue.main.eraseToAnyScheduler()
+      $0.soundEffectClient = .noop
       $0.uuid = UUIDGenerator { UUID() }
       switch testName {
       case "testAdd":
         $0.dataManager = .mock()
       case "testDelete", "testEdit":
+        $0.dataManager = .mock(initialData: try? JSONEncoder().encode([Standup.mock]))
+      case "testRecord", "testRecord_Discard":
+        $0.date = DateGenerator { Date(timeIntervalSince1970: 1234567890) }
+        $0.speechClient.authorizationStatus = { .authorized }
+        $0.speechClient.startTask = { _ in
+          AsyncThrowingStream {
+            $0.yield(
+              SpeechRecognitionResult(
+                bestTranscription: Transcription(formattedString: "Hello world!"),
+                isFinal: true
+              )
+            )
+            $0.finish()
+          }
+        }
         $0.dataManager = .mock(initialData: try? JSONEncoder().encode([Standup.mock]))
       default:
         fatalError()

@@ -12,7 +12,6 @@ final class StandupsListUITests: XCTestCase {
   var app: XCUIApplication!
 
   override func setUpWithError() throws {
-    self.continueAfterFailure = false
     self.app = XCUIApplication()
     self.app.launchEnvironment = [
       "SWIFT_DEPENDENCIES_CONTEXT": "test"
@@ -54,8 +53,7 @@ final class StandupsListUITests: XCTestCase {
     self.app.launchEnvironment["UITest"] = String(#function.dropLast(2))
     self.app.launch()
 
-    XCTAssertEqual(self.app.staticTexts["Design"].exists, true)
-    self.app.cells.firstMatch.tap()
+    self.app.staticTexts["Design"].tap()
 
     self.app.buttons["Delete"].tap()
     XCTAssertEqual(self.app.staticTexts["Delete?"].exists, true)
@@ -70,8 +68,7 @@ final class StandupsListUITests: XCTestCase {
     self.app.launchEnvironment["UITest"] = String(#function.dropLast(2))
     self.app.launch()
 
-    XCTAssertEqual(self.app.staticTexts["Design"].exists, true)
-    self.app.cells.firstMatch.tap()
+    self.app.staticTexts["Design"].tap()
 
     self.app.buttons["Edit"].tap()
     let titleTextField = self.app.textFields["Title"]
@@ -84,5 +81,54 @@ final class StandupsListUITests: XCTestCase {
     try await Task.sleep(for: .seconds(0.3))
     XCTAssertEqual(self.app.staticTexts["Design & Product"].exists, true)
     XCTAssertEqual(self.app.staticTexts["Daily Standups"].exists, true)
+  }
+
+  func testRecord() async throws {
+    self.app.launchEnvironment["UITest"] = String(#function.dropLast(2))
+    self.app.launch()
+
+    self.app.staticTexts["Design"].tap()
+
+    self.app.buttons["Start Meeting"].tap()
+    self.app.buttons["End meeting"].tap()
+
+    XCTAssertEqual(self.app.staticTexts["End meeting?"].exists, true)
+    self.app.buttons["Save and end"].tap()
+
+    // NB: Due to a SwiftUI navigation bug the screen is blank when popping back to the detail.
+    XCTExpectFailure {
+      XCTAssertEqual(self.app.staticTexts["Design"].exists, true)
+      XCTAssertEqual(self.app.staticTexts["February 13, 2009"].exists, true)
+      XCTAssertEqual(self.app.staticTexts["6:31 PM"].exists, true)
+    }
+
+    try await Task.sleep(for: .seconds(0.5))
+    self.app.buttons["Daily Standups"].tap()
+    self.app.staticTexts["Design"].tap()
+
+    XCTAssertEqual(self.app.staticTexts["Design"].exists, true)
+    XCTAssertEqual(self.app.staticTexts["February 13, 2009"].exists, true)
+    XCTAssertEqual(self.app.staticTexts["6:31 PM"].exists, true)
+
+    self.app.staticTexts["February 13, 2009"].tap()
+    self.app.staticTexts["Hello world!"].tap()
+  }
+
+  func testRecord_Discard() async throws {
+    self.app.launchEnvironment["UITest"] = String(#function.dropLast(2))
+    self.app.launch()
+
+    self.app.staticTexts["Design"].tap()
+
+    self.app.buttons["Start Meeting"].tap()
+    self.app.buttons["End meeting"].tap()
+
+    XCTAssertEqual(self.app.staticTexts["End meeting?"].exists, true)
+    self.app.buttons["Discard"].tap()
+
+    try await Task.sleep(for: .seconds(0.5))
+    XCTAssertEqual(self.app.staticTexts["Design"].exists, true)
+    XCTAssertEqual(self.app.staticTexts["February 13, 2009"].exists, false)
+    XCTAssertEqual(self.app.staticTexts["6:31 PM"].exists, false)
   }
 }

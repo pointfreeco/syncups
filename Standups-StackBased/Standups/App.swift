@@ -34,7 +34,10 @@ class AppModel: ObservableObject {
 
   private func bind() {
     self.standupsList.onStandupTapped = { [weak self] standup in
-      self?.path.append(.detail(StandupDetailModel(standup: standup)))
+      guard let self else { return }
+      withDependencies(from: self) {
+        self.path.append(.detail(StandupDetailModel(standup: standup)))
+      }
     }
 
     for destination in self.path {
@@ -53,11 +56,14 @@ class AppModel: ObservableObject {
 
   private func bindDetail(model: StandupDetailModel) {
     model.onMeetingStarted = { [weak self] standup in
-      self?.path.append(
-        .record(
-          RecordMeetingModel(standup: standup)
+      guard let self else { return }
+      withDependencies(from: self) {
+        self.path.append(
+          .record(
+            RecordMeetingModel(standup: standup)
+          )
         )
-      )
+      }
     }
 
     model.onConfirmDeletion = { [weak model, weak self] in
