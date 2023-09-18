@@ -23,6 +23,9 @@ struct UITestingView: View {
 
   var body: some View {
     withDependencies {
+      $0.continuousClock = ContinuousClock()
+      $0.date = DateGenerator { Date() }
+      $0.uuid = UUIDGenerator { UUID() }
       switch testName {
       case "testAdd":
         $0.dataManager = .mock()

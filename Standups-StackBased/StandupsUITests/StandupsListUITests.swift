@@ -15,7 +15,7 @@ final class StandupsListUITests: XCTestCase {
     self.continueAfterFailure = false
     self.app = XCUIApplication()
     self.app.launchEnvironment = [
-      "SWIFT_DEPENDENCIES_CONTEXT": "preview"
+      "SWIFT_DEPENDENCIES_CONTEXT": "test"
     ]
   }
 
