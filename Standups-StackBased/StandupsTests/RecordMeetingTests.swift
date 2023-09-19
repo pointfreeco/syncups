@@ -6,7 +6,7 @@ import XCTest
 @testable import Standups_StackBased
 
 @MainActor
-final class RecordMeetingTests: XCTestCase {
+final class RecordMeetingTests: BaseTestCase {
   func testTimer() async throws {
     let clock = TestClock()
     let soundEffectPlayCount = LockIsolated(0)

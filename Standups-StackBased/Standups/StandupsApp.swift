@@ -9,7 +9,7 @@ struct StandupsApp: App {
       //     dependencies for the duration of the test (e.g. the data manager). We do not really
       //     recommend performing UI tests in general, but we do want to demonstrate how it can be
       //     done.
-      if let testName = ProcessInfo.processInfo.environment["UITest"] {
+      if let testName = ProcessInfo.processInfo.environment["UI_TEST_NAME"] {
         UITestingView(testName: testName)
       } else {
         AppView(model: AppModel(standupsList: StandupsListModel()))
@@ -48,6 +48,14 @@ struct UITestingView: View {
           }
         }
         $0.dataManager = .mock(initialData: try? JSONEncoder().encode([Standup.mock]))
+      case "testPersistence":
+        let id = ProcessInfo.processInfo.environment["TEST_UUID"]!
+        let url = URL.documentsDirectory.appending(component: "\(id).json")
+        $0.dataManager = .init(
+          load: { _ in try Data(contentsOf: url) },
+          save: { data, _ in try data.write(to: url) }
+        )
+
       default:
         fatalError()
       }

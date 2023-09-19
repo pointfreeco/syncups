@@ -6,7 +6,7 @@ import XCTest
 @testable import Standups_StackBased
 
 @MainActor
-final class StandupDetailTests: XCTestCase {
+final class StandupDetailTests: BaseTestCase {
   func testSpeechRestricted() throws {
     let model = withDependencies {
       $0.speechClient.authorizationStatus = { .restricted }

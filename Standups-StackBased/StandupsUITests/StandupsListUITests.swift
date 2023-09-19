@@ -14,9 +14,10 @@ final class StandupsListUITests: XCTestCase {
   override func setUpWithError() throws {
     self.app = XCUIApplication()
     self.app.launchEnvironment["SWIFT_DEPENDENCIES_CONTEXT"] = "test"
-    self.app.launchEnvironment["UITest"] = String(
+    self.app.launchEnvironment["UI_TEST_NAME"] = String(
       self.name.split(separator: " ").last?.dropLast() ?? ""
     )
+    self.app.launchEnvironment["TEST_UUID"] = UUID().uuidString
     self.app.launch()
   }
 
@@ -31,21 +32,20 @@ final class StandupsListUITests: XCTestCase {
   // available on next launch.
   func testAdd() throws {
     self.app.navigationBars["Daily Standups"].buttons["Add"].tap()
-    let collectionViews = self.app.collectionViews
-    let titleTextField = collectionViews.textFields["Title"]
-    let nameTextField = collectionViews.textFields["Name"]
+    let titleTextField = self.app.collectionViews.textFields["Title"]
+    let nameTextField = self.app.collectionViews.textFields["Name"]
 
     titleTextField.typeText("Engineering")
 
     nameTextField.tap()
     nameTextField.typeText("Blob")
 
-    collectionViews.buttons["New attendee"].tap()
+    self.app.buttons["New attendee"].tap()
     self.app.typeText("Blob Jr.")
 
     self.app.navigationBars["New standup"].buttons["Add"].tap()
 
-    XCTAssertEqual(collectionViews.staticTexts["Engineering"].exists, true)
+    XCTAssertEqual(self.app.staticTexts["Engineering"].exists, true)
   }
 
   func testDelete() async throws {
@@ -114,5 +114,18 @@ final class StandupsListUITests: XCTestCase {
     XCTAssertEqual(self.app.staticTexts["Design"].exists, true)
     XCTAssertEqual(self.app.staticTexts["February 13, 2009"].exists, false)
     XCTAssertEqual(self.app.staticTexts["6:31 PM"].exists, false)
+  }
+
+  func testPersistence() throws {
+    XCTAssertEqual(self.app.staticTexts["Engineering"].exists, false)
+
+    self.app.navigationBars["Daily Standups"].buttons["Add"].tap()
+    let titleTextField = self.app.collectionViews.textFields["Title"]
+    titleTextField.typeText("Engineering")
+    self.app.navigationBars["New standup"].buttons["Add"].tap()
+
+    XCUIDevice.shared.press(.home)
+    self.app.launch()
+    XCTAssertEqual(self.app.staticTexts["Engineering"].exists, true)
   }
 }

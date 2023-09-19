@@ -16,7 +16,7 @@ final class StandupsListTests: XCTestCase {
     let model = withDependencies {
       $0.dataManager = .mock()
       $0.dataManager.save = { data, _ in savedData.setValue(data) }
-      $0.mainQueue = mainQueue.eraseToAnyScheduler()
+      $0.mainQueue = self.mainQueue.eraseToAnyScheduler()
       $0.uuid = .incrementing
     } operation: {
       StandupsListModel()
@@ -64,7 +64,7 @@ final class StandupsListTests: XCTestCase {
   func testAdd_ValidatedAttendees() async throws {
     let model = withDependencies {
       $0.dataManager = .mock()
-      $0.mainQueue = mainQueue.eraseToAnyScheduler()
+      $0.mainQueue = self.mainQueue.eraseToAnyScheduler()
       $0.uuid = .incrementing
     } operation: {
       StandupsListModel(
@@ -108,7 +108,7 @@ final class StandupsListTests: XCTestCase {
       dependencies.dataManager = .mock(
         initialData: try JSONEncoder().encode([Standup.mock])
       )
-      dependencies.mainQueue = mainQueue.eraseToAnyScheduler()
+      dependencies.mainQueue = self.mainQueue.eraseToAnyScheduler()
     } operation: {
       StandupsListModel()
     }
@@ -142,7 +142,7 @@ final class StandupsListTests: XCTestCase {
           )
         ])
       )
-      dependencies.mainQueue = mainQueue.eraseToAnyScheduler()
+      dependencies.mainQueue = self.mainQueue.eraseToAnyScheduler()
     } operation: {
       StandupsListModel()
     }
@@ -210,14 +210,13 @@ final class StandupsListTests: XCTestCase {
     let expectation = self.expectation(description: "DataManager.save")
     let savedData = LockIsolated<Data>(Data())
 
-    let mainQueue = DispatchQueue.test
     let model = withDependencies {
       $0.dataManager.load = { _ in try JSONEncoder().encode([Standup]()) }
       $0.dataManager.save = { data, url in
         savedData.setValue(data)
         expectation.fulfill()
       }
-      $0.mainQueue = mainQueue.eraseToAnyScheduler()
+      $0.mainQueue = self.mainQueue.eraseToAnyScheduler()
     } operation: {
       StandupsListModel(
         destination: .add(StandupFormModel(standup: .mock))
@@ -225,7 +224,7 @@ final class StandupsListTests: XCTestCase {
     }
 
     model.confirmAddStandupButtonTapped()
-    await mainQueue.advance(by: .seconds(1))
+    await self.mainQueue.advance(by: .seconds(1))
     XCTAssertEqual(
       try JSONDecoder().decode([Standup].self, from: savedData.value),
       [.mock]
