@@ -13,9 +13,11 @@ final class StandupsListUITests: XCTestCase {
 
   override func setUpWithError() throws {
     self.app = XCUIApplication()
-    self.app.launchEnvironment = [
-      "SWIFT_DEPENDENCIES_CONTEXT": "test"
-    ]
+    self.app.launchEnvironment["SWIFT_DEPENDENCIES_CONTEXT"] = "test"
+    self.app.launchEnvironment["UITest"] = String(
+      self.name.split(separator: " ").last?.dropLast() ?? ""
+    )
+    self.app.launch()
   }
 
   // This test demonstrates the simple flow of tapping the "Add" button, filling in some fields in
@@ -28,9 +30,6 @@ final class StandupsListUITests: XCTestCase {
   // the standup is added to the list its data will be persisted to disk so that it will be
   // available on next launch.
   func testAdd() throws {
-    self.app.launchEnvironment["UITest"] = String(#function.dropLast(2))
-    self.app.launch()
-
     self.app.navigationBars["Daily Standups"].buttons["Add"].tap()
     let collectionViews = self.app.collectionViews
     let titleTextField = collectionViews.textFields["Title"]
@@ -50,9 +49,6 @@ final class StandupsListUITests: XCTestCase {
   }
 
   func testDelete() async throws {
-    self.app.launchEnvironment["UITest"] = String(#function.dropLast(2))
-    self.app.launch()
-
     self.app.staticTexts["Design"].tap()
 
     self.app.buttons["Delete"].tap()
@@ -65,9 +61,6 @@ final class StandupsListUITests: XCTestCase {
   }
 
   func testEdit() async throws {
-    self.app.launchEnvironment["UITest"] = String(#function.dropLast(2))
-    self.app.launch()
-
     self.app.staticTexts["Design"].tap()
 
     self.app.buttons["Edit"].tap()
@@ -84,9 +77,6 @@ final class StandupsListUITests: XCTestCase {
   }
 
   func testRecord() async throws {
-    self.app.launchEnvironment["UITest"] = String(#function.dropLast(2))
-    self.app.launch()
-
     self.app.staticTexts["Design"].tap()
 
     self.app.buttons["Start Meeting"].tap()
@@ -112,9 +102,6 @@ final class StandupsListUITests: XCTestCase {
   }
 
   func testRecord_Discard() async throws {
-    self.app.launchEnvironment["UITest"] = String(#function.dropLast(2))
-    self.app.launch()
-
     self.app.staticTexts["Design"].tap()
 
     self.app.buttons["Start Meeting"].tap()
