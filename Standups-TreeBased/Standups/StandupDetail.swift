@@ -256,7 +256,7 @@ struct StandupDetailView: View {
           }
       }
     }
-    .onChange(of: self.model.isDismissed) { _ in self.dismiss() }
+    .onChange(of: self.model.isDismissed) { _, _ in self.dismiss() }
   }
 }
 
