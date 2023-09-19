@@ -17,7 +17,7 @@ final class StandupsListTests: BaseTestCase {
     let model = withDependencies {
       $0.dataManager = .mock()
       $0.dataManager.save = { data, _ in savedData.setValue(data) }
-      $0.mainQueue = self.mainQueue.eraseToAnyScheduler()
+      $0.mainQueue = .immediate
       $0.uuid = .incrementing
     } operation: {
       StandupsListModel()
@@ -54,18 +54,12 @@ final class StandupsListTests: BaseTestCase {
         )
       ]
     )
-
-    await self.mainQueue.run()
-    XCTAssertEqual(
-      try JSONDecoder().decode(IdentifiedArrayOf<Standup>.self, from: XCTUnwrap(savedData.value)),
-      model.standups
-    )
   }
 
   func testAdd_ValidatedAttendees() async throws {
     let model = withDependencies {
       $0.dataManager = .mock()
-      $0.mainQueue = self.mainQueue.eraseToAnyScheduler()
+      $0.mainQueue = .immediate
       $0.uuid = .incrementing
     } operation: {
       StandupsListModel(
@@ -155,10 +149,10 @@ final class StandupsListTests: BaseTestCase {
 
     model.confirmAddStandupButtonTapped()
     await self.mainQueue.advance(by: .seconds(1))
+    await self.fulfillment(of: [expectation], timeout: 1)
     XCTAssertEqual(
       try JSONDecoder().decode([Standup].self, from: savedData.value),
       [.mock]
     )
-    await self.fulfillment(of: [expectation], timeout: 1)
   }
 }

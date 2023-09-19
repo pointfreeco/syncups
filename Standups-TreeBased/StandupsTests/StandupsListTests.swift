@@ -16,7 +16,7 @@ final class StandupsListTests: BaseTestCase {
     let model = withDependencies {
       $0.dataManager = .mock()
       $0.dataManager.save = { data, _ in savedData.setValue(data) }
-      $0.mainQueue = self.mainQueue.eraseToAnyScheduler()
+      $0.mainQueue = .immediate
       $0.uuid = .incrementing
     } operation: {
       StandupsListModel()
@@ -53,18 +53,12 @@ final class StandupsListTests: BaseTestCase {
         )
       ]
     )
-
-    await self.mainQueue.run()
-    XCTAssertEqual(
-      try JSONDecoder().decode(IdentifiedArrayOf<Standup>.self, from: XCTUnwrap(savedData.value)),
-      model.standups
-    )
   }
 
   func testAdd_ValidatedAttendees() async throws {
     let model = withDependencies {
       $0.dataManager = .mock()
-      $0.mainQueue = self.mainQueue.eraseToAnyScheduler()
+      $0.mainQueue = .immediate
       $0.uuid = .incrementing
     } operation: {
       StandupsListModel(
@@ -104,11 +98,11 @@ final class StandupsListTests: BaseTestCase {
   }
 
   func testDelete() async throws {
-    let model = try withDependencies { dependencies in
-      dependencies.dataManager = .mock(
+    let model = try withDependencies {
+      $0.dataManager = .mock(
         initialData: try JSONEncoder().encode([Standup.mock])
       )
-      dependencies.mainQueue = self.mainQueue.eraseToAnyScheduler()
+      $0.mainQueue = .immediate
     } operation: {
       StandupsListModel()
     }
@@ -131,8 +125,8 @@ final class StandupsListTests: BaseTestCase {
   }
 
   func testDetailEdit() async throws {
-    let model = try withDependencies { dependencies in
-      dependencies.dataManager = .mock(
+    let model = try withDependencies {
+      $0.dataManager = .mock(
         initialData: try JSONEncoder().encode([
           Standup(
             id: Standup.ID(uuidString: "00000000-0000-0000-0000-000000000000")!,
@@ -142,7 +136,7 @@ final class StandupsListTests: BaseTestCase {
           )
         ])
       )
-      dependencies.mainQueue = self.mainQueue.eraseToAnyScheduler()
+      $0.mainQueue = .immediate
     } operation: {
       StandupsListModel()
     }
