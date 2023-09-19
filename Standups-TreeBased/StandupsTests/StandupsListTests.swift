@@ -7,7 +7,7 @@ import XCTest
 @testable import Standups_TreeBased
 
 @MainActor
-final class StandupsListTests: XCTestCase {
+final class StandupsListTests: BaseTestCase {
   let mainQueue = DispatchQueue.test
 
   func testAdd() async throws {

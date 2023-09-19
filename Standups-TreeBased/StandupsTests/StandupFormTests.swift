@@ -5,7 +5,7 @@ import XCTest
 @testable import Standups_TreeBased
 
 @MainActor
-final class StandupFormTests: XCTestCase {
+final class StandupFormTests: BaseTestCase {
   func testAddAttendee() {
     let model = withDependencies {
       $0.uuid = .incrementing
