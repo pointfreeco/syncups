@@ -27,26 +27,25 @@ final class StandupsListUITests: XCTestCase {
   // it takes 0.025 seconds (400 times faster) and it even tests more. It further confirms that when
   // the standup is added to the list its data will be persisted to disk so that it will be
   // available on next launch.
-  func testAdd() throws {
+  func testAdd() async throws {
     self.app.launchEnvironment["UITest"] = String(#function.dropLast(2))
     self.app.launch()
 
     self.app.navigationBars["Daily Standups"].buttons["Add"].tap()
-    let collectionViews = self.app.collectionViews
-    let titleTextField = collectionViews.textFields["Title"]
-    let nameTextField = collectionViews.textFields["Name"]
+    let titleTextField = self.app.collectionViews.textFields["Title"]
+    let nameTextField = self.app.collectionViews.textFields["Name"]
 
     titleTextField.typeText("Engineering")
 
     nameTextField.tap()
     nameTextField.typeText("Blob")
 
-    collectionViews.buttons["New attendee"].tap()
+    self.app.buttons["New attendee"].tap()
     self.app.typeText("Blob Jr.")
 
     self.app.navigationBars["New standup"].buttons["Add"].tap()
 
-    XCTAssertEqual(collectionViews.staticTexts["Engineering"].exists, true)
+    XCTAssertEqual(self.app.staticTexts["Engineering"].exists, true)
   }
 
   func testDelete() async throws {
@@ -95,6 +94,7 @@ final class StandupsListUITests: XCTestCase {
     XCTAssertEqual(self.app.staticTexts["End meeting?"].exists, true)
     self.app.buttons["Save and end"].tap()
 
+    try await Task.sleep(for: .seconds(0.5))
     // NB: Due to a SwiftUI navigation bug the screen is blank when popping back to the detail.
     XCTExpectFailure {
       XCTAssertEqual(self.app.staticTexts["Design"].exists, true)
@@ -102,7 +102,6 @@ final class StandupsListUITests: XCTestCase {
       XCTAssertEqual(self.app.staticTexts["6:31 PM"].exists, true)
     }
 
-    try await Task.sleep(for: .seconds(0.5))
     self.app.buttons["Daily Standups"].tap()
     self.app.staticTexts["Design"].tap()
 

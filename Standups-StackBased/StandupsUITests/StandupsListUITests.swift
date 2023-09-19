@@ -95,14 +95,11 @@ final class StandupsListUITests: XCTestCase {
     XCTAssertEqual(self.app.staticTexts["End meeting?"].exists, true)
     self.app.buttons["Save and end"].tap()
 
-    // NB: Due to a SwiftUI navigation bug the screen is blank when popping back to the detail.
-    XCTExpectFailure {
-      XCTAssertEqual(self.app.staticTexts["Design"].exists, true)
-      XCTAssertEqual(self.app.staticTexts["February 13, 2009"].exists, true)
-      XCTAssertEqual(self.app.staticTexts["6:31 PM"].exists, true)
-    }
-
     try await Task.sleep(for: .seconds(0.5))
+    XCTAssertEqual(self.app.staticTexts["Design"].exists, true)
+    XCTAssertEqual(self.app.staticTexts["February 13, 2009"].exists, true)
+    XCTAssertEqual(self.app.staticTexts["6:31 PM"].exists, true)
+
     self.app.buttons["Daily Standups"].tap()
     self.app.staticTexts["Design"].tap()
 
