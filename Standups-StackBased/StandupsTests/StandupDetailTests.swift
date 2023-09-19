@@ -65,7 +65,7 @@ final class StandupDetailTests: BaseTestCase {
 
     await model.alertButtonTapped(.continueWithoutRecording)
 
-    self.wait(for: [onMeetingStartedExpectation], timeout: 0)
+    await self.fulfillment(of: [onMeetingStartedExpectation])
   }
 
   func testSpeechAuthorized() async throws {
@@ -83,7 +83,7 @@ final class StandupDetailTests: BaseTestCase {
 
     model.startMeetingButtonTapped()
 
-    self.wait(for: [onMeetingStartedExpectation], timeout: 0)
+    await self.fulfillment(of: [onMeetingStartedExpectation])
   }
 
   func testEdit() throws {
