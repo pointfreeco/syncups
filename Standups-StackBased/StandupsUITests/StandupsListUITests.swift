@@ -17,7 +17,6 @@ final class StandupsListUITests: XCTestCase {
     self.app.launchEnvironment["UI_TEST_NAME"] = String(
       self.name.split(separator: " ").last?.dropLast() ?? ""
     )
-    self.app.launchEnvironment["TEST_UUID"] = UUID().uuidString
     self.app.launch()
   }
 
