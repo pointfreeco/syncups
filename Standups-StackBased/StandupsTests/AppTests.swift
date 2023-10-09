@@ -6,7 +6,7 @@ import XCTest
 @testable import Standups_StackBased
 
 @MainActor
-final class AppTests: XCTestCase {
+final class AppTests: BaseTestCase {
   func testRecordWithTranscript() async throws {
     let standup = Standup(
       id: Standup.ID(),

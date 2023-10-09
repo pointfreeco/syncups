@@ -6,7 +6,7 @@ import XCTest
 @testable import Standups_StackBased
 
 @MainActor
-final class RecordMeetingTests: XCTestCase {
+final class RecordMeetingTests: BaseTestCase {
   func testTimer() async throws {
     let clock = TestClock()
     let soundEffectPlayCount = LockIsolated(0)
@@ -66,7 +66,7 @@ final class RecordMeetingTests: XCTestCase {
 
     await task.value
 
-    self.wait(for: [onMeetingFinishedExpectation], timeout: 0)
+    await self.fulfillment(of: [onMeetingFinishedExpectation])
     XCTAssertEqual(soundEffectPlayCount.value, 2)
   }
 
@@ -104,7 +104,7 @@ final class RecordMeetingTests: XCTestCase {
 
     await model.task()
 
-    self.wait(for: [onMeetingFinishedExpectation], timeout: 0)
+    await self.fulfillment(of: [onMeetingFinishedExpectation])
   }
 
   func testEndMeetingSave() async throws {
@@ -141,7 +141,7 @@ final class RecordMeetingTests: XCTestCase {
 
     await model.alertButtonTapped(.confirmSave)
 
-    self.wait(for: [onMeetingFinishedExpectation], timeout: 0)
+    await self.fulfillment(of: [onMeetingFinishedExpectation])
 
     task.cancel()
     await task.value
@@ -177,7 +177,7 @@ final class RecordMeetingTests: XCTestCase {
 
     task.cancel()
     await task.value
-    self.wait(for: [onDiscardMeetingExpectation], timeout: 0)
+    await self.fulfillment(of: [onDiscardMeetingExpectation])
   }
 
   func testNextSpeaker() async throws {
@@ -240,7 +240,7 @@ final class RecordMeetingTests: XCTestCase {
 
     await model.alertButtonTapped(.confirmSave)
 
-    self.wait(for: [onMeetingFinishedExpectation], timeout: 0)
+    await self.fulfillment(of: [onMeetingFinishedExpectation])
     XCTAssertEqual(soundEffectPlayCount.value, 2)
 
     task.cancel()
@@ -298,7 +298,7 @@ final class RecordMeetingTests: XCTestCase {
     await task.value
 
     XCTAssertEqual(model.secondsElapsed, 3)
-    self.wait(for: [onMeetingFinishedExpectation], timeout: 0)
+    await self.fulfillment(of: [onMeetingFinishedExpectation])
   }
 
   func testSpeechRecognitionFailure_Discard() async throws {
@@ -343,6 +343,6 @@ final class RecordMeetingTests: XCTestCase {
     await model.alertButtonTapped(.confirmDiscard)
     model.destination = nil  // NB: Simulate SwiftUI closing alert.
 
-    self.wait(for: [onDiscardMeetingExpectation], timeout: 0)
+    await self.fulfillment(of: [onDiscardMeetingExpectation])
   }
 }

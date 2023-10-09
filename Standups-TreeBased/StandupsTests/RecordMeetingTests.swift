@@ -6,7 +6,7 @@ import XCTest
 @testable import Standups_TreeBased
 
 @MainActor
-final class RecordMeetingTests: XCTestCase {
+final class RecordMeetingTests: BaseTestCase {
   func testTimer() async throws {
     let clock = TestClock()
     let soundEffectPlayCount = LockIsolated(0)
@@ -66,7 +66,7 @@ final class RecordMeetingTests: XCTestCase {
 
     await task.value
 
-    self.wait(for: [onMeetingFinishedExpectation], timeout: 0)
+    await self.fulfillment(of: [onMeetingFinishedExpectation])
     XCTAssertEqual(model.isDismissed, true)
     XCTAssertEqual(soundEffectPlayCount.value, 2)
   }
@@ -105,7 +105,7 @@ final class RecordMeetingTests: XCTestCase {
 
     await model.task()
 
-    self.wait(for: [onMeetingFinishedExpectation], timeout: 0)
+    await self.fulfillment(of: [onMeetingFinishedExpectation])
     XCTAssertEqual(model.isDismissed, true)
   }
 
@@ -143,7 +143,7 @@ final class RecordMeetingTests: XCTestCase {
 
     await model.alertButtonTapped(.confirmSave)
 
-    self.wait(for: [onMeetingFinishedExpectation], timeout: 0)
+    await self.fulfillment(of: [onMeetingFinishedExpectation])
     XCTAssertEqual(model.isDismissed, true)
 
     task.cancel()
@@ -241,7 +241,7 @@ final class RecordMeetingTests: XCTestCase {
 
     await model.alertButtonTapped(.confirmSave)
 
-    self.wait(for: [onMeetingFinishedExpectation], timeout: 0)
+    await self.fulfillment(of: [onMeetingFinishedExpectation])
     XCTAssertEqual(model.isDismissed, true)
     XCTAssertEqual(soundEffectPlayCount.value, 2)
 
@@ -301,7 +301,7 @@ final class RecordMeetingTests: XCTestCase {
     await task.value
 
     XCTAssertEqual(model.secondsElapsed, 3)
-    self.wait(for: [onMeetingFinishedExpectation], timeout: 0)
+    await self.fulfillment(of: [onMeetingFinishedExpectation])
   }
 
   func testSpeechRecognitionFailure_Discard() async throws {

@@ -31,6 +31,9 @@
 		CA350CCD2984518200434F8A /* StandupDetailTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350CC92984518200434F8A /* StandupDetailTests.swift */; };
 		CA350CCF2984518A00434F8A /* StandupsListUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350CCE2984518A00434F8A /* StandupsListUITests.swift */; };
 		CA350CD2298452F300434F8A /* ding.wav in Resources */ = {isa = PBXBuildFile; fileRef = CA350CD1298452F300434F8A /* ding.wav */; };
+		CAC7A59E2ABA374500985FC1 /* ConcurrencyExtras in Frameworks */ = {isa = PBXBuildFile; productRef = CAC7A59D2ABA374500985FC1 /* ConcurrencyExtras */; };
+		CAC7A5A12ABA374D00985FC1 /* ConcurrencyExtras in Frameworks */ = {isa = PBXBuildFile; productRef = CAC7A5A02ABA374D00985FC1 /* ConcurrencyExtras */; };
+		CAC7A5A32ABA375800985FC1 /* BaseTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAC7A5A22ABA375800985FC1 /* BaseTestCase.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -74,6 +77,7 @@
 		CA350CC92984518200434F8A /* StandupDetailTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StandupDetailTests.swift; sourceTree = "<group>"; };
 		CA350CCE2984518A00434F8A /* StandupsListUITests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StandupsListUITests.swift; sourceTree = "<group>"; };
 		CA350CD1298452F300434F8A /* ding.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = ding.wav; sourceTree = "<group>"; };
+		CAC7A5A22ABA375800985FC1 /* BaseTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseTestCase.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,6 +85,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CAC7A59E2ABA374500985FC1 /* ConcurrencyExtras in Frameworks */,
 				CA350CC22984511300434F8A /* Tagged in Frameworks */,
 				CA350CBC298450E700434F8A /* SwiftUINavigation in Frameworks */,
 				CA350CBF2984510200434F8A /* IdentifiedCollections in Frameworks */,
@@ -92,6 +97,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CAC7A5A12ABA374D00985FC1 /* ConcurrencyExtras in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -112,6 +118,7 @@
 				CA350C842984506F00434F8A /* StandupsTests */,
 				CA350C8E2984506F00434F8A /* StandupsUITests */,
 				CA350C722984506E00434F8A /* Products */,
+				CAC7A59F2ABA374D00985FC1 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -147,6 +154,7 @@
 			isa = PBXGroup;
 			children = (
 				CA1D22E92991BC7000B529DE /* AppTests.swift */,
+				CAC7A5A22ABA375800985FC1 /* BaseTestCase.swift */,
 				CA350CC62984518200434F8A /* RecordMeetingTests.swift */,
 				CA350CC92984518200434F8A /* StandupDetailTests.swift */,
 				CA350CC82984518200434F8A /* StandupFormTests.swift */,
@@ -182,6 +190,13 @@
 			path = Resources;
 			sourceTree = "<group>";
 		};
+		CAC7A59F2ABA374D00985FC1 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -203,6 +218,7 @@
 				CA350CBE2984510200434F8A /* IdentifiedCollections */,
 				CA350CC12984511300434F8A /* Tagged */,
 				CA350CC42984515C00434F8A /* Dependencies */,
+				CAC7A59D2ABA374500985FC1 /* ConcurrencyExtras */,
 			);
 			productName = Standups;
 			productReference = CA350C712984506E00434F8A /* Standups-StackBased.app */;
@@ -222,6 +238,9 @@
 				CA350C832984506F00434F8A /* PBXTargetDependency */,
 			);
 			name = "Standups-StackBasedTests";
+			packageProductDependencies = (
+				CAC7A5A02ABA374D00985FC1 /* ConcurrencyExtras */,
+			);
 			productName = StandupsTests;
 			productReference = CA350C812984506F00434F8A /* Standups-StackBasedTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -283,6 +302,7 @@
 				CA350CBD2984510200434F8A /* XCRemoteSwiftPackageReference "swift-identified-collections" */,
 				CA350CC02984511300434F8A /* XCRemoteSwiftPackageReference "swift-tagged" */,
 				CA350CC32984515C00434F8A /* XCRemoteSwiftPackageReference "swift-dependencies" */,
+				CAC7A59C2ABA374500985FC1 /* XCRemoteSwiftPackageReference "swift-concurrency-extras" */,
 			);
 			productRefGroup = CA350C722984506E00434F8A /* Products */;
 			projectDirPath = "";
@@ -346,6 +366,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CA350CCD2984518200434F8A /* StandupDetailTests.swift in Sources */,
+				CAC7A5A32ABA375800985FC1 /* BaseTestCase.swift in Sources */,
 				CA350CCA2984518200434F8A /* RecordMeetingTests.swift in Sources */,
 				CA350CCB2984518200434F8A /* StandupsListTests.swift in Sources */,
 				CA1D22EA2991BC7000B529DE /* AppTests.swift in Sources */,
@@ -721,6 +742,14 @@
 				minimumVersion = 1.0.0;
 			};
 		};
+		CAC7A59C2ABA374500985FC1 /* XCRemoteSwiftPackageReference "swift-concurrency-extras" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pointfreeco/swift-concurrency-extras";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -743,6 +772,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = CA350CC32984515C00434F8A /* XCRemoteSwiftPackageReference "swift-dependencies" */;
 			productName = Dependencies;
+		};
+		CAC7A59D2ABA374500985FC1 /* ConcurrencyExtras */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CAC7A59C2ABA374500985FC1 /* XCRemoteSwiftPackageReference "swift-concurrency-extras" */;
+			productName = ConcurrencyExtras;
+		};
+		CAC7A5A02ABA374D00985FC1 /* ConcurrencyExtras */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CAC7A59C2ABA374500985FC1 /* XCRemoteSwiftPackageReference "swift-concurrency-extras" */;
+			productName = ConcurrencyExtras;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

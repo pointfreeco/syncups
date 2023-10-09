@@ -6,7 +6,7 @@ import XCTest
 @testable import Standups_StackBased
 
 @MainActor
-final class StandupDetailTests: XCTestCase {
+final class StandupDetailTests: BaseTestCase {
   func testSpeechRestricted() throws {
     let model = withDependencies {
       $0.speechClient.authorizationStatus = { .restricted }
@@ -65,7 +65,7 @@ final class StandupDetailTests: XCTestCase {
 
     await model.alertButtonTapped(.continueWithoutRecording)
 
-    self.wait(for: [onMeetingStartedExpectation], timeout: 0)
+    await self.fulfillment(of: [onMeetingStartedExpectation])
   }
 
   func testSpeechAuthorized() async throws {
@@ -83,7 +83,7 @@ final class StandupDetailTests: XCTestCase {
 
     model.startMeetingButtonTapped()
 
-    self.wait(for: [onMeetingStartedExpectation], timeout: 0)
+    await self.fulfillment(of: [onMeetingStartedExpectation])
   }
 
   func testEdit() throws {

@@ -26,10 +26,11 @@
 		CA350CC52984515C00434F8A /* Dependencies in Frameworks */ = {isa = PBXBuildFile; productRef = CA350CC42984515C00434F8A /* Dependencies */; };
 		CA350CCA2984518200434F8A /* RecordMeetingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350CC62984518200434F8A /* RecordMeetingTests.swift */; };
 		CA350CCB2984518200434F8A /* StandupsListTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350CC72984518200434F8A /* StandupsListTests.swift */; };
-		CA350CCC2984518200434F8A /* EditStandupTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350CC82984518200434F8A /* EditStandupTests.swift */; };
+		CA350CCC2984518200434F8A /* StandupFormTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350CC82984518200434F8A /* StandupFormTests.swift */; };
 		CA350CCD2984518200434F8A /* StandupDetailTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350CC92984518200434F8A /* StandupDetailTests.swift */; };
 		CA350CCF2984518A00434F8A /* StandupsListUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350CCE2984518A00434F8A /* StandupsListUITests.swift */; };
 		CA350CD2298452F300434F8A /* ding.wav in Resources */ = {isa = PBXBuildFile; fileRef = CA350CD1298452F300434F8A /* ding.wav */; };
+		CAC7A5A52ABA3D5700985FC1 /* BaseTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAC7A5A42ABA3D5700985FC1 /* BaseTestCase.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -68,10 +69,11 @@
 		CA350CAC298450BF00434F8A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CA350CC62984518200434F8A /* RecordMeetingTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecordMeetingTests.swift; sourceTree = "<group>"; };
 		CA350CC72984518200434F8A /* StandupsListTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StandupsListTests.swift; sourceTree = "<group>"; };
-		CA350CC82984518200434F8A /* EditStandupTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditStandupTests.swift; sourceTree = "<group>"; };
+		CA350CC82984518200434F8A /* StandupFormTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StandupFormTests.swift; sourceTree = "<group>"; };
 		CA350CC92984518200434F8A /* StandupDetailTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StandupDetailTests.swift; sourceTree = "<group>"; };
 		CA350CCE2984518A00434F8A /* StandupsListUITests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StandupsListUITests.swift; sourceTree = "<group>"; };
 		CA350CD1298452F300434F8A /* ding.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = ding.wav; sourceTree = "<group>"; };
+		CAC7A5A42ABA3D5700985FC1 /* BaseTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseTestCase.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -152,9 +154,10 @@
 		CA350C842984506F00434F8A /* StandupsTests */ = {
 			isa = PBXGroup;
 			children = (
-				CA350CC82984518200434F8A /* EditStandupTests.swift */,
+				CAC7A5A42ABA3D5700985FC1 /* BaseTestCase.swift */,
 				CA350CC62984518200434F8A /* RecordMeetingTests.swift */,
 				CA350CC92984518200434F8A /* StandupDetailTests.swift */,
+				CA350CC82984518200434F8A /* StandupFormTests.swift */,
 				CA350CC72984518200434F8A /* StandupsListTests.swift */,
 			);
 			path = StandupsTests;
@@ -352,8 +355,9 @@
 			files = (
 				CA350CCD2984518200434F8A /* StandupDetailTests.swift in Sources */,
 				CA350CCA2984518200434F8A /* RecordMeetingTests.swift in Sources */,
+				CAC7A5A52ABA3D5700985FC1 /* BaseTestCase.swift in Sources */,
 				CA350CCB2984518200434F8A /* StandupsListTests.swift in Sources */,
-				CA350CCC2984518200434F8A /* EditStandupTests.swift in Sources */,
+				CA350CCC2984518200434F8A /* StandupFormTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
