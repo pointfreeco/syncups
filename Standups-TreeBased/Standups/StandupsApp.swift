@@ -49,7 +49,8 @@ struct UITestingView: View {
         }
         $0.dataManager = .mock(initialData: try? JSONEncoder().encode([Standup.mock]))
       case "testPersistence":
-        let url = URL.documentsDirectory.appending(component: "\(UUID().uuidString).json")
+        let id = ProcessInfo.processInfo.environment["TEST_UUID"]!
+        let url = URL.documentsDirectory.appending(component: "\(id).json")
         $0.dataManager = .init(
           load: { _ in try Data(contentsOf: url) },
           save: { data, _ in try data.write(to: url) }
