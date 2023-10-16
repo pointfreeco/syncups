@@ -12,9 +12,9 @@ StandupsListModel(
   destination: .detail(
     StandupDetailModel(
       destination: .record(
-        RecordMeetingModel(standup: …)
+        RecordMeetingModel(syncUp: …)
       ),
-      standup: …
+      syncUp: …
     )
   )
 )

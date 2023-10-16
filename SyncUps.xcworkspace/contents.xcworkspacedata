@@ -5,6 +5,6 @@
       location = "group:SyncUps-StackBased/SyncUps-StackBased.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:/Users/brandon/projects/syncups/Standups-TreeBased/SyncUps-TreeBased.xcodeproj">
+      location = "group:SyncUps-TreeBased/SyncUps-TreeBased.xcodeproj">
    </FileRef>
 </Workspace>
