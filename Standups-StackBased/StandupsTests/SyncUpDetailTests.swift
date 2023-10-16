@@ -6,17 +6,17 @@ import XCTest
 @testable import Standups_StackBased
 
 @MainActor
-final class StandupDetailTests: BaseTestCase {
+final class SyncUpDetailTests: BaseTestCase {
   func testSpeechRestricted() throws {
     let model = withDependencies {
       $0.speechClient.authorizationStatus = { .restricted }
     } operation: {
-      StandupDetailModel(standup: .mock)
+      SyncUpDetailModel(syncUp: .mock)
     }
 
     model.startMeetingButtonTapped()
 
-    let alert = try XCTUnwrap(model.destination, case: /StandupDetailModel.Destination.alert)
+    let alert = try XCTUnwrap(model.destination, case: /SyncUpDetailModel.Destination.alert)
 
     XCTAssertNoDifference(alert, .speechRecognitionRestricted)
   }
@@ -25,12 +25,12 @@ final class StandupDetailTests: BaseTestCase {
     let model = withDependencies {
       $0.speechClient.authorizationStatus = { .denied }
     } operation: {
-      StandupDetailModel(standup: .mock)
+      SyncUpDetailModel(syncUp: .mock)
     }
 
     model.startMeetingButtonTapped()
 
-    let alert = try XCTUnwrap(model.destination, case: /StandupDetailModel.Destination.alert)
+    let alert = try XCTUnwrap(model.destination, case: /SyncUpDetailModel.Destination.alert)
 
     XCTAssertNoDifference(alert, .speechRecognitionDenied)
   }
@@ -40,9 +40,9 @@ final class StandupDetailTests: BaseTestCase {
     let model = withDependencies {
       $0.openSettings = { settingsOpened.setValue(true) }
     } operation: {
-      StandupDetailModel(
+      SyncUpDetailModel(
         destination: .alert(.speechRecognitionDenied),
-        standup: .mock
+        syncUp: .mock
       )
     }
 
@@ -52,14 +52,14 @@ final class StandupDetailTests: BaseTestCase {
   }
 
   func testContinueWithoutRecording() async throws {
-    let model = StandupDetailModel(
+    let model = SyncUpDetailModel(
       destination: .alert(.speechRecognitionDenied),
-      standup: .mock
+      syncUp: .mock
     )
 
     let onMeetingStartedExpectation = self.expectation(description: "onMeetingStarted")
-    model.onMeetingStarted = { standup in
-      XCTAssertEqual(standup, .mock)
+    model.onMeetingStarted = { syncUp in
+      XCTAssertEqual(syncUp, .mock)
       onMeetingStartedExpectation.fulfill()
     }
 
@@ -72,12 +72,12 @@ final class StandupDetailTests: BaseTestCase {
     let model = withDependencies {
       $0.speechClient.authorizationStatus = { .authorized }
     } operation: {
-      StandupDetailModel(standup: .mock)
+      SyncUpDetailModel(syncUp: .mock)
     }
 
     let onMeetingStartedExpectation = self.expectation(description: "onMeetingStarted")
-    model.onMeetingStarted = { standup in
-      XCTAssertEqual(standup, .mock)
+    model.onMeetingStarted = { syncUp in
+      XCTAssertEqual(syncUp, .mock)
       onMeetingStartedExpectation.fulfill()
     }
 
@@ -92,9 +92,9 @@ final class StandupDetailTests: BaseTestCase {
     } operation: {
       @Dependency(\.uuid) var uuid
 
-      return StandupDetailModel(
-        standup: Standup(
-          id: Standup.ID(uuid()),
+      return SyncUpDetailModel(
+        syncUp: SyncUp(
+          id: SyncUp.ID(uuid()),
           title: "Engineering"
         )
       )
@@ -102,17 +102,17 @@ final class StandupDetailTests: BaseTestCase {
 
     model.editButtonTapped()
 
-    let editModel = try XCTUnwrap(model.destination, case: /StandupDetailModel.Destination.edit)
+    let editModel = try XCTUnwrap(model.destination, case: /SyncUpDetailModel.Destination.edit)
 
-    editModel.standup.title = "Engineering"
-    editModel.standup.theme = .lavender
+    editModel.syncUp.title = "Engineering"
+    editModel.syncUp.theme = .lavender
     model.doneEditingButtonTapped()
 
     XCTAssertNil(model.destination)
     XCTAssertEqual(
-      model.standup,
-      Standup(
-        id: Standup.ID(uuidString: "00000000-0000-0000-0000-000000000000")!,
+      model.syncUp,
+      SyncUp(
+        id: SyncUp.ID(uuidString: "00000000-0000-0000-0000-000000000000")!,
         attendees: [
           Attendee(id: Attendee.ID(uuidString: "00000000-0000-0000-0000-000000000001")!)
         ],

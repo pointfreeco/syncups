@@ -248,7 +248,7 @@ struct StandupsList_Previews: PreviewProvider {
       message: """
         This preview demonstrates how to start the app in a state with a few standups \
         pre-populated. Since the initial standups are loaded from disk we cannot simply pass some \
-        data to the StandupsList model. But, we can override the DataManager dependency so that \
+        data to the SyncpUpsList model. But, we can override the DataManager dependency so that \
         when its load endpoint is called it will load whatever data we want.
         """
     ) {

@@ -2,7 +2,7 @@ import IdentifiedCollections
 import SwiftUI
 import Tagged
 
-struct Standup: Hashable, Identifiable, Codable {
+struct SyncUp: Hashable, Identifiable, Codable {
   let id: Tagged<Self, UUID>
   var attendees: IdentifiedArrayOf<Attendee> = []
   var duration = Duration.seconds(60 * 5)
@@ -61,9 +61,9 @@ enum Theme: String, CaseIterable, Equatable, Hashable, Identifiable, Codable {
   var name: String { self.rawValue.capitalized }
 }
 
-extension Standup {
+extension SyncUp {
   static let mock = Self(
-    id: Standup.ID(UUID()),
+    id: SyncUp.ID(UUID()),
     attendees: [
       Attendee(id: Attendee.ID(UUID()), name: "Blob"),
       Attendee(id: Attendee.ID(UUID()), name: "Blob Jr"),
@@ -92,7 +92,7 @@ extension Standup {
   )
 
   static let engineeringMock = Self(
-    id: Standup.ID(UUID()),
+    id: SyncUp.ID(UUID()),
     attendees: [
       Attendee(id: Attendee.ID(UUID()), name: "Blob"),
       Attendee(id: Attendee.ID(UUID()), name: "Blob Jr"),
@@ -104,7 +104,7 @@ extension Standup {
   )
 
   static let designMock = Self(
-    id: Standup.ID(UUID()),
+    id: SyncUp.ID(UUID()),
     attendees: [
       Attendee(id: Attendee.ID(UUID()), name: "Blob Sr"),
       Attendee(id: Attendee.ID(UUID()), name: "Blob Jr"),

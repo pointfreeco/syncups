@@ -8,8 +8,8 @@ import XCTest
 @MainActor
 final class AppTests: BaseTestCase {
   func testRecordWithTranscript() async throws {
-    let standup = Standup(
-      id: Standup.ID(),
+    let syncUp = SyncUp(
+      id: SyncUp.ID(),
       attendees: [
         .init(id: Attendee.ID()),
         .init(id: Attendee.ID()),
@@ -22,7 +22,7 @@ final class AppTests: BaseTestCase {
       $0.continuousClock = ImmediateClock()
       $0.date.now = Date(timeIntervalSince1970: 1_234_567_890)
       $0.mainQueue = .immediate
-      $0.dataManager = .mock(initialData: try? JSONEncoder().encode([standup]))
+      $0.dataManager = .mock(initialData: try? JSONEncoder().encode([syncUp]))
       $0.soundEffectClient = .noop
       $0.speechClient.authorizationStatus = { .authorized }
       $0.speechClient.startTask = { _ in
@@ -40,10 +40,10 @@ final class AppTests: BaseTestCase {
     } operation: {
       AppModel(
         path: [
-          .detail(StandupDetailModel(standup: standup)),
-          .record(RecordMeetingModel(standup: standup)),
+          .detail(SyncUpDetailModel(syncUp: syncUp)),
+          .record(RecordMeetingModel(syncUp: syncUp)),
         ],
-        standupsList: StandupsListModel()
+        syncUpsList: SyncUpsListModel()
       )
     }
 
@@ -52,7 +52,7 @@ final class AppTests: BaseTestCase {
 
     XCTAssertEqual(model.path, [model.path[0]])
     XCTAssertNoDifference(
-      model.standupsList.standups[0].meetings,
+      model.syncUpsList.syncUps[0].meetings,
       [
         Meeting(
           id: Meeting.ID(uuidString: "00000000-0000-0000-0000-000000000000")!,
@@ -66,35 +66,35 @@ final class AppTests: BaseTestCase {
   func testDelete() async throws {
     let model = try withDependencies { dependencies in
       dependencies.dataManager = .mock(
-        initialData: try JSONEncoder().encode([Standup.mock])
+        initialData: try JSONEncoder().encode([SyncUp.mock])
       )
       dependencies.mainQueue = .immediate
     } operation: {
-      AppModel(standupsList: StandupsListModel())
+      AppModel(syncUpsList: SyncUpsListModel())
     }
 
-    model.standupsList.standupTapped(standup: model.standupsList.standups[0])
+    model.syncUpsList.syncUpTapped(syncUp: model.syncUpsList.syncUps[0])
 
     let detailModel = try XCTUnwrap(model.path[0], case: /AppModel.Destination.detail)
 
     detailModel.deleteButtonTapped()
 
-    let alert = try XCTUnwrap(detailModel.destination, case: /StandupDetailModel.Destination.alert)
+    let alert = try XCTUnwrap(detailModel.destination, case: /SyncUpDetailModel.Destination.alert)
 
-    XCTAssertNoDifference(alert, .deleteStandup)
+    XCTAssertNoDifference(alert, .deleteSyncUp)
 
     await detailModel.alertButtonTapped(.confirmDeletion)
 
     XCTAssertEqual(model.path, [])
-    XCTAssertEqual(model.standupsList.standups, [])
+    XCTAssertEqual(model.syncUpsList.syncUps, [])
   }
 
   func testDetailEdit() async throws {
     let model = try withDependencies { dependencies in
       dependencies.dataManager = .mock(
         initialData: try JSONEncoder().encode([
-          Standup(
-            id: Standup.ID(uuidString: "00000000-0000-0000-0000-000000000000")!,
+          SyncUp(
+            id: SyncUp.ID(uuidString: "00000000-0000-0000-0000-000000000000")!,
             attendees: [
               Attendee(id: Attendee.ID(uuidString: "00000000-0000-0000-0000-000000000001")!)
             ]
@@ -103,27 +103,27 @@ final class AppTests: BaseTestCase {
       )
       dependencies.mainQueue = .immediate
     } operation: {
-      AppModel(standupsList: StandupsListModel())
+      AppModel(syncUpsList: SyncUpsListModel())
     }
 
-    model.standupsList.standupTapped(standup: model.standupsList.standups[0])
+    model.syncUpsList.syncUpTapped(syncUp: model.syncUpsList.syncUps[0])
 
     let detailModel = try XCTUnwrap(model.path[0], case: /AppModel.Destination.detail)
 
     detailModel.editButtonTapped()
 
     let editModel = try XCTUnwrap(
-      detailModel.destination, case: /StandupDetailModel.Destination.edit)
+      detailModel.destination, case: /SyncUpDetailModel.Destination.edit)
 
-    editModel.standup.title = "Design"
+    editModel.syncUp.title = "Design"
     detailModel.doneEditingButtonTapped()
 
     XCTAssertNil(detailModel.destination)
     XCTAssertEqual(
-      model.standupsList.standups,
+      model.syncUpsList.syncUps,
       [
-        Standup(
-          id: Standup.ID(uuidString: "00000000-0000-0000-0000-000000000000")!,
+        SyncUp(
+          id: SyncUp.ID(uuidString: "00000000-0000-0000-0000-000000000000")!,
           attendees: [
             Attendee(id: Attendee.ID(uuidString: "00000000-0000-0000-0000-000000000001")!)
           ],

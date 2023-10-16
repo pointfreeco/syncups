@@ -9,15 +9,15 @@
 /* Begin PBXBuildFile section */
 		2A368893298ADD2500E8C33A /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A368892298ADD2500E8C33A /* App.swift */; };
 		CA1D22EA2991BC7000B529DE /* AppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1D22E92991BC7000B529DE /* AppTests.swift */; };
-		CA350C752984506E00434F8A /* StandupsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350C742984506E00434F8A /* StandupsApp.swift */; };
-		CA350CAF298450BF00434F8A /* StandupDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350CA1298450BF00434F8A /* StandupDetail.swift */; };
+		CA350C752984506E00434F8A /* SyncUpsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350C742984506E00434F8A /* SyncUpsApp.swift */; };
+		CA350CAF298450BF00434F8A /* SyncUpDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350CA1298450BF00434F8A /* SyncUpDetail.swift */; };
 		CA350CB0298450BF00434F8A /* RecordMeeting.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350CA2298450BF00434F8A /* RecordMeeting.swift */; };
-		CA350CB1298450BF00434F8A /* StandupForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350CA3298450BF00434F8A /* StandupForm.swift */; };
+		CA350CB1298450BF00434F8A /* SyncUpForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350CA3298450BF00434F8A /* SyncUpForm.swift */; };
 		CA350CB2298450BF00434F8A /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350CA5298450BF00434F8A /* DataManager.swift */; };
 		CA350CB3298450BF00434F8A /* SpeechClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350CA6298450BF00434F8A /* SpeechClient.swift */; };
 		CA350CB4298450BF00434F8A /* OpenSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350CA7298450BF00434F8A /* OpenSettings.swift */; };
 		CA350CB5298450BF00434F8A /* SoundEffectClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350CA8298450BF00434F8A /* SoundEffectClient.swift */; };
-		CA350CB6298450BF00434F8A /* StandupsList.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350CA9298450BF00434F8A /* StandupsList.swift */; };
+		CA350CB6298450BF00434F8A /* SyncUpsList.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350CA9298450BF00434F8A /* SyncUpsList.swift */; };
 		CA350CB7298450BF00434F8A /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350CAA298450BF00434F8A /* Models.swift */; };
 		CA350CB8298450BF00434F8A /* Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350CAB298450BF00434F8A /* Helpers.swift */; };
 		CA350CB9298450BF00434F8A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CA350CAC298450BF00434F8A /* Assets.xcassets */; };
@@ -26,9 +26,9 @@
 		CA350CC22984511300434F8A /* Tagged in Frameworks */ = {isa = PBXBuildFile; productRef = CA350CC12984511300434F8A /* Tagged */; };
 		CA350CC52984515C00434F8A /* Dependencies in Frameworks */ = {isa = PBXBuildFile; productRef = CA350CC42984515C00434F8A /* Dependencies */; };
 		CA350CCA2984518200434F8A /* RecordMeetingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350CC62984518200434F8A /* RecordMeetingTests.swift */; };
-		CA350CCB2984518200434F8A /* StandupsListTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350CC72984518200434F8A /* StandupsListTests.swift */; };
-		CA350CCC2984518200434F8A /* StandupFormTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350CC82984518200434F8A /* StandupFormTests.swift */; };
-		CA350CCD2984518200434F8A /* StandupDetailTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350CC92984518200434F8A /* StandupDetailTests.swift */; };
+		CA350CCB2984518200434F8A /* SyncUpsListTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350CC72984518200434F8A /* SyncUpsListTests.swift */; };
+		CA350CCC2984518200434F8A /* SyncUpFormTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350CC82984518200434F8A /* SyncUpFormTests.swift */; };
+		CA350CCD2984518200434F8A /* SyncUpDetailTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350CC92984518200434F8A /* SyncUpDetailTests.swift */; };
 		CA350CCF2984518A00434F8A /* StandupsListUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350CCE2984518A00434F8A /* StandupsListUITests.swift */; };
 		CA350CD2298452F300434F8A /* ding.wav in Resources */ = {isa = PBXBuildFile; fileRef = CA350CD1298452F300434F8A /* ding.wav */; };
 		CAC7A59E2ABA374500985FC1 /* ConcurrencyExtras in Frameworks */ = {isa = PBXBuildFile; productRef = CAC7A59D2ABA374500985FC1 /* ConcurrencyExtras */; };
@@ -57,24 +57,24 @@
 		2A368892298ADD2500E8C33A /* App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
 		CA1D22E92991BC7000B529DE /* AppTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTests.swift; sourceTree = "<group>"; };
 		CA350C712984506E00434F8A /* Standups-StackBased.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Standups-StackBased.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		CA350C742984506E00434F8A /* StandupsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StandupsApp.swift; sourceTree = "<group>"; };
+		CA350C742984506E00434F8A /* SyncUpsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncUpsApp.swift; sourceTree = "<group>"; };
 		CA350C812984506F00434F8A /* Standups-StackBasedTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Standups-StackBasedTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA350C8B2984506F00434F8A /* Standups-StackBasedUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Standups-StackBasedUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		CA350CA1298450BF00434F8A /* StandupDetail.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StandupDetail.swift; sourceTree = "<group>"; };
+		CA350CA1298450BF00434F8A /* SyncUpDetail.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncUpDetail.swift; sourceTree = "<group>"; };
 		CA350CA2298450BF00434F8A /* RecordMeeting.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecordMeeting.swift; sourceTree = "<group>"; };
-		CA350CA3298450BF00434F8A /* StandupForm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StandupForm.swift; sourceTree = "<group>"; };
+		CA350CA3298450BF00434F8A /* SyncUpForm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncUpForm.swift; sourceTree = "<group>"; };
 		CA350CA5298450BF00434F8A /* DataManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
 		CA350CA6298450BF00434F8A /* SpeechClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpeechClient.swift; sourceTree = "<group>"; };
 		CA350CA7298450BF00434F8A /* OpenSettings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenSettings.swift; sourceTree = "<group>"; };
 		CA350CA8298450BF00434F8A /* SoundEffectClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SoundEffectClient.swift; sourceTree = "<group>"; };
-		CA350CA9298450BF00434F8A /* StandupsList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StandupsList.swift; sourceTree = "<group>"; };
+		CA350CA9298450BF00434F8A /* SyncUpsList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncUpsList.swift; sourceTree = "<group>"; };
 		CA350CAA298450BF00434F8A /* Models.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		CA350CAB298450BF00434F8A /* Helpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Helpers.swift; sourceTree = "<group>"; };
 		CA350CAC298450BF00434F8A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CA350CC62984518200434F8A /* RecordMeetingTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecordMeetingTests.swift; sourceTree = "<group>"; };
-		CA350CC72984518200434F8A /* StandupsListTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StandupsListTests.swift; sourceTree = "<group>"; };
-		CA350CC82984518200434F8A /* StandupFormTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StandupFormTests.swift; sourceTree = "<group>"; };
-		CA350CC92984518200434F8A /* StandupDetailTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StandupDetailTests.swift; sourceTree = "<group>"; };
+		CA350CC72984518200434F8A /* SyncUpsListTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncUpsListTests.swift; sourceTree = "<group>"; };
+		CA350CC82984518200434F8A /* SyncUpFormTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncUpFormTests.swift; sourceTree = "<group>"; };
+		CA350CC92984518200434F8A /* SyncUpDetailTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncUpDetailTests.swift; sourceTree = "<group>"; };
 		CA350CCE2984518A00434F8A /* StandupsListUITests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StandupsListUITests.swift; sourceTree = "<group>"; };
 		CA350CD1298452F300434F8A /* ding.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = ding.wav; sourceTree = "<group>"; };
 		CAC7A5A22ABA375800985FC1 /* BaseTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseTestCase.swift; sourceTree = "<group>"; };
@@ -139,10 +139,10 @@
 				CA350CAB298450BF00434F8A /* Helpers.swift */,
 				CA350CAA298450BF00434F8A /* Models.swift */,
 				CA350CA2298450BF00434F8A /* RecordMeeting.swift */,
-				CA350CA1298450BF00434F8A /* StandupDetail.swift */,
-				CA350CA3298450BF00434F8A /* StandupForm.swift */,
-				CA350C742984506E00434F8A /* StandupsApp.swift */,
-				CA350CA9298450BF00434F8A /* StandupsList.swift */,
+				CA350CA1298450BF00434F8A /* SyncUpDetail.swift */,
+				CA350CA3298450BF00434F8A /* SyncUpForm.swift */,
+				CA350C742984506E00434F8A /* SyncUpsApp.swift */,
+				CA350CA9298450BF00434F8A /* SyncUpsList.swift */,
 				CA350CAC298450BF00434F8A /* Assets.xcassets */,
 				CA350CA4298450BF00434F8A /* Dependencies */,
 				CA350CD0298452F300434F8A /* Resources */,
@@ -156,9 +156,9 @@
 				CA1D22E92991BC7000B529DE /* AppTests.swift */,
 				CAC7A5A22ABA375800985FC1 /* BaseTestCase.swift */,
 				CA350CC62984518200434F8A /* RecordMeetingTests.swift */,
-				CA350CC92984518200434F8A /* StandupDetailTests.swift */,
-				CA350CC82984518200434F8A /* StandupFormTests.swift */,
-				CA350CC72984518200434F8A /* StandupsListTests.swift */,
+				CA350CC92984518200434F8A /* SyncUpDetailTests.swift */,
+				CA350CC82984518200434F8A /* SyncUpFormTests.swift */,
+				CA350CC72984518200434F8A /* SyncUpsListTests.swift */,
 			);
 			path = StandupsTests;
 			sourceTree = "<group>";
@@ -348,16 +348,16 @@
 			files = (
 				CA350CB7298450BF00434F8A /* Models.swift in Sources */,
 				CA350CB4298450BF00434F8A /* OpenSettings.swift in Sources */,
-				CA350C752984506E00434F8A /* StandupsApp.swift in Sources */,
+				CA350C752984506E00434F8A /* SyncUpsApp.swift in Sources */,
 				CA350CB3298450BF00434F8A /* SpeechClient.swift in Sources */,
 				CA350CB5298450BF00434F8A /* SoundEffectClient.swift in Sources */,
 				CA350CB2298450BF00434F8A /* DataManager.swift in Sources */,
-				CA350CB6298450BF00434F8A /* StandupsList.swift in Sources */,
+				CA350CB6298450BF00434F8A /* SyncUpsList.swift in Sources */,
 				CA350CB8298450BF00434F8A /* Helpers.swift in Sources */,
-				CA350CB1298450BF00434F8A /* StandupForm.swift in Sources */,
+				CA350CB1298450BF00434F8A /* SyncUpForm.swift in Sources */,
 				2A368893298ADD2500E8C33A /* App.swift in Sources */,
 				CA350CB0298450BF00434F8A /* RecordMeeting.swift in Sources */,
-				CA350CAF298450BF00434F8A /* StandupDetail.swift in Sources */,
+				CA350CAF298450BF00434F8A /* SyncUpDetail.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -365,12 +365,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CA350CCD2984518200434F8A /* StandupDetailTests.swift in Sources */,
+				CA350CCD2984518200434F8A /* SyncUpDetailTests.swift in Sources */,
 				CAC7A5A32ABA375800985FC1 /* BaseTestCase.swift in Sources */,
 				CA350CCA2984518200434F8A /* RecordMeetingTests.swift in Sources */,
-				CA350CCB2984518200434F8A /* StandupsListTests.swift in Sources */,
+				CA350CCB2984518200434F8A /* SyncUpsListTests.swift in Sources */,
 				CA1D22EA2991BC7000B529DE /* AppTests.swift in Sources */,
-				CA350CCC2984518200434F8A /* StandupFormTests.swift in Sources */,
+				CA350CCC2984518200434F8A /* SyncUpFormTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -2,7 +2,7 @@ import Dependencies
 import SwiftUI
 
 @main
-struct StandupsApp: App {
+struct SyncUpsApp: App {
   var body: some Scene {
     WindowGroup {
       // NB: This conditional is here only to facilitate UI testing so that we can mock out certain
@@ -12,7 +12,7 @@ struct StandupsApp: App {
       if let testName = ProcessInfo.processInfo.environment["UI_TEST_NAME"] {
         UITestingView(testName: testName)
       } else {
-        AppView(model: AppModel(standupsList: StandupsListModel()))
+        AppView(model: AppModel(syncUpsList: SyncUpsListModel()))
       }
     }
   }
@@ -32,7 +32,7 @@ struct UITestingView: View {
       case "testAdd":
         $0.dataManager = .mock()
       case "testDelete", "testEdit":
-        $0.dataManager = .mock(initialData: try? JSONEncoder().encode([Standup.mock]))
+        $0.dataManager = .mock(initialData: try? JSONEncoder().encode([SyncUp.mock]))
       case "testRecord", "testRecord_Discard":
         $0.date = DateGenerator { Date(timeIntervalSince1970: 1234567890) }
         $0.speechClient.authorizationStatus = { .authorized }
@@ -47,7 +47,7 @@ struct UITestingView: View {
             $0.finish()
           }
         }
-        $0.dataManager = .mock(initialData: try? JSONEncoder().encode([Standup.mock]))
+        $0.dataManager = .mock(initialData: try? JSONEncoder().encode([SyncUp.mock]))
       case "testPersistence":
         let id = ProcessInfo.processInfo.environment["TEST_UUID"]!
         let url = URL.documentsDirectory.appending(component: "\(id).json")
@@ -60,7 +60,7 @@ struct UITestingView: View {
         fatalError()
       }
     } operation: {
-      AppView(model: AppModel(standupsList: StandupsListModel()))
+      AppView(model: AppModel(syncUpsList: SyncUpsListModel()))
     }
   }
 }

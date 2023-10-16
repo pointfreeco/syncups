@@ -5,14 +5,14 @@ import XCTest
 @testable import Standups_StackBased
 
 @MainActor
-final class StandupFormTests: BaseTestCase {
+final class SyncUpFormTests: BaseTestCase {
   func testAddAttendee() {
     let model = withDependencies {
       $0.uuid = .incrementing
     } operation: {
-      StandupFormModel(
-        standup: Standup(
-          id: Standup.ID(),
+      SyncUpFormModel(
+        syncUp: SyncUp(
+          id: SyncUp.ID(),
           attendees: [],
           title: "Engineering"
         )
@@ -20,7 +20,7 @@ final class StandupFormTests: BaseTestCase {
     }
 
     XCTAssertNoDifference(
-      model.standup.attendees,
+      model.syncUp.attendees,
       [
         Attendee(id: Attendee.ID(uuidString: "00000000-0000-0000-0000-000000000000")!)
       ]
@@ -29,7 +29,7 @@ final class StandupFormTests: BaseTestCase {
     model.addAttendeeButtonTapped()
 
     XCTAssertNoDifference(
-      model.standup.attendees,
+      model.syncUp.attendees,
       [
         Attendee(id: Attendee.ID(uuidString: "00000000-0000-0000-0000-000000000000")!),
         Attendee(id: Attendee.ID(uuidString: "00000000-0000-0000-0000-000000000001")!),
@@ -41,9 +41,9 @@ final class StandupFormTests: BaseTestCase {
     let model = withDependencies {
       $0.uuid = .incrementing
     } operation: {
-      StandupFormModel(
-        standup: Standup(
-          id: Standup.ID(),
+      SyncUpFormModel(
+        syncUp: SyncUp(
+          id: SyncUp.ID(),
           attendees: [],
           title: "Engineering"
         )
@@ -66,9 +66,9 @@ final class StandupFormTests: BaseTestCase {
     } operation: {
       @Dependency(\.uuid) var uuid
 
-      return StandupFormModel(
-        standup: Standup(
-          id: Standup.ID(),
+      return SyncUpFormModel(
+        syncUp: SyncUp(
+          id: SyncUp.ID(),
           attendees: [
             Attendee(id: Attendee.ID(uuid())),
             Attendee(id: Attendee.ID(uuid())),
@@ -87,7 +87,7 @@ final class StandupFormTests: BaseTestCase {
       .attendee(Attendee.ID(uuidString: "00000000-0000-0000-0000-000000000001")!)
     )
     XCTAssertNoDifference(
-      model.standup.attendees,
+      model.syncUp.attendees,
       [
         Attendee(id: Attendee.ID(uuidString: "00000000-0000-0000-0000-000000000001")!),
         Attendee(id: Attendee.ID(uuidString: "00000000-0000-0000-0000-000000000002")!),
@@ -102,7 +102,7 @@ final class StandupFormTests: BaseTestCase {
       .attendee(Attendee.ID(uuidString: "00000000-0000-0000-0000-000000000003")!)
     )
     XCTAssertNoDifference(
-      model.standup.attendees,
+      model.syncUp.attendees,
       [
         Attendee(id: Attendee.ID(uuidString: "00000000-0000-0000-0000-000000000001")!),
         Attendee(id: Attendee.ID(uuidString: "00000000-0000-0000-0000-000000000003")!),
@@ -116,7 +116,7 @@ final class StandupFormTests: BaseTestCase {
       .attendee(Attendee.ID(uuidString: "00000000-0000-0000-0000-000000000001")!)
     )
     XCTAssertNoDifference(
-      model.standup.attendees,
+      model.syncUp.attendees,
       [
         Attendee(id: Attendee.ID(uuidString: "00000000-0000-0000-0000-000000000001")!)
       ]
@@ -129,7 +129,7 @@ final class StandupFormTests: BaseTestCase {
       .attendee(Attendee.ID(uuidString: "00000000-0000-0000-0000-000000000004")!)
     )
     XCTAssertNoDifference(
-      model.standup.attendees,
+      model.syncUp.attendees,
       [
         Attendee(id: Attendee.ID(uuidString: "00000000-0000-0000-0000-000000000004")!)
       ]

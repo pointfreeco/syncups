@@ -2,9 +2,9 @@ import Dependencies
 import SwiftUI
 import SwiftUINavigation
 
-class StandupFormModel: ObservableObject {
+class SyncUpFormModel: ObservableObject {
   @Published var focus: Field?
-  @Published var standup: Standup
+  @Published var syncUp: SyncUp
 
   @Dependency(\.uuid) var uuid
 
@@ -15,55 +15,55 @@ class StandupFormModel: ObservableObject {
 
   init(
     focus: Field? = .title,
-    standup: Standup
+    syncUp: SyncUp
   ) {
     self.focus = focus
-    self.standup = standup
-    if self.standup.attendees.isEmpty {
-      self.standup.attendees.append(Attendee(id: Attendee.ID(self.uuid())))
+    self.syncUp = syncUp
+    if self.syncUp.attendees.isEmpty {
+      self.syncUp.attendees.append(Attendee(id: Attendee.ID(self.uuid())))
     }
   }
 
   func deleteAttendees(atOffsets indices: IndexSet) {
-    self.standup.attendees.remove(atOffsets: indices)
-    if self.standup.attendees.isEmpty {
-      self.standup.attendees.append(Attendee(id: Attendee.ID(self.uuid())))
+    self.syncUp.attendees.remove(atOffsets: indices)
+    if self.syncUp.attendees.isEmpty {
+      self.syncUp.attendees.append(Attendee(id: Attendee.ID(self.uuid())))
     }
     guard let firstIndex = indices.first
     else { return }
-    let index = min(firstIndex, self.standup.attendees.count - 1)
-    self.focus = .attendee(self.standup.attendees[index].id)
+    let index = min(firstIndex, self.syncUp.attendees.count - 1)
+    self.focus = .attendee(self.syncUp.attendees[index].id)
   }
 
   func addAttendeeButtonTapped() {
     let attendee = Attendee(id: Attendee.ID(self.uuid()))
-    self.standup.attendees.append(attendee)
+    self.syncUp.attendees.append(attendee)
     self.focus = .attendee(attendee.id)
   }
 }
 
-struct StandupFormView: View {
-  @FocusState var focus: StandupFormModel.Field?
-  @ObservedObject var model: StandupFormModel
+struct SyncUpFormView: View {
+  @FocusState var focus: SyncUpFormModel.Field?
+  @ObservedObject var model: SyncUpFormModel
 
   var body: some View {
     Form {
       Section {
-        TextField("Title", text: self.$model.standup.title)
+        TextField("Title", text: self.$model.syncUp.title)
           .focused(self.$focus, equals: .title)
         HStack {
-          Slider(value: self.$model.standup.duration.seconds, in: 5...30, step: 1) {
+          Slider(value: self.$model.syncUp.duration.seconds, in: 5...30, step: 1) {
             Text("Length")
           }
           Spacer()
-          Text(self.model.standup.duration.formatted(.units()))
+          Text(self.model.syncUp.duration.formatted(.units()))
         }
-        ThemePicker(selection: self.$model.standup.theme)
+        ThemePicker(selection: self.$model.syncUp.theme)
       } header: {
-        Text("Standup Info")
+        Text("Sync-up Info")
       }
       Section {
-        ForEach(self.$model.standup.attendees) { $attendee in
+        ForEach(self.$model.syncUp.attendees) { $attendee in
           TextField("Name", text: $attendee.name)
             .focused(self.$focus, equals: .attendee(attendee.id))
         }
@@ -109,10 +109,10 @@ extension Duration {
   }
 }
 
-struct StandupForm_Previews: PreviewProvider {
+struct SyncUpForm_Previews: PreviewProvider {
   static var previews: some View {
     NavigationStack {
-      StandupFormView(model: StandupFormModel(standup: .mock))
+      SyncUpFormView(model: SyncUpFormModel(syncUp: .mock))
     }
     .previewDisplayName("Edit")
 
@@ -123,10 +123,10 @@ struct StandupForm_Previews: PreviewProvider {
         """
     ) {
       NavigationStack {
-        StandupFormView(
-          model: StandupFormModel(
-            focus: .attendee(Standup.mock.attendees[3].id),
-            standup: .mock
+        SyncUpFormView(
+          model: SyncUpFormModel(
+            focus: .attendee(SyncUp.mock.attendees[3].id),
+            syncUp: .mock
           )
         )
       }

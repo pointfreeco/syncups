@@ -8,7 +8,7 @@ import XCTest
 @testable import Standups_StackBased
 
 @MainActor
-final class StandupsListTests: BaseTestCase {
+final class SyncUpsListTests: BaseTestCase {
   let mainQueue = DispatchQueue.test
 
   func testAdd() async throws {
@@ -20,26 +20,26 @@ final class StandupsListTests: BaseTestCase {
       $0.mainQueue = .immediate
       $0.uuid = .incrementing
     } operation: {
-      StandupsListModel()
+      SyncUpsListModel()
     }
 
-    model.addStandupButtonTapped()
+    model.addSyncUpButtonTapped()
 
-    let addModel = try XCTUnwrap(model.destination, case: /StandupsListModel.Destination.add)
+    let addModel = try XCTUnwrap(model.destination, case: /SyncUpsListModel.Destination.add)
 
-    addModel.standup.title = "Engineering"
-    addModel.standup.attendees[0].name = "Blob"
+    addModel.syncUp.title = "Engineering"
+    addModel.syncUp.attendees[0].name = "Blob"
     addModel.addAttendeeButtonTapped()
-    addModel.standup.attendees[1].name = "Blob Jr."
-    model.confirmAddStandupButtonTapped()
+    addModel.syncUp.attendees[1].name = "Blob Jr."
+    model.confirmAddSyncUpButtonTapped()
 
     XCTAssertNil(model.destination)
 
     XCTAssertNoDifference(
-      model.standups,
+      model.syncUps,
       [
-        Standup(
-          id: Standup.ID(uuidString: "00000000-0000-0000-0000-000000000000")!,
+        SyncUp(
+          id: SyncUp.ID(uuidString: "00000000-0000-0000-0000-000000000000")!,
           attendees: [
             Attendee(
               id: Attendee.ID(uuidString: "00000000-0000-0000-0000-000000000001")!,
@@ -62,11 +62,11 @@ final class StandupsListTests: BaseTestCase {
       $0.mainQueue = .immediate
       $0.uuid = .incrementing
     } operation: {
-      StandupsListModel(
+      SyncUpsListModel(
         destination: .add(
-          StandupFormModel(
-            standup: Standup(
-              id: Standup.ID(uuidString: "deadbeef-dead-beef-dead-beefdeadbeef")!,
+          SyncUpFormModel(
+            syncUp: SyncUp(
+              id: SyncUp.ID(uuidString: "deadbeef-dead-beef-dead-beefdeadbeef")!,
               attendees: [
                 Attendee(id: Attendee.ID(), name: ""),
                 Attendee(id: Attendee.ID(), name: "    "),
@@ -78,14 +78,14 @@ final class StandupsListTests: BaseTestCase {
       )
     }
 
-    model.confirmAddStandupButtonTapped()
+    model.confirmAddSyncUpButtonTapped()
 
     XCTAssertNil(model.destination)
     XCTAssertNoDifference(
-      model.standups,
+      model.syncUps,
       [
-        Standup(
-          id: Standup.ID(uuidString: "deadbeef-dead-beef-dead-beefdeadbeef")!,
+        SyncUp(
+          id: SyncUp.ID(uuidString: "deadbeef-dead-beef-dead-beefdeadbeef")!,
           attendees: [
             Attendee(
               id: Attendee.ID(uuidString: "00000000-0000-0000-0000-000000000000")!,
@@ -105,16 +105,16 @@ final class StandupsListTests: BaseTestCase {
         initialData: Data("!@#$ BAD DATA %^&*()".utf8)
       )
     } operation: {
-      StandupsListModel()
+      SyncUpsListModel()
     }
 
-    let alert = try XCTUnwrap(model.destination, case: /StandupsListModel.Destination.alert)
+    let alert = try XCTUnwrap(model.destination, case: /SyncUpsListModel.Destination.alert)
 
     XCTAssertNoDifference(alert, .dataFailedToLoad)
 
     model.alertButtonTapped(.confirmLoadMockData)
 
-    XCTAssertNoDifference(model.standups, [.mock, .designMock, .engineeringMock])
+    XCTAssertNoDifference(model.syncUps, [.mock, .designMock, .engineeringMock])
   }
 
   func testLoadingDataFileNotFound() async throws {
@@ -124,7 +124,7 @@ final class StandupsListTests: BaseTestCase {
         throw FileNotFound()
       }
     } operation: {
-      StandupsListModel()
+      SyncUpsListModel()
     }
 
     XCTAssertNil(model.destination)
@@ -135,23 +135,23 @@ final class StandupsListTests: BaseTestCase {
     let savedData = LockIsolated<Data>(Data())
 
     let model = withDependencies {
-      $0.dataManager.load = { _ in try JSONEncoder().encode([Standup]()) }
+      $0.dataManager.load = { _ in try JSONEncoder().encode([SyncUp]()) }
       $0.dataManager.save = { data, url in
         savedData.setValue(data)
         expectation.fulfill()
       }
       $0.mainQueue = self.mainQueue.eraseToAnyScheduler()
     } operation: {
-      StandupsListModel(
-        destination: .add(StandupFormModel(standup: .mock))
+      SyncUpsListModel(
+        destination: .add(SyncUpFormModel(syncUp: .mock))
       )
     }
 
-    model.confirmAddStandupButtonTapped()
+    model.confirmAddSyncUpButtonTapped()
     await self.mainQueue.advance(by: .seconds(1))
     await self.fulfillment(of: [expectation], timeout: 1)
     XCTAssertEqual(
-      try JSONDecoder().decode([Standup].self, from: savedData.value),
+      try JSONDecoder().decode([SyncUp].self, from: savedData.value),
       [.mock]
     )
   }
