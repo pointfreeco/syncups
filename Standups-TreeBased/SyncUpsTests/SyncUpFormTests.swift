@@ -2,7 +2,7 @@ import CustomDump
 import Dependencies
 import XCTest
 
-@testable import Standups_TreeBased
+@testable import SyncUps_TreeBased
 
 @MainActor
 final class SyncUpFormTests: BaseTestCase {

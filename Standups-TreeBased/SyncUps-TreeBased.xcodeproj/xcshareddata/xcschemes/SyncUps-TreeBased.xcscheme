@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "CA350C702984506E00434F8A"
-               BuildableName = "Standups-TreeBased.app"
-               BlueprintName = "Standups-TreeBased"
-               ReferencedContainer = "container:Standups-TreeBased.xcodeproj">
+               BuildableName = "SyncUps-TreeBased.app"
+               BlueprintName = "SyncUps-TreeBased"
+               ReferencedContainer = "container:SyncUps-TreeBased.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "CA350C802984506F00434F8A"
-               BuildableName = "Standups-TreeBasedTests.xctest"
-               BlueprintName = "Standups-TreeBasedTests"
-               ReferencedContainer = "container:Standups-TreeBased.xcodeproj">
+               BuildableName = "SyncUps-TreeBasedTests.xctest"
+               BlueprintName = "SyncUps-TreeBasedTests"
+               ReferencedContainer = "container:SyncUps-TreeBased.xcodeproj">
             </BuildableReference>
          </TestableReference>
          <TestableReference
@@ -43,9 +43,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "CA350C8A2984506F00434F8A"
-               BuildableName = "Standups-TreeBasedUITests.xctest"
-               BlueprintName = "Standups-TreeBasedUITests"
-               ReferencedContainer = "container:Standups-TreeBased.xcodeproj">
+               BuildableName = "SyncUps-TreeBasedUITests.xctest"
+               BlueprintName = "SyncUps-TreeBasedUITests"
+               ReferencedContainer = "container:SyncUps-TreeBased.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -65,9 +65,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "CA350C702984506E00434F8A"
-            BuildableName = "Standups-TreeBased.app"
-            BlueprintName = "Standups-TreeBased"
-            ReferencedContainer = "container:Standups-TreeBased.xcodeproj">
+            BuildableName = "SyncUps-TreeBased.app"
+            BlueprintName = "SyncUps-TreeBased"
+            ReferencedContainer = "container:SyncUps-TreeBased.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -82,9 +82,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "CA350C702984506E00434F8A"
-            BuildableName = "Standups-TreeBased.app"
-            BlueprintName = "Standups-TreeBased"
-            ReferencedContainer = "container:Standups-TreeBased.xcodeproj">
+            BuildableName = "SyncUps-TreeBased.app"
+            BlueprintName = "SyncUps-TreeBased"
+            ReferencedContainer = "container:SyncUps-TreeBased.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
