@@ -68,7 +68,7 @@ modern, best practices for SwiftUI development. We faithfully recreate the Scrum
 some key additions:
 
  1. Identifiers are made type safe using our [Tagged library][tagged-gh]. This prevents us from
-    writing non-sensical code, such as comparing a `Standup.ID` to a `Attendee.ID`.
+    writing non-sensical code, such as comparing a `SyncUp.ID` to a `Attendee.ID`.
  2. Instead of using bare arrays in feature logic we use an "identified" array from our
     [IdentifiedCollections][identified-collections-gh] library. This allows you to read and modify
     elements of the collection via their ID rather than positional index, which can be error prone

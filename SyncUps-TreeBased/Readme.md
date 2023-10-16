@@ -1,6 +1,6 @@
-# Standups: Tree-based navigation
+# SyncUps: Tree-based navigation
 
-This directory holds the Standups application built using “tree-based” navigation, that is where 
+This directory holds the SyncUps application built using “tree-based” navigation, that is where 
 feature describes an enum of all possible destinations one can navigate to from that feature.
 
 For example, to start the application in a state where the user is drilled down to the detail screen 
@@ -8,9 +8,9 @@ and _then_ drilled down to the record screen, you can construct a piece of deepl
 that describes exactly where you want to navigate to:
 
 ```swift
-StandupsListModel(
+SyncUpsListModel(
   destination: .detail(
-    StandupDetailModel(
+    SyncUpDetailModel(
       destination: .record(
         RecordMeetingModel(syncUp: …)
       ),
@@ -43,6 +43,6 @@ with bugs that make them nearly unusable. We have filed many bugs with Apple (se
 and we high recommend that if you like tree-based navigation that you duplicate those bugs.
 
 So, if you weigh the pros and cons of using tree-based navigation and still decide to use it, this 
-Standups up shows how it can be done.
+SyncUps up shows how it can be done.
 
 [nav-bugs]: https://gist.github.com/mbrandonw/f8b94957031160336cac6898a919cbb7
