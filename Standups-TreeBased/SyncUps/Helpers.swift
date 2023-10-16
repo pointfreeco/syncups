@@ -41,7 +41,7 @@ struct Preview_Previews: PreviewProvider {
         ullamco laboris nisi ut aliquip ex ea commodo consequat.
         """
     ) {
-      StandupDetailView(model: StandupDetailModel(standup: .mock))
+      SyncUpDetailView(model: SyncUpDetailModel(syncUp: .mock))
     }
   }
 }

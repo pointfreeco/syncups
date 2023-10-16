@@ -8,7 +8,7 @@ import XCTest
 // and then check for that value in the entry point of the application. If the environment value
 // exists, you can use 'withDependencies' to override dependencies to be used in the UI test.
 @MainActor
-final class StandupsListUITests: XCTestCase {
+final class SyncUpsListUITests: XCTestCase {
   var app: XCUIApplication!
 
   override func setUpWithError() throws {
@@ -22,16 +22,16 @@ final class StandupsListUITests: XCTestCase {
   }
 
   // This test demonstrates the simple flow of tapping the "Add" button, filling in some fields in
-  // the form, and then adding the standup to the list. It's a very simple test, but it takes
+  // the form, and then adding the sync-up to the list. It's a very simple test, but it takes
   // approximately 10 seconds to run, and it depends on a lot of internal implementation details to
   // get right, such as tapping a button with the literal label "Add".
   //
-  // This test is also written in the simpler, "unit test" style in StandupsListTests.swift, where
+  // This test is also written in the simpler, "unit test" style in SyncUpsListTests.swift, where
   // it takes 0.025 seconds (400 times faster) and it even tests more. It further confirms that when
-  // the standup is added to the list its data will be persisted to disk so that it will be
+  // the sync-up is added to the list its data will be persisted to disk so that it will be
   // available on next launch.
   func testAdd() async throws {
-    self.app.navigationBars["Daily Standups"].buttons["Add"].tap()
+    self.app.navigationBars["Daily Sync-ups"].buttons["Add"].tap()
     let titleTextField = self.app.collectionViews.textFields["Title"]
     let nameTextField = self.app.collectionViews.textFields["Name"]
 
@@ -43,7 +43,7 @@ final class StandupsListUITests: XCTestCase {
     self.app.buttons["New attendee"].tap()
     self.app.typeText("Blob Jr.")
 
-    self.app.navigationBars["New standup"].buttons["Add"].tap()
+    self.app.navigationBars["New sync-up"].buttons["Add"].tap()
 
     XCTAssertEqual(self.app.staticTexts["Engineering"].exists, true)
   }
@@ -57,7 +57,7 @@ final class StandupsListUITests: XCTestCase {
     self.app.buttons["Yes"].tap()
     try await Task.sleep(for: .seconds(0.3))
     XCTAssertEqual(self.app.staticTexts["Design"].exists, false)
-    XCTAssertEqual(self.app.staticTexts["Daily Standups"].exists, true)
+    XCTAssertEqual(self.app.staticTexts["Daily Sync-ups"].exists, true)
   }
 
   func testEdit() async throws {
@@ -70,10 +70,10 @@ final class StandupsListUITests: XCTestCase {
     self.app.buttons["Done"].tap()
     XCTAssertEqual(self.app.staticTexts["Design & Product"].exists, true)
 
-    self.app.buttons["Daily Standups"].tap()
+    self.app.buttons["Daily Sync-ups"].tap()
     try await Task.sleep(for: .seconds(0.3))
     XCTAssertEqual(self.app.staticTexts["Design & Product"].exists, true)
-    XCTAssertEqual(self.app.staticTexts["Daily Standups"].exists, true)
+    XCTAssertEqual(self.app.staticTexts["Daily Sync-ups"].exists, true)
   }
 
   func testRecord() async throws {
@@ -93,7 +93,7 @@ final class StandupsListUITests: XCTestCase {
       XCTAssertEqual(self.app.staticTexts["6:31 PM"].exists, true)
     }
 
-    self.app.buttons["Daily Standups"].tap()
+    self.app.buttons["Daily Sync-ups"].tap()
     self.app.staticTexts["Design"].tap()
 
     XCTAssertEqual(self.app.staticTexts["Design"].exists, true)
@@ -122,10 +122,10 @@ final class StandupsListUITests: XCTestCase {
   func testPersistence() throws {
     XCTAssertEqual(self.app.staticTexts["Engineering"].exists, false)
 
-    self.app.navigationBars["Daily Standups"].buttons["Add"].tap()
+    self.app.navigationBars["Daily Sync-ups"].buttons["Add"].tap()
     let titleTextField = self.app.collectionViews.textFields["Title"]
     titleTextField.typeText("Engineering")
-    self.app.navigationBars["New standup"].buttons["Add"].tap()
+    self.app.navigationBars["New sync-up"].buttons["Add"].tap()
 
     XCUIDevice.shared.press(.home)
     self.app.launch()

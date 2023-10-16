@@ -5,11 +5,11 @@ import SwiftUI
 import SwiftUINavigation
 
 @MainActor
-final class StandupsListModel: ObservableObject {
+final class SyncUpsListModel: ObservableObject {
   @Published var destination: Destination? {
     didSet { self.bind() }
   }
-  @Published var standups: IdentifiedArrayOf<Standup>
+  @Published var syncUps: IdentifiedArrayOf<SyncUp>
 
   private var destinationCancellable: AnyCancellable?
   private var cancellables: Set<AnyCancellable> = []
@@ -19,9 +19,9 @@ final class StandupsListModel: ObservableObject {
   @Dependency(\.uuid) var uuid
 
   enum Destination {
-    case add(StandupFormModel)
+    case add(SyncUpFormModel)
     case alert(AlertState<AlertAction>)
-    case detail(StandupDetailModel)
+    case detail(SyncUpDetailModel)
   }
   enum AlertAction {
     case confirmLoadMockData
@@ -32,76 +32,76 @@ final class StandupsListModel: ObservableObject {
   ) {
     defer { self.bind() }
     self.destination = destination
-    self.standups = []
+    self.syncUps = []
 
     do {
-      self.standups = try JSONDecoder().decode(
+      self.syncUps = try JSONDecoder().decode(
         IdentifiedArray.self,
-        from: self.dataManager.load(.standups)
+        from: self.dataManager.load(.syncUps)
       )
     } catch is DecodingError {
       self.destination = .alert(.dataFailedToLoad)
     } catch {
     }
 
-    self.$standups
+    self.$syncUps
       .dropFirst()
       .debounce(for: .seconds(1), scheduler: self.mainQueue)
-      .sink { [weak self] standups in
-        try? self?.dataManager.save(JSONEncoder().encode(standups), .standups)
+      .sink { [weak self] syncUps in
+        try? self?.dataManager.save(JSONEncoder().encode(syncUps), .syncUps)
       }
       .store(in: &self.cancellables)
   }
 
-  func addStandupButtonTapped() {
+  func addSyncUpButtonTapped() {
     self.destination = .add(
       withDependencies(from: self) {
-        StandupFormModel(standup: Standup(id: Standup.ID(self.uuid())))
+        SyncUpFormModel(syncUp: SyncUp(id: SyncUp.ID(self.uuid())))
       }
     )
   }
 
-  func dismissAddStandupButtonTapped() {
+  func dismissAddSyncUpButtonTapped() {
     self.destination = nil
   }
 
-  func confirmAddStandupButtonTapped() {
+  func confirmAddSyncUpButtonTapped() {
     defer { self.destination = nil }
 
-    guard case let .add(standupFormModel) = self.destination
+    guard case let .add(syncUpFormModel) = self.destination
     else { return }
-    var standup = standupFormModel.standup
+    var syncUp = syncUpFormModel.syncUp
 
-    standup.attendees.removeAll { attendee in
+    syncUp.attendees.removeAll { attendee in
       attendee.name.allSatisfy(\.isWhitespace)
     }
-    if standup.attendees.isEmpty {
-      standup.attendees.append(Attendee(id: Attendee.ID(self.uuid())))
+    if syncUp.attendees.isEmpty {
+      syncUp.attendees.append(Attendee(id: Attendee.ID(self.uuid())))
     }
-    self.standups.append(standup)
+    self.syncUps.append(syncUp)
   }
 
-  func standupTapped(standup: Standup) {
+  func syncUpTapped(syncUp: SyncUp) {
     self.destination = .detail(
       withDependencies(from: self) {
-        StandupDetailModel(standup: standup)
+        SyncUpDetailModel(syncUp: syncUp)
       }
     )
   }
 
   private func bind() {
     switch self.destination {
-    case let .detail(standupDetailModel):
-      standupDetailModel.onConfirmDeletion = { [weak self, id = standupDetailModel.standup.id] in
+    case let .detail(syncUpDetailModel):
+      syncUpDetailModel.onConfirmDeletion = { [weak self, id = syncUpDetailModel.syncUp.id] in
         withAnimation {
-          self?.standups.remove(id: id)
+          self?.syncUps.remove(id: id)
           self?.destination = nil
         }
       }
 
-      self.destinationCancellable = standupDetailModel.$standup
-        .sink { [weak self] standup in
-          self?.standups[id: standup.id] = standup
+      self.destinationCancellable = syncUpDetailModel.$syncUp
+        .sink { [weak self] syncUp in
+          self?.syncUps[id: syncUp.id] = syncUp
         }
 
     case .add, .alert, .none:
@@ -113,7 +113,7 @@ final class StandupsListModel: ObservableObject {
     switch action {
     case .confirmLoadMockData?:
       withAnimation {
-        self.standups = [
+        self.syncUps = [
           .mock,
           .designMock,
           .engineeringMock,
@@ -125,7 +125,7 @@ final class StandupsListModel: ObservableObject {
   }
 }
 
-extension AlertState where Action == StandupsListModel.AlertAction {
+extension AlertState where Action == SyncUpsListModel.AlertAction {
   static let dataFailedToLoad = Self {
     TextState("Data failed to load")
   } actions: {
@@ -144,45 +144,45 @@ extension AlertState where Action == StandupsListModel.AlertAction {
   }
 }
 
-struct StandupsList: View {
-  @ObservedObject var model: StandupsListModel
+struct SyncUpsList: View {
+  @ObservedObject var model: SyncUpsListModel
 
   var body: some View {
     NavigationStack {
       List {
-        ForEach(self.model.standups) { standup in
+        ForEach(self.model.syncUps) { syncUp in
           Button {
-            self.model.standupTapped(standup: standup)
+            self.model.syncUpTapped(syncUp: syncUp)
           } label: {
-            CardView(standup: standup)
+            CardView(syncUp: syncUp)
           }
-          .listRowBackground(standup.theme.mainColor)
+          .listRowBackground(syncUp.theme.mainColor)
         }
       }
       .toolbar {
         Button {
-          self.model.addStandupButtonTapped()
+          self.model.addSyncUpButtonTapped()
         } label: {
           Image(systemName: "plus")
         }
       }
-      .navigationTitle("Daily Standups")
+      .navigationTitle("Daily Sync-ups")
       .sheet(
         unwrapping: self.$model.destination,
-        case: /StandupsListModel.Destination.add
+        case: /SyncUpsListModel.Destination.add
       ) { $model in
         NavigationStack {
-          StandupFormView(model: model)
-            .navigationTitle("New standup")
+          SyncUpFormView(model: model)
+            .navigationTitle("New sync-up")
             .toolbar {
               ToolbarItem(placement: .cancellationAction) {
                 Button("Dismiss") {
-                  self.model.dismissAddStandupButtonTapped()
+                  self.model.dismissAddSyncUpButtonTapped()
                 }
               }
               ToolbarItem(placement: .confirmationAction) {
                 Button("Add") {
-                  self.model.confirmAddStandupButtonTapped()
+                  self.model.confirmAddSyncUpButtonTapped()
                 }
               }
             }
@@ -190,13 +190,13 @@ struct StandupsList: View {
       }
       .navigationDestination(
         unwrapping: self.$model.destination,
-        case: /StandupsListModel.Destination.detail
+        case: /SyncUpsListModel.Destination.detail
       ) { $detailModel in
-        StandupDetailView(model: detailModel)
+        SyncUpDetailView(model: detailModel)
       }
       .alert(
         unwrapping: self.$model.destination,
-        case: /StandupsListModel.Destination.alert
+        case: /SyncUpsListModel.Destination.alert
       ) {
         self.model.alertButtonTapped($0)
       }
@@ -205,23 +205,23 @@ struct StandupsList: View {
 }
 
 struct CardView: View {
-  let standup: Standup
+  let syncUp: SyncUp
 
   var body: some View {
     VStack(alignment: .leading) {
-      Text(self.standup.title)
+      Text(self.syncUp.title)
         .font(.headline)
       Spacer()
       HStack {
-        Label("\(self.standup.attendees.count)", systemImage: "person.3")
+        Label("\(self.syncUp.attendees.count)", systemImage: "person.3")
         Spacer()
-        Label(self.standup.duration.formatted(.units()), systemImage: "clock")
+        Label(self.syncUp.duration.formatted(.units()), systemImage: "clock")
           .labelStyle(.trailingIcon)
       }
       .font(.caption)
     }
     .padding()
-    .foregroundColor(self.standup.theme.accentColor)
+    .foregroundColor(self.syncUp.theme.accentColor)
   }
 }
 
@@ -239,49 +239,49 @@ extension LabelStyle where Self == TrailingIconLabelStyle {
 }
 
 extension URL {
-  fileprivate static let standups = Self.documentsDirectory.appending(component: "standups.json")
+  fileprivate static let syncUps = Self.documentsDirectory.appending(component: "sync-ups.json")
 }
 
-struct StandupsList_Previews: PreviewProvider {
+struct SyncUpsList_Previews: PreviewProvider {
   static var previews: some View {
     Preview(
       message: """
-        This preview demonstrates how to start the app in a state with a few standups \
-        pre-populated. Since the initial standups are loaded from disk we cannot simply pass some \
+        This preview demonstrates how to start the app in a state with a few sync-ups \
+        pre-populated. Since the initial sync-ups are loaded from disk we cannot simply pass some \
         data to the SyncpUpsList model. But, we can override the DataManager dependency so that \
         when its load endpoint is called it will load whatever data we want.
         """
     ) {
-      StandupsList(
+      SyncUpsList(
         model: withDependencies {
           $0.dataManager = .mock(
             initialData: try! JSONEncoder().encode([
-              Standup.mock,
+              SyncUp.mock,
               .engineeringMock,
               .designMock,
             ])
           )
         } operation: {
-          StandupsListModel()
+          SyncUpsListModel()
         }
       )
     }
-    .previewDisplayName("Mocking initial standups")
+    .previewDisplayName("Mocking initial sync-ups")
 
     Preview(
       message: """
         This preview demonstrates how to test the flow of loading bad data from disk, in which \
         case an alert should be shown. This can be done by overridding the DataManager dependency \
-        so that its initial data does not properly decode into a collection of standups.
+        so that its initial data does not properly decode into a collection of sync-ups.
         """
     ) {
-      StandupsList(
+      SyncUpsList(
         model: withDependencies {
           $0.dataManager = .mock(
             initialData: Data("!@#$% bad data ^&*()".utf8)
           )
         } operation: {
-          StandupsListModel()
+          SyncUpsListModel()
         }
       )
     }
@@ -291,27 +291,27 @@ struct StandupsList_Previews: PreviewProvider {
       message: """
         The preview demonstrates how you can start the application navigated to a very specific \
         screen just by constructing a piece of state. In particular we will start the app drilled \
-        down to the detail screen of a standup, and then further drilled down to the record screen \
+        down to the detail screen of a sync-up, and then further drilled down to the record screen \
         for a new meeting.
         """
     ) {
-      StandupsList(
+      SyncUpsList(
         model: withDependencies {
           $0.dataManager = .mock(
             initialData: try! JSONEncoder().encode([
-              Standup.mock,
+              SyncUp.mock,
               .engineeringMock,
               .designMock,
             ])
           )
         } operation: {
-          StandupsListModel(
+          SyncUpsListModel(
             destination: .detail(
-              StandupDetailModel(
+              SyncUpDetailModel(
                 destination: .record(
-                  RecordMeetingModel(standup: .mock)
+                  RecordMeetingModel(syncUp: .mock)
                 ),
-                standup: .mock
+                syncUp: .mock
               )
             )
           )
@@ -324,21 +324,21 @@ struct StandupsList_Previews: PreviewProvider {
       message: """
         The preview demonstrates how you can start the application navigated to a very specific \
         screen just by constructing a piece of state. In particular we will start the app with the \
-        "Add standup" screen opened and with the last attendee text field focused.
+        "Add sync-up" screen opened and with the last attendee text field focused.
         """
     ) {
-      StandupsList(
+      SyncUpsList(
         model: withDependencies {
           $0.dataManager = .mock()
         } operation: {
-          var standup = Standup.mock
+          var syncUp = SyncUp.mock
           let lastAttendee = Attendee(id: Attendee.ID())
-          let _ = standup.attendees.append(lastAttendee)
-          return StandupsListModel(
+          let _ = syncUp.attendees.append(lastAttendee)
+          return SyncUpsListModel(
             destination: .add(
-              StandupFormModel(
+              SyncUpFormModel(
                 focus: .attendee(lastAttendee.id),
-                standup: standup
+                syncUp: syncUp
               )
             )
           )

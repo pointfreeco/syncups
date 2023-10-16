@@ -11,7 +11,7 @@ class RecordMeetingModel: ObservableObject {
   @Published var isDismissed = false
   @Published var secondsElapsed = 0
   @Published var speakerIndex = 0
-  let standup: Standup
+  let syncUp: SyncUp
   private var transcript = ""
 
   @Dependency(\.continuousClock) var clock
@@ -32,14 +32,14 @@ class RecordMeetingModel: ObservableObject {
 
   init(
     destination: Destination? = nil,
-    standup: Standup
+    syncUp: SyncUp
   ) {
     self.destination = destination
-    self.standup = standup
+    self.syncUp = syncUp
   }
 
   var durationRemaining: Duration {
-    self.standup.duration - .seconds(self.secondsElapsed)
+    self.syncUp.duration - .seconds(self.secondsElapsed)
   }
 
   var isAlertOpen: Bool {
@@ -52,7 +52,7 @@ class RecordMeetingModel: ObservableObject {
   }
 
   func nextButtonTapped() {
-    guard self.speakerIndex < self.standup.attendees.count - 1
+    guard self.speakerIndex < self.syncUp.attendees.count - 1
     else {
       self.destination = .alert(.endMeeting(isDiscardable: false))
       return
@@ -61,7 +61,7 @@ class RecordMeetingModel: ObservableObject {
     self.speakerIndex += 1
     self.soundEffectClient.play()
     self.secondsElapsed =
-      self.speakerIndex * Int(self.standup.durationPerAttendee.components.seconds)
+      self.speakerIndex * Int(self.syncUp.durationPerAttendee.components.seconds)
   }
 
   func endMeetingButtonTapped() {
@@ -125,9 +125,9 @@ class RecordMeetingModel: ObservableObject {
 
       self.secondsElapsed += 1
 
-      let secondsPerAttendee = Int(self.standup.durationPerAttendee.components.seconds)
+      let secondsPerAttendee = Int(self.syncUp.durationPerAttendee.components.seconds)
       if self.secondsElapsed.isMultiple(of: secondsPerAttendee) {
-        if self.speakerIndex == self.standup.attendees.count - 1 {
+        if self.speakerIndex == self.syncUp.attendees.count - 1 {
           await self.finishMeeting()
           break
         }
@@ -184,27 +184,27 @@ struct RecordMeetingView: View {
   var body: some View {
     ZStack {
       RoundedRectangle(cornerRadius: 16)
-        .fill(self.model.standup.theme.mainColor)
+        .fill(self.model.syncUp.theme.mainColor)
 
       VStack {
         MeetingHeaderView(
           secondsElapsed: self.model.secondsElapsed,
           durationRemaining: self.model.durationRemaining,
-          theme: self.model.standup.theme
+          theme: self.model.syncUp.theme
         )
         MeetingTimerView(
-          standup: self.model.standup,
+          syncUp: self.model.syncUp,
           speakerIndex: self.model.speakerIndex
         )
         MeetingFooterView(
-          standup: self.model.standup,
+          syncUp: self.model.syncUp,
           nextButtonTapped: { self.model.nextButtonTapped() },
           speakerIndex: self.model.speakerIndex
         )
       }
     }
     .padding()
-    .foregroundColor(self.model.standup.theme.accentColor)
+    .foregroundColor(self.model.syncUp.theme.accentColor)
     .navigationBarTitleDisplayMode(.inline)
     .toolbar {
       ToolbarItem(placement: .cancellationAction) {
@@ -284,7 +284,7 @@ struct MeetingProgressViewStyle: ProgressViewStyle {
 }
 
 struct MeetingTimerView: View {
-  let standup: Standup
+  let syncUp: SyncUp
   let speakerIndex: Int
 
   var body: some View {
@@ -293,8 +293,8 @@ struct MeetingTimerView: View {
       .overlay {
         VStack {
           Group {
-            if self.speakerIndex < self.standup.attendees.count {
-              Text(self.standup.attendees[self.speakerIndex].name)
+            if self.speakerIndex < self.syncUp.attendees.count {
+              Text(self.syncUp.attendees[self.speakerIndex].name)
             } else {
               Text("Someone")
             }
@@ -305,14 +305,14 @@ struct MeetingTimerView: View {
             .font(.largeTitle)
             .padding(.top)
         }
-        .foregroundStyle(self.standup.theme.accentColor)
+        .foregroundStyle(self.syncUp.theme.accentColor)
       }
       .overlay {
-        ForEach(Array(self.standup.attendees.enumerated()), id: \.element.id) { index, attendee in
+        ForEach(Array(self.syncUp.attendees.enumerated()), id: \.element.id) { index, attendee in
           if index < self.speakerIndex + 1 {
-            SpeakerArc(totalSpeakers: self.standup.attendees.count, speakerIndex: index)
+            SpeakerArc(totalSpeakers: self.syncUp.attendees.count, speakerIndex: index)
               .rotation(Angle(degrees: -90))
-              .stroke(self.standup.theme.mainColor, lineWidth: 12)
+              .stroke(self.syncUp.theme.mainColor, lineWidth: 12)
           }
         }
       }
@@ -351,15 +351,15 @@ struct SpeakerArc: Shape {
 }
 
 struct MeetingFooterView: View {
-  let standup: Standup
+  let syncUp: SyncUp
   var nextButtonTapped: () -> Void
   let speakerIndex: Int
 
   var body: some View {
     VStack {
       HStack {
-        if self.speakerIndex < self.standup.attendees.count - 1 {
-          Text("Speaker \(self.speakerIndex + 1) of \(self.standup.attendees.count)")
+        if self.speakerIndex < self.syncUp.attendees.count - 1 {
+          Text("Speaker \(self.speakerIndex + 1) of \(self.syncUp.attendees.count)")
         } else {
           Text("No more speakers.")
         }
@@ -377,7 +377,7 @@ struct RecordMeeting_Previews: PreviewProvider {
   static var previews: some View {
     NavigationStack {
       RecordMeetingView(
-        model: RecordMeetingModel(standup: .mock)
+        model: RecordMeetingModel(syncUp: .mock)
       )
     }
     .previewDisplayName("Happy path")
@@ -393,7 +393,7 @@ struct RecordMeeting_Previews: PreviewProvider {
           model: withDependencies {
             $0.speechClient = .fail(after: .seconds(2))
           } operation: {
-            RecordMeetingModel(standup: .mock)
+            RecordMeetingModel(syncUp: .mock)
           }
         )
       }

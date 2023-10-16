@@ -6,12 +6,12 @@ import SwiftUINavigation
 import XCTestDynamicOverlay
 
 @MainActor
-class StandupDetailModel: ObservableObject {
+class SyncUpDetailModel: ObservableObject {
   @Published var destination: Destination? {
     didSet { self.bind() }
   }
   @Published var isDismissed = false
-  @Published var standup: Standup
+  @Published var syncUp: SyncUp
 
   @Dependency(\.continuousClock) var clock
   @Dependency(\.date.now) var now
@@ -19,11 +19,11 @@ class StandupDetailModel: ObservableObject {
   @Dependency(\.speechClient.authorizationStatus) var authorizationStatus
   @Dependency(\.uuid) var uuid
 
-  var onConfirmDeletion: () -> Void = unimplemented("StandupDetailModel.onConfirmDeletion")
+  var onConfirmDeletion: () -> Void = unimplemented("SyncUpDetailModel.onConfirmDeletion")
 
   enum Destination {
     case alert(AlertState<AlertAction>)
-    case edit(StandupFormModel)
+    case edit(SyncUpFormModel)
     case meeting(Meeting)
     case record(RecordMeetingModel)
   }
@@ -35,15 +35,15 @@ class StandupDetailModel: ObservableObject {
 
   init(
     destination: Destination? = nil,
-    standup: Standup
+    syncUp: SyncUp
   ) {
     self.destination = destination
-    self.standup = standup
+    self.syncUp = syncUp
     self.bind()
   }
 
   func deleteMeetings(atOffsets indices: IndexSet) {
-    self.standup.meetings.remove(atOffsets: indices)
+    self.syncUp.meetings.remove(atOffsets: indices)
   }
 
   func meetingTapped(_ meeting: Meeting) {
@@ -51,7 +51,7 @@ class StandupDetailModel: ObservableObject {
   }
 
   func deleteButtonTapped() {
-    self.destination = .alert(.deleteStandup)
+    self.destination = .alert(.deleteSyncUp)
   }
 
   func alertButtonTapped(_ action: AlertAction?) async {
@@ -63,7 +63,7 @@ class StandupDetailModel: ObservableObject {
     case .continueWithoutRecording?:
       self.destination = .record(
         withDependencies(from: self) {
-          RecordMeetingModel(standup: self.standup)
+          RecordMeetingModel(syncUp: self.syncUp)
         }
       )
 
@@ -78,7 +78,7 @@ class StandupDetailModel: ObservableObject {
   func editButtonTapped() {
     self.destination = .edit(
       withDependencies(from: self) {
-        StandupFormModel(standup: self.standup)
+        SyncUpFormModel(syncUp: self.syncUp)
       }
     )
   }
@@ -91,7 +91,7 @@ class StandupDetailModel: ObservableObject {
     guard case let .edit(model) = self.destination
     else { return }
 
-    self.standup = model.standup
+    self.syncUp = model.syncUp
     self.destination = nil
   }
 
@@ -100,7 +100,7 @@ class StandupDetailModel: ObservableObject {
     case .notDetermined, .authorized:
       self.destination = .record(
         withDependencies(from: self) {
-          RecordMeetingModel(standup: self.standup)
+          RecordMeetingModel(syncUp: self.syncUp)
         }
       )
 
@@ -123,7 +123,7 @@ class StandupDetailModel: ObservableObject {
 
         let didCancel = nil == (try? await self.clock.sleep(for: .milliseconds(400)))
         withAnimation(didCancel ? nil : .default) {
-          self.standup.meetings.insert(
+          self.syncUp.meetings.insert(
             Meeting(
               id: Meeting.ID(self.uuid()),
               date: self.now,
@@ -141,9 +141,9 @@ class StandupDetailModel: ObservableObject {
   }
 }
 
-struct StandupDetailView: View {
+struct SyncUpDetailView: View {
   @Environment(\.dismiss) var dismiss
-  @ObservedObject var model: StandupDetailModel
+  @ObservedObject var model: SyncUpDetailModel
 
   var body: some View {
     List {
@@ -158,25 +158,25 @@ struct StandupDetailView: View {
         HStack {
           Label("Length", systemImage: "clock")
           Spacer()
-          Text(self.model.standup.duration.formatted(.units()))
+          Text(self.model.syncUp.duration.formatted(.units()))
         }
 
         HStack {
           Label("Theme", systemImage: "paintpalette")
           Spacer()
-          Text(self.model.standup.theme.name)
+          Text(self.model.syncUp.theme.name)
             .padding(4)
-            .foregroundColor(self.model.standup.theme.accentColor)
-            .background(self.model.standup.theme.mainColor)
+            .foregroundColor(self.model.syncUp.theme.accentColor)
+            .background(self.model.syncUp.theme.mainColor)
             .cornerRadius(4)
         }
       } header: {
-        Text("Standup Info")
+        Text("Sync-up Info")
       }
 
-      if !self.model.standup.meetings.isEmpty {
+      if !self.model.syncUp.meetings.isEmpty {
         Section {
-          ForEach(self.model.standup.meetings) { meeting in
+          ForEach(self.model.syncUp.meetings) { meeting in
             Button {
               self.model.meetingTapped(meeting)
             } label: {
@@ -196,7 +196,7 @@ struct StandupDetailView: View {
       }
 
       Section {
-        ForEach(self.model.standup.attendees) { attendee in
+        ForEach(self.model.syncUp.attendees) { attendee in
           Label(attendee.name, systemImage: "person")
         }
       } header: {
@@ -211,7 +211,7 @@ struct StandupDetailView: View {
         .frame(maxWidth: .infinity)
       }
     }
-    .navigationTitle(self.model.standup.title)
+    .navigationTitle(self.model.syncUp.title)
     .toolbar {
       Button("Edit") {
         self.model.editButtonTapped()
@@ -219,29 +219,29 @@ struct StandupDetailView: View {
     }
     .navigationDestination(
       unwrapping: self.$model.destination,
-      case: /StandupDetailModel.Destination.meeting
+      case: /SyncUpDetailModel.Destination.meeting
     ) { $meeting in
-      MeetingView(meeting: meeting, standup: self.model.standup)
+      MeetingView(meeting: meeting, syncUp: self.model.syncUp)
     }
     .navigationDestination(
       unwrapping: self.$model.destination,
-      case: /StandupDetailModel.Destination.record
+      case: /SyncUpDetailModel.Destination.record
     ) { $model in
       RecordMeetingView(model: model)
     }
     .alert(
       unwrapping: self.$model.destination,
-      case: /StandupDetailModel.Destination.alert
+      case: /SyncUpDetailModel.Destination.alert
     ) { action in
       await self.model.alertButtonTapped(action)
     }
     .sheet(
       unwrapping: self.$model.destination,
-      case: /StandupDetailModel.Destination.edit
+      case: /SyncUpDetailModel.Destination.edit
     ) { $editModel in
       NavigationStack {
-        StandupFormView(model: editModel)
-          .navigationTitle(self.model.standup.title)
+        SyncUpFormView(model: editModel)
+          .navigationTitle(self.model.syncUp.title)
           .toolbar {
             ToolbarItem(placement: .cancellationAction) {
               Button("Cancel") {
@@ -260,8 +260,8 @@ struct StandupDetailView: View {
   }
 }
 
-extension AlertState where Action == StandupDetailModel.AlertAction {
-  static let deleteStandup = Self {
+extension AlertState where Action == SyncUpDetailModel.AlertAction {
+  static let deleteSyncUp = Self {
     TextState("Delete?")
   } actions: {
     ButtonState(role: .destructive, action: .confirmDeletion) {
@@ -312,7 +312,7 @@ extension AlertState where Action == StandupDetailModel.AlertAction {
 
 struct MeetingView: View {
   let meeting: Meeting
-  let standup: Standup
+  let syncUp: SyncUp
 
   var body: some View {
     ScrollView {
@@ -321,7 +321,7 @@ struct MeetingView: View {
           .padding(.bottom)
         Text("Attendees")
           .font(.headline)
-        ForEach(self.standup.attendees) { attendee in
+        ForEach(self.syncUp.attendees) { attendee in
           Text(attendee.name)
         }
         Text("Transcript")
@@ -335,7 +335,7 @@ struct MeetingView: View {
   }
 }
 
-struct StandupDetail_Previews: PreviewProvider {
+struct SyncUpDetail_Previews: PreviewProvider {
   static var previews: some View {
     Preview(
       message: """
@@ -346,7 +346,7 @@ struct StandupDetail_Previews: PreviewProvider {
         """
     ) {
       NavigationStack {
-        StandupDetailView(model: StandupDetailModel(standup: .mock))
+        SyncUpDetailView(model: SyncUpDetailModel(syncUp: .mock))
       }
     }
     .previewDisplayName("Happy path")
@@ -360,11 +360,11 @@ struct StandupDetail_Previews: PreviewProvider {
         """
     ) {
       NavigationStack {
-        StandupDetailView(
+        SyncUpDetailView(
           model: withDependencies {
             $0.speechClient = .fail(after: .seconds(2))
           } operation: {
-            StandupDetailModel(standup: .mock)
+            SyncUpDetailModel(syncUp: .mock)
           }
         )
       }
@@ -379,11 +379,11 @@ struct StandupDetail_Previews: PreviewProvider {
         """
     ) {
       NavigationStack {
-        StandupDetailView(
+        SyncUpDetailView(
           model: withDependencies {
             $0.speechClient.authorizationStatus = { .denied }
           } operation: {
-            StandupDetailModel(standup: .mock)
+            SyncUpDetailModel(syncUp: .mock)
           }
         )
       }
@@ -398,11 +398,11 @@ struct StandupDetail_Previews: PreviewProvider {
         """
     ) {
       NavigationStack {
-        StandupDetailView(
+        SyncUpDetailView(
           model: withDependencies {
             $0.speechClient.authorizationStatus = { .restricted }
           } operation: {
-            StandupDetailModel(standup: .mock)
+            SyncUpDetailModel(syncUp: .mock)
           }
         )
       }

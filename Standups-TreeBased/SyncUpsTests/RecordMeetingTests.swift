@@ -18,8 +18,8 @@ final class RecordMeetingTests: BaseTestCase {
       $0.speechClient.authorizationStatus = { .denied }
     } operation: {
       RecordMeetingModel(
-        standup: Standup(
-          id: Standup.ID(),
+        syncUp: SyncUp(
+          id: SyncUp.ID(),
           attendees: [
             Attendee(id: Attendee.ID()),
             Attendee(id: Attendee.ID()),
@@ -89,8 +89,8 @@ final class RecordMeetingTests: BaseTestCase {
       }
     } operation: {
       RecordMeetingModel(
-        standup: Standup(
-          id: Standup.ID(),
+        syncUp: SyncUp(
+          id: SyncUp.ID(),
           attendees: [Attendee(id: Attendee.ID())],
           duration: .seconds(3)
         )
@@ -117,7 +117,7 @@ final class RecordMeetingTests: BaseTestCase {
       $0.soundEffectClient = .noop
       $0.speechClient.authorizationStatus = { .denied }
     } operation: {
-      RecordMeetingModel(standup: .mock)
+      RecordMeetingModel(syncUp: .mock)
     }
 
     let onMeetingFinishedExpectation = self.expectation(description: "onMeetingFinished")
@@ -158,7 +158,7 @@ final class RecordMeetingTests: BaseTestCase {
       $0.soundEffectClient = .noop
       $0.speechClient.authorizationStatus = { .denied }
     } operation: {
-      RecordMeetingModel(standup: .mock)
+      RecordMeetingModel(syncUp: .mock)
     }
 
     model.onMeetingFinished = { _ in XCTFail() }
@@ -193,8 +193,8 @@ final class RecordMeetingTests: BaseTestCase {
 
     } operation: {
       RecordMeetingModel(
-        standup: Standup(
-          id: Standup.ID(),
+        syncUp: SyncUp(
+          id: SyncUp.ID(),
           attendees: [
             Attendee(id: Attendee.ID()),
             Attendee(id: Attendee.ID()),
@@ -268,8 +268,8 @@ final class RecordMeetingTests: BaseTestCase {
       }
     } operation: {
       RecordMeetingModel(
-        standup: Standup(
-          id: Standup.ID(),
+        syncUp: SyncUp(
+          id: SyncUp.ID(),
           attendees: [Attendee(id: Attendee.ID())],
           duration: .seconds(3)
         )
@@ -315,8 +315,8 @@ final class RecordMeetingTests: BaseTestCase {
       }
     } operation: {
       RecordMeetingModel(
-        standup: Standup(
-          id: Standup.ID(),
+        syncUp: SyncUp(
+          id: SyncUp.ID(),
           attendees: [Attendee(id: Attendee.ID())],
           duration: .seconds(3)
         )

@@ -6,17 +6,17 @@ import XCTest
 @testable import Standups_TreeBased
 
 @MainActor
-final class StandupDetailTests: BaseTestCase {
+final class SyncUpDetailTests: BaseTestCase {
   func testSpeechRestricted() throws {
     let model = withDependencies {
       $0.speechClient.authorizationStatus = { .restricted }
     } operation: {
-      StandupDetailModel(standup: .mock)
+      SyncUpDetailModel(syncUp: .mock)
     }
 
     model.startMeetingButtonTapped()
 
-    let alert = try XCTUnwrap(model.destination, case: /StandupDetailModel.Destination.alert)
+    let alert = try XCTUnwrap(model.destination, case: /SyncUpDetailModel.Destination.alert)
 
     XCTAssertNoDifference(alert, .speechRecognitionRestricted)
   }
@@ -25,12 +25,12 @@ final class StandupDetailTests: BaseTestCase {
     let model = withDependencies {
       $0.speechClient.authorizationStatus = { .denied }
     } operation: {
-      StandupDetailModel(standup: .mock)
+      SyncUpDetailModel(syncUp: .mock)
     }
 
     model.startMeetingButtonTapped()
 
-    let alert = try XCTUnwrap(model.destination, case: /StandupDetailModel.Destination.alert)
+    let alert = try XCTUnwrap(model.destination, case: /SyncUpDetailModel.Destination.alert)
 
     XCTAssertNoDifference(alert, .speechRecognitionDenied)
   }
@@ -40,9 +40,9 @@ final class StandupDetailTests: BaseTestCase {
     let model = withDependencies {
       $0.openSettings = { settingsOpened.setValue(true) }
     } operation: {
-      StandupDetailModel(
+      SyncUpDetailModel(
         destination: .alert(.speechRecognitionDenied),
-        standup: .mock
+        syncUp: .mock
       )
     }
 
@@ -52,30 +52,30 @@ final class StandupDetailTests: BaseTestCase {
   }
 
   func testContinueWithoutRecording() async throws {
-    let model = StandupDetailModel(
+    let model = SyncUpDetailModel(
       destination: .alert(.speechRecognitionDenied),
-      standup: .mock
+      syncUp: .mock
     )
 
     await model.alertButtonTapped(.continueWithoutRecording)
 
-    let recordModel = try XCTUnwrap(model.destination, case: /StandupDetailModel.Destination.record)
+    let recordModel = try XCTUnwrap(model.destination, case: /SyncUpDetailModel.Destination.record)
 
-    XCTAssertEqual(recordModel.standup, model.standup)
+    XCTAssertEqual(recordModel.syncUp, model.syncUp)
   }
 
   func testSpeechAuthorized() async throws {
     let model = withDependencies {
       $0.speechClient.authorizationStatus = { .authorized }
     } operation: {
-      StandupDetailModel(standup: .mock)
+      SyncUpDetailModel(syncUp: .mock)
     }
 
     model.startMeetingButtonTapped()
 
-    let recordModel = try XCTUnwrap(model.destination, case: /StandupDetailModel.Destination.record)
+    let recordModel = try XCTUnwrap(model.destination, case: /SyncUpDetailModel.Destination.record)
 
-    XCTAssertEqual(recordModel.standup, model.standup)
+    XCTAssertEqual(recordModel.syncUp, model.syncUp)
   }
 
   func testRecordWithTranscript() async throws {
@@ -97,10 +97,10 @@ final class StandupDetailTests: BaseTestCase {
       }
       $0.uuid = .incrementing
     } operation: {
-      StandupDetailModel(
-        destination: .record(RecordMeetingModel(standup: .mock)),
-        standup: Standup(
-          id: Standup.ID(),
+      SyncUpDetailModel(
+        destination: .record(RecordMeetingModel(syncUp: .mock)),
+        syncUp: SyncUp(
+          id: SyncUp.ID(),
           attendees: [
             .init(id: Attendee.ID()),
             .init(id: Attendee.ID()),
@@ -111,13 +111,13 @@ final class StandupDetailTests: BaseTestCase {
       )
     }
 
-    let recordModel = try XCTUnwrap(model.destination, case: /StandupDetailModel.Destination.record)
+    let recordModel = try XCTUnwrap(model.destination, case: /SyncUpDetailModel.Destination.record)
 
     await recordModel.task()
 
     XCTAssertNil(model.destination)
     XCTAssertNoDifference(
-      model.standup.meetings,
+      model.syncUp.meetings,
       [
         Meeting(
           id: Meeting.ID(uuidString: "00000000-0000-0000-0000-000000000000")!,
@@ -134,9 +134,9 @@ final class StandupDetailTests: BaseTestCase {
     } operation: {
       @Dependency(\.uuid) var uuid
 
-      return StandupDetailModel(
-        standup: Standup(
-          id: Standup.ID(uuid()),
+      return SyncUpDetailModel(
+        syncUp: SyncUp(
+          id: SyncUp.ID(uuid()),
           title: "Engineering"
         )
       )
@@ -144,17 +144,17 @@ final class StandupDetailTests: BaseTestCase {
 
     model.editButtonTapped()
 
-    let editModel = try XCTUnwrap(model.destination, case: /StandupDetailModel.Destination.edit)
+    let editModel = try XCTUnwrap(model.destination, case: /SyncUpDetailModel.Destination.edit)
 
-    editModel.standup.title = "Engineering"
-    editModel.standup.theme = .lavender
+    editModel.syncUp.title = "Engineering"
+    editModel.syncUp.theme = .lavender
     model.doneEditingButtonTapped()
 
     XCTAssertNil(model.destination)
     XCTAssertEqual(
-      model.standup,
-      Standup(
-        id: Standup.ID(uuidString: "00000000-0000-0000-0000-000000000000")!,
+      model.syncUp,
+      SyncUp(
+        id: SyncUp.ID(uuidString: "00000000-0000-0000-0000-000000000000")!,
         attendees: [
           Attendee(id: Attendee.ID(uuidString: "00000000-0000-0000-0000-000000000001")!)
         ],
