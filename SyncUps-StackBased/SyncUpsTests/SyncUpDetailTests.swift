@@ -3,7 +3,7 @@ import CustomDump
 import Dependencies
 import XCTest
 
-@testable import Standups_StackBased
+@testable import SyncUps_StackBased
 
 @MainActor
 final class SyncUpDetailTests: BaseTestCase {

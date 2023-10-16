@@ -29,7 +29,7 @@
 		CA350CCB2984518200434F8A /* SyncUpsListTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350CC72984518200434F8A /* SyncUpsListTests.swift */; };
 		CA350CCC2984518200434F8A /* SyncUpFormTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350CC82984518200434F8A /* SyncUpFormTests.swift */; };
 		CA350CCD2984518200434F8A /* SyncUpDetailTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350CC92984518200434F8A /* SyncUpDetailTests.swift */; };
-		CA350CCF2984518A00434F8A /* StandupsListUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350CCE2984518A00434F8A /* StandupsListUITests.swift */; };
+		CA350CCF2984518A00434F8A /* SyncUpsListUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350CCE2984518A00434F8A /* SyncUpsListUITests.swift */; };
 		CA350CD2298452F300434F8A /* ding.wav in Resources */ = {isa = PBXBuildFile; fileRef = CA350CD1298452F300434F8A /* ding.wav */; };
 		CAC7A59E2ABA374500985FC1 /* ConcurrencyExtras in Frameworks */ = {isa = PBXBuildFile; productRef = CAC7A59D2ABA374500985FC1 /* ConcurrencyExtras */; };
 		CAC7A5A12ABA374D00985FC1 /* ConcurrencyExtras in Frameworks */ = {isa = PBXBuildFile; productRef = CAC7A5A02ABA374D00985FC1 /* ConcurrencyExtras */; };
@@ -56,10 +56,10 @@
 /* Begin PBXFileReference section */
 		2A368892298ADD2500E8C33A /* App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
 		CA1D22E92991BC7000B529DE /* AppTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTests.swift; sourceTree = "<group>"; };
-		CA350C712984506E00434F8A /* Standups-StackBased.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Standups-StackBased.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		CA350C712984506E00434F8A /* SyncUps-StackBased.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "SyncUps-StackBased.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA350C742984506E00434F8A /* SyncUpsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncUpsApp.swift; sourceTree = "<group>"; };
-		CA350C812984506F00434F8A /* Standups-StackBasedTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Standups-StackBasedTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		CA350C8B2984506F00434F8A /* Standups-StackBasedUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Standups-StackBasedUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		CA350C812984506F00434F8A /* SyncUps-StackBasedTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "SyncUps-StackBasedTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		CA350C8B2984506F00434F8A /* SyncUps-StackBasedUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "SyncUps-StackBasedUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA350CA1298450BF00434F8A /* SyncUpDetail.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncUpDetail.swift; sourceTree = "<group>"; };
 		CA350CA2298450BF00434F8A /* RecordMeeting.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecordMeeting.swift; sourceTree = "<group>"; };
 		CA350CA3298450BF00434F8A /* SyncUpForm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncUpForm.swift; sourceTree = "<group>"; };
@@ -75,7 +75,7 @@
 		CA350CC72984518200434F8A /* SyncUpsListTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncUpsListTests.swift; sourceTree = "<group>"; };
 		CA350CC82984518200434F8A /* SyncUpFormTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncUpFormTests.swift; sourceTree = "<group>"; };
 		CA350CC92984518200434F8A /* SyncUpDetailTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncUpDetailTests.swift; sourceTree = "<group>"; };
-		CA350CCE2984518A00434F8A /* StandupsListUITests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StandupsListUITests.swift; sourceTree = "<group>"; };
+		CA350CCE2984518A00434F8A /* SyncUpsListUITests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncUpsListUITests.swift; sourceTree = "<group>"; };
 		CA350CD1298452F300434F8A /* ding.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = ding.wav; sourceTree = "<group>"; };
 		CAC7A5A22ABA375800985FC1 /* BaseTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseTestCase.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -114,9 +114,9 @@
 		CA350C682984506E00434F8A = {
 			isa = PBXGroup;
 			children = (
-				CA350C732984506E00434F8A /* Standups */,
-				CA350C842984506F00434F8A /* StandupsTests */,
-				CA350C8E2984506F00434F8A /* StandupsUITests */,
+				CA350C732984506E00434F8A /* SyncUps */,
+				CA350C842984506F00434F8A /* SyncUpsTests */,
+				CA350C8E2984506F00434F8A /* SyncUpsUITests */,
 				CA350C722984506E00434F8A /* Products */,
 				CAC7A59F2ABA374D00985FC1 /* Frameworks */,
 			);
@@ -125,14 +125,14 @@
 		CA350C722984506E00434F8A /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				CA350C712984506E00434F8A /* Standups-StackBased.app */,
-				CA350C812984506F00434F8A /* Standups-StackBasedTests.xctest */,
-				CA350C8B2984506F00434F8A /* Standups-StackBasedUITests.xctest */,
+				CA350C712984506E00434F8A /* SyncUps-StackBased.app */,
+				CA350C812984506F00434F8A /* SyncUps-StackBasedTests.xctest */,
+				CA350C8B2984506F00434F8A /* SyncUps-StackBasedUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		CA350C732984506E00434F8A /* Standups */ = {
+		CA350C732984506E00434F8A /* SyncUps */ = {
 			isa = PBXGroup;
 			children = (
 				2A368892298ADD2500E8C33A /* App.swift */,
@@ -147,10 +147,10 @@
 				CA350CA4298450BF00434F8A /* Dependencies */,
 				CA350CD0298452F300434F8A /* Resources */,
 			);
-			path = Standups;
+			path = SyncUps;
 			sourceTree = "<group>";
 		};
-		CA350C842984506F00434F8A /* StandupsTests */ = {
+		CA350C842984506F00434F8A /* SyncUpsTests */ = {
 			isa = PBXGroup;
 			children = (
 				CA1D22E92991BC7000B529DE /* AppTests.swift */,
@@ -160,15 +160,15 @@
 				CA350CC82984518200434F8A /* SyncUpFormTests.swift */,
 				CA350CC72984518200434F8A /* SyncUpsListTests.swift */,
 			);
-			path = StandupsTests;
+			path = SyncUpsTests;
 			sourceTree = "<group>";
 		};
-		CA350C8E2984506F00434F8A /* StandupsUITests */ = {
+		CA350C8E2984506F00434F8A /* SyncUpsUITests */ = {
 			isa = PBXGroup;
 			children = (
-				CA350CCE2984518A00434F8A /* StandupsListUITests.swift */,
+				CA350CCE2984518A00434F8A /* SyncUpsListUITests.swift */,
 			);
-			path = StandupsUITests;
+			path = SyncUpsUITests;
 			sourceTree = "<group>";
 		};
 		CA350CA4298450BF00434F8A /* Dependencies */ = {
@@ -200,9 +200,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		CA350C702984506E00434F8A /* Standups-StackBased */ = {
+		CA350C702984506E00434F8A /* SyncUps-StackBased */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = CA350C952984506F00434F8A /* Build configuration list for PBXNativeTarget "Standups-StackBased" */;
+			buildConfigurationList = CA350C952984506F00434F8A /* Build configuration list for PBXNativeTarget "SyncUps-StackBased" */;
 			buildPhases = (
 				CA350C6D2984506E00434F8A /* Sources */,
 				CA350C6E2984506E00434F8A /* Frameworks */,
@@ -212,7 +212,7 @@
 			);
 			dependencies = (
 			);
-			name = "Standups-StackBased";
+			name = "SyncUps-StackBased";
 			packageProductDependencies = (
 				CA350CBB298450E700434F8A /* SwiftUINavigation */,
 				CA350CBE2984510200434F8A /* IdentifiedCollections */,
@@ -221,12 +221,12 @@
 				CAC7A59D2ABA374500985FC1 /* ConcurrencyExtras */,
 			);
 			productName = Standups;
-			productReference = CA350C712984506E00434F8A /* Standups-StackBased.app */;
+			productReference = CA350C712984506E00434F8A /* SyncUps-StackBased.app */;
 			productType = "com.apple.product-type.application";
 		};
-		CA350C802984506F00434F8A /* Standups-StackBasedTests */ = {
+		CA350C802984506F00434F8A /* SyncUps-StackBasedTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = CA350C982984506F00434F8A /* Build configuration list for PBXNativeTarget "Standups-StackBasedTests" */;
+			buildConfigurationList = CA350C982984506F00434F8A /* Build configuration list for PBXNativeTarget "SyncUps-StackBasedTests" */;
 			buildPhases = (
 				CA350C7D2984506F00434F8A /* Sources */,
 				CA350C7E2984506F00434F8A /* Frameworks */,
@@ -237,17 +237,17 @@
 			dependencies = (
 				CA350C832984506F00434F8A /* PBXTargetDependency */,
 			);
-			name = "Standups-StackBasedTests";
+			name = "SyncUps-StackBasedTests";
 			packageProductDependencies = (
 				CAC7A5A02ABA374D00985FC1 /* ConcurrencyExtras */,
 			);
 			productName = StandupsTests;
-			productReference = CA350C812984506F00434F8A /* Standups-StackBasedTests.xctest */;
+			productReference = CA350C812984506F00434F8A /* SyncUps-StackBasedTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		CA350C8A2984506F00434F8A /* Standups-StackBasedUITests */ = {
+		CA350C8A2984506F00434F8A /* SyncUps-StackBasedUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = CA350C9B2984506F00434F8A /* Build configuration list for PBXNativeTarget "Standups-StackBasedUITests" */;
+			buildConfigurationList = CA350C9B2984506F00434F8A /* Build configuration list for PBXNativeTarget "SyncUps-StackBasedUITests" */;
 			buildPhases = (
 				CA350C872984506F00434F8A /* Sources */,
 				CA350C882984506F00434F8A /* Frameworks */,
@@ -258,9 +258,9 @@
 			dependencies = (
 				CA350C8D2984506F00434F8A /* PBXTargetDependency */,
 			);
-			name = "Standups-StackBasedUITests";
+			name = "SyncUps-StackBasedUITests";
 			productName = StandupsUITests;
-			productReference = CA350C8B2984506F00434F8A /* Standups-StackBasedUITests.xctest */;
+			productReference = CA350C8B2984506F00434F8A /* SyncUps-StackBasedUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -288,7 +288,7 @@
 					};
 				};
 			};
-			buildConfigurationList = CA350C6C2984506E00434F8A /* Build configuration list for PBXProject "Standups-StackBased" */;
+			buildConfigurationList = CA350C6C2984506E00434F8A /* Build configuration list for PBXProject "SyncUps-StackBased" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -308,9 +308,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				CA350C702984506E00434F8A /* Standups-StackBased */,
-				CA350C802984506F00434F8A /* Standups-StackBasedTests */,
-				CA350C8A2984506F00434F8A /* Standups-StackBasedUITests */,
+				CA350C702984506E00434F8A /* SyncUps-StackBased */,
+				CA350C802984506F00434F8A /* SyncUps-StackBasedTests */,
+				CA350C8A2984506F00434F8A /* SyncUps-StackBasedUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -378,7 +378,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CA350CCF2984518A00434F8A /* StandupsListUITests.swift in Sources */,
+				CA350CCF2984518A00434F8A /* SyncUpsListUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -387,12 +387,12 @@
 /* Begin PBXTargetDependency section */
 		CA350C832984506F00434F8A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = CA350C702984506E00434F8A /* Standups-StackBased */;
+			target = CA350C702984506E00434F8A /* SyncUps-StackBased */;
 			targetProxy = CA350C822984506F00434F8A /* PBXContainerItemProxy */;
 		};
 		CA350C8D2984506F00434F8A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = CA350C702984506E00434F8A /* Standups-StackBased */;
+			target = CA350C702984506E00434F8A /* SyncUps-StackBased */;
 			targetProxy = CA350C8C2984506F00434F8A /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -534,7 +534,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = co.pointfree.Standups;
+				PRODUCT_BUNDLE_IDENTIFIER = co.pointfree.SyncUps;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -562,7 +562,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = co.pointfree.Standups;
+				PRODUCT_BUNDLE_IDENTIFIER = co.pointfree.SyncUps;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -585,13 +585,13 @@
 					"@loader_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = co.pointfree.StandupsTests;
+				PRODUCT_BUNDLE_IDENTIFIER = co.pointfree.SyncUpsTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Standups-StackBased.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Standups-StackBased";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SyncUps-StackBased.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/SyncUps-StackBased";
 			};
 			name = Debug;
 		};
@@ -610,12 +610,12 @@
 					"@loader_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = co.pointfree.StandupsTests;
+				PRODUCT_BUNDLE_IDENTIFIER = co.pointfree.SyncUpsTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Standups-StackBased.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Standups-StackBased";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SyncUps-StackBased.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/SyncUps-StackBased";
 			};
 			name = Release;
 		};
@@ -633,14 +633,14 @@
 					"@loader_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = co.pointfree.StandupsUITests;
+				PRODUCT_BUNDLE_IDENTIFIER = co.pointfree.SyncUpsUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = "Standups-StackBased";
+				TEST_TARGET_NAME = "SyncUps-StackBased";
 			};
 			name = Debug;
 		};
@@ -658,20 +658,20 @@
 					"@loader_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = co.pointfree.StandupsUITests;
+				PRODUCT_BUNDLE_IDENTIFIER = co.pointfree.SyncUpsUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = "Standups-StackBased";
+				TEST_TARGET_NAME = "SyncUps-StackBased";
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		CA350C6C2984506E00434F8A /* Build configuration list for PBXProject "Standups-StackBased" */ = {
+		CA350C6C2984506E00434F8A /* Build configuration list for PBXProject "SyncUps-StackBased" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				CA350C932984506F00434F8A /* Debug */,
@@ -680,7 +680,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		CA350C952984506F00434F8A /* Build configuration list for PBXNativeTarget "Standups-StackBased" */ = {
+		CA350C952984506F00434F8A /* Build configuration list for PBXNativeTarget "SyncUps-StackBased" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				CA350C962984506F00434F8A /* Debug */,
@@ -689,7 +689,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		CA350C982984506F00434F8A /* Build configuration list for PBXNativeTarget "Standups-StackBasedTests" */ = {
+		CA350C982984506F00434F8A /* Build configuration list for PBXNativeTarget "SyncUps-StackBasedTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				CA350C992984506F00434F8A /* Debug */,
@@ -698,7 +698,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		CA350C9B2984506F00434F8A /* Build configuration list for PBXNativeTarget "Standups-StackBasedUITests" */ = {
+		CA350C9B2984506F00434F8A /* Build configuration list for PBXNativeTarget "SyncUps-StackBasedUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				CA350C9C2984506F00434F8A /* Debug */,

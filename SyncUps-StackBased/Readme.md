@@ -1,6 +1,6 @@
-# Standups: Stack-based navigation
+# SyncUps: Stack-based navigation
 
-This directory holds the Standups application built using “stack-based” navigation: that is, using 
+This directory holds the SyncUps application built using “stack-based” navigation: that is, using 
 `NavigationStack` with a binding to a collection. This allows you to represent all navigation paths 
 in the application with a single, flat array of values. 
 
@@ -11,8 +11,8 @@ models for each of those screens.
 ```swift
 AppModel(
   path: [
-    .detail(StandupDetailModel(standup: …)),
-    .record(RecordMeetingModel(standup: …)),
+    .detail(SyncUpDetailModel(syncUp: …)),
+    .record(RecordMeetingModel(syncUp: …)),
   ]
 )
 ```
@@ -30,7 +30,7 @@ binding, has fewer bugs than other state-based navigation APIs in SwiftUI.
 
 However, they also have cons:
 
-* Stack-based navigation is not concise. For example, our Standups app has a finite set of
+* Stack-based navigation is not concise. For example, our SyncUps app has a finite set of
 navigation paths that make sense, and stack-based navigation allows for non-sensical paths. For
 example, the  record screen can only ever happen after the detail screen, yet it's possible to
 construct a path like this: `[.record, .detail]`.
@@ -40,4 +40,4 @@ lifted to a parent feature.
 * And related to the above two cons: stack-based navigation is more difficult to unit test. 
 
 So, if you weigh the pros and cons of using stack-based navigation and still decide to use it, this 
-Standups app shows how it can be done.
+SyncUps app shows how it can be done.

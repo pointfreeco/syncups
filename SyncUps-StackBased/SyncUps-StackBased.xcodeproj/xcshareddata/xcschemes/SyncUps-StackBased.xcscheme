@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "CA350C702984506E00434F8A"
-               BuildableName = "Standups-StackBased.app"
-               BlueprintName = "Standups-StackBased"
-               ReferencedContainer = "container:Standups-StackBased.xcodeproj">
+               BuildableName = "SyncUps-StackBased.app"
+               BlueprintName = "SyncUps-StackBased"
+               ReferencedContainer = "container:SyncUps-StackBased.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "CA350C802984506F00434F8A"
-               BuildableName = "Standups-StackBasedTests.xctest"
-               BlueprintName = "Standups-StackBasedTests"
-               ReferencedContainer = "container:Standups-StackBased.xcodeproj">
+               BuildableName = "SyncUps-StackBasedTests.xctest"
+               BlueprintName = "SyncUps-StackBasedTests"
+               ReferencedContainer = "container:SyncUps-StackBased.xcodeproj">
             </BuildableReference>
          </TestableReference>
          <TestableReference
@@ -43,9 +43,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "CA350C8A2984506F00434F8A"
-               BuildableName = "Standups-StackBasedUITests.xctest"
-               BlueprintName = "Standups-StackBasedUITests"
-               ReferencedContainer = "container:Standups-StackBased.xcodeproj">
+               BuildableName = "SyncUps-StackBasedUITests.xctest"
+               BlueprintName = "SyncUps-StackBasedUITests"
+               ReferencedContainer = "container:SyncUps-StackBased.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -65,9 +65,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "CA350C702984506E00434F8A"
-            BuildableName = "Standups-StackBased.app"
-            BlueprintName = "Standups-StackBased"
-            ReferencedContainer = "container:Standups-StackBased.xcodeproj">
+            BuildableName = "SyncUps-StackBased.app"
+            BlueprintName = "SyncUps-StackBased"
+            ReferencedContainer = "container:SyncUps-StackBased.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -82,9 +82,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "CA350C702984506E00434F8A"
-            BuildableName = "Standups-StackBased.app"
-            BlueprintName = "Standups-StackBased"
-            ReferencedContainer = "container:Standups-StackBased.xcodeproj">
+            BuildableName = "SyncUps-StackBased.app"
+            BlueprintName = "SyncUps-StackBased"
+            ReferencedContainer = "container:SyncUps-StackBased.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

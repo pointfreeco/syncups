@@ -2,7 +2,7 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:Standups-StackBased/Standups-StackBased.xcodeproj">
+      location = "group:SyncUps-StackBased/SyncUps-StackBased.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:Standups-TreeBased/Standups-TreeBased.xcodeproj">
