@@ -38,14 +38,14 @@
 			containerPortal = CA350C692984506E00434F8A /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = CA350C702984506E00434F8A;
-			remoteInfo = Standups;
+			remoteInfo = SyncUps;
 		};
 		CA350C8C2984506F00434F8A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CA350C692984506E00434F8A /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = CA350C702984506E00434F8A;
-			remoteInfo = Standups;
+			remoteInfo = SyncUps;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -201,7 +201,7 @@
 				CA350CC12984511300434F8A /* Tagged */,
 				CA350CC42984515C00434F8A /* Dependencies */,
 			);
-			productName = Standups;
+			productName = SyncUps;
 			productReference = CA350C712984506E00434F8A /* SyncUps-TreeBased.app */;
 			productType = "com.apple.product-type.application";
 		};
@@ -219,7 +219,7 @@
 				CA350C832984506F00434F8A /* PBXTargetDependency */,
 			);
 			name = "SyncUps-TreeBasedTests";
-			productName = StandupsTests;
+			productName = SyncUpsTests;
 			productReference = CA350C812984506F00434F8A /* SyncUps-TreeBasedTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
@@ -237,7 +237,7 @@
 				CA350C8D2984506F00434F8A /* PBXTargetDependency */,
 			);
 			name = "SyncUps-TreeBasedUITests";
-			productName = StandupsUITests;
+			productName = SyncUpsUITests;
 			productReference = CA350C8B2984506F00434F8A /* SyncUps-TreeBasedUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
