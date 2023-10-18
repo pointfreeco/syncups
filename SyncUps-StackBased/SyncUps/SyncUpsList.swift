@@ -118,7 +118,7 @@ extension AlertState where Action == SyncUpsListModel.AlertAction {
   }
 }
 
-struct SyncpUpsList: View {
+struct SyncUpsList: View {
   @ObservedObject var model: SyncUpsListModel
 
   var body: some View {
@@ -214,11 +214,11 @@ struct SyncUpsList_Previews: PreviewProvider {
       message: """
         This preview demonstrates how to start the app in a state with a few sync-ups \
         pre-populated. Since the initial sync-ups are loaded from disk we cannot simply pass some \
-        data to the SyncpUpsList model. But, we can override the DataManager dependency so that \
+        data to the SyncUpsList model. But, we can override the DataManager dependency so that \
         when its load endpoint is called it will load whatever data we want.
         """
     ) {
-      SyncpUpsList(
+      SyncUpsList(
         model: withDependencies {
           $0.dataManager = .mock(
             initialData: try! JSONEncoder().encode([
@@ -241,7 +241,7 @@ struct SyncUpsList_Previews: PreviewProvider {
         so that its initial data does not properly decode into a collection of sync-ups.
         """
     ) {
-      SyncpUpsList(
+      SyncUpsList(
         model: withDependencies {
           $0.dataManager = .mock(
             initialData: Data("!@#$% bad data ^&*()".utf8)
@@ -260,7 +260,7 @@ struct SyncUpsList_Previews: PreviewProvider {
         "Add sync-up" screen opened and with the last attendee text field focused.
         """
     ) {
-      SyncpUpsList(
+      SyncUpsList(
         model: withDependencies {
           $0.dataManager = .mock()
         } operation: {

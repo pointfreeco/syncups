@@ -117,7 +117,7 @@ struct AppView: View {
 
   var body: some View {
     NavigationStack(path: self.$model.path) {
-      SyncpUpsList(model: self.model.syncUpsList)
+      SyncUpsList(model: self.model.syncUpsList)
         .navigationDestination(for: AppModel.Destination.self) { destination in
           switch destination {
           case let .detail(detailModel):
