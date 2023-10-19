@@ -8,6 +8,7 @@ import XCTestDynamicOverlay
 @MainActor
 class RecordMeetingModel: Hashable, ObservableObject {
   @Published var destination: Destination?
+  @Published var isDismissed = false
   @Published var secondsElapsed = 0
   @Published var speakerIndex = 0
   let syncUp: SyncUp
@@ -19,8 +20,6 @@ class RecordMeetingModel: Hashable, ObservableObject {
 
   var onMeetingFinished: (String) async -> Void = unimplemented(
     "RecordMeetingModel.onMeetingFinished")
-  var onDiscardMeeting: () -> Void = unimplemented(
-    "RecordMeetingModel.onDiscardMeeting")
 
   enum Destination {
     case alert(AlertState<AlertAction>)
@@ -79,9 +78,9 @@ class RecordMeetingModel: Hashable, ObservableObject {
   func alertButtonTapped(_ action: AlertAction?) async {
     switch action {
     case .confirmSave?:
-      await self.onMeetingFinished(self.transcript)
+      await self.finishMeeting()
     case .confirmDiscard?:
-      self.onDiscardMeeting()
+      self.isDismissed = true
     case nil:
       break
     }
@@ -128,13 +127,18 @@ class RecordMeetingModel: Hashable, ObservableObject {
       let secondsPerAttendee = Int(self.syncUp.durationPerAttendee.components.seconds)
       if self.secondsElapsed.isMultiple(of: secondsPerAttendee) {
         if self.speakerIndex == self.syncUp.attendees.count - 1 {
-          await self.onMeetingFinished(self.transcript)
+          await self.finishMeeting()
           break
         }
         self.speakerIndex += 1
         self.soundEffectClient.play()
       }
     }
+  }
+
+  private func finishMeeting() async {
+    self.isDismissed = true
+    await self.onMeetingFinished(self.transcript)
   }
 }
 
@@ -179,6 +183,7 @@ extension AlertState where Action == RecordMeetingModel.AlertAction {
 
 struct RecordMeetingView: View {
   @ObservedObject var model: RecordMeetingModel
+  @Environment(\.dismiss) var dismiss
 
   var body: some View {
     ZStack {
@@ -220,6 +225,7 @@ struct RecordMeetingView: View {
       await self.model.alertButtonTapped(action)
     }
     .task { await self.model.task() }
+    .onChange(of: self.model.isDismissed) { _, _ in self.dismiss() }
   }
 }
 
