@@ -50,7 +50,6 @@ final class AppTests: BaseTestCase {
     let recordModel = try XCTUnwrap(model.path[1], case: /AppModel.Destination.record)
     await recordModel.task()
 
-    XCTAssertEqual(model.path, [model.path[0]])
     XCTAssertNoDifference(
       model.syncUpsList.syncUps[0].meetings,
       [

@@ -116,13 +116,14 @@ final class SyncUpsListUITests: XCTestCase {
     XCTAssertEqual(self.app.staticTexts["6:31 PM"].exists, false)
   }
 
-  func testPersistence() throws {
+  func testPersistence() async throws {
     XCTAssertEqual(self.app.staticTexts["Engineering"].exists, false)
 
     self.app.navigationBars["Daily Sync-ups"].buttons["Add"].tap()
     let titleTextField = self.app.collectionViews.textFields["Title"]
     titleTextField.typeText("Engineering")
     self.app.navigationBars["New sync-up"].buttons["Add"].tap()
+    try await Task.sleep(for: .seconds(1))
 
     XCUIDevice.shared.press(.home)
     self.app.launch()

@@ -84,10 +84,6 @@ class AppModel: ObservableObject {
   }
 
   private func bindRecord(model: RecordMeetingModel) {
-    model.onDiscardMeeting = { [weak self] in
-      self?.path.removeLast()
-    }
-
     model.onMeetingFinished = { [weak self] transcript in
       guard let self else { return }
 
@@ -103,7 +99,6 @@ class AppModel: ObservableObject {
         transcript: transcript
       )
 
-      self.path.removeLast()
       let didCancel = (try? await self.clock.sleep(for: .milliseconds(400))) == nil
       _ = withAnimation(didCancel ? nil : .default) {
         detailModel.syncUp.meetings.insert(meeting, at: 0)
