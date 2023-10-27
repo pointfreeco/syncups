@@ -24,7 +24,7 @@ final class SyncUpListTests: BaseTestCase {
 
     model.addSyncUpButtonTapped()
 
-    let addModel = try XCTUnwrap(model.destination, case: /SyncUpsListModel.Destination.add)
+    let addModel = try XCTUnwrap(model.destination?.add)
 
     addModel.syncUp.title = "Engineering"
     addModel.syncUp.attendees[0].name = "Blob"
@@ -109,11 +109,11 @@ final class SyncUpListTests: BaseTestCase {
 
     model.syncUpTapped(syncUp: model.syncUps[0])
 
-    let detailModel = try XCTUnwrap(model.destination, case: /SyncUpsListModel.Destination.detail)
+    let detailModel = try XCTUnwrap(model.destination?.detail)
 
     detailModel.deleteButtonTapped()
 
-    let alert = try XCTUnwrap(detailModel.destination, case: /SyncUpDetailModel.Destination.alert)
+    let alert = try XCTUnwrap(detailModel.destination?.alert)
 
     XCTAssertNoDifference(alert, .deleteSyncUp)
 
@@ -143,12 +143,11 @@ final class SyncUpListTests: BaseTestCase {
 
     model.syncUpTapped(syncUp: model.syncUps[0])
 
-    let detailModel = try XCTUnwrap(model.destination, case: /SyncUpsListModel.Destination.detail)
+    let detailModel = try XCTUnwrap(model.destination?.detail)
 
     detailModel.editButtonTapped()
 
-    let editModel = try XCTUnwrap(
-      detailModel.destination, case: /SyncUpDetailModel.Destination.edit)
+    let editModel = try XCTUnwrap(detailModel.destination?.edit)
 
     editModel.syncUp.title = "Design"
     detailModel.doneEditingButtonTapped()
@@ -178,7 +177,7 @@ final class SyncUpListTests: BaseTestCase {
       SyncUpsListModel()
     }
 
-    let alert = try XCTUnwrap(model.destination, case: /SyncUpsListModel.Destination.alert)
+    let alert = try XCTUnwrap(model.destination?.alert)
 
     XCTAssertNoDifference(alert, .dataFailedToLoad)
 

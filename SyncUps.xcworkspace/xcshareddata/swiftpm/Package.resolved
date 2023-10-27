@@ -14,8 +14,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-case-paths",
       "state" : {
-        "revision" : "5da6989aae464f324eef5c5b52bdb7974725ab81",
-        "version" : "1.0.0"
+        "branch" : "case-key-paths",
+        "revision" : "34326a68a736f48d517d4f5ddbdddaca7288b967"
       }
     },
     {
@@ -73,6 +73,15 @@
       }
     },
     {
+      "identity" : "swift-syntax",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-syntax.git",
+      "state" : {
+        "revision" : "ffa3cd6fc2aa62adbedd31d3efaf7c0d86a9f029",
+        "version" : "509.0.1"
+      }
+    },
+    {
       "identity" : "swift-tagged",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-tagged.git",
@@ -86,17 +95,17 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swiftui-navigation.git",
       "state" : {
-        "revision" : "6eb293c49505d86e9e24232cb6af6be7fff93bd5",
-        "version" : "1.0.2"
+        "branch" : "case-key-paths",
+        "revision" : "3285fbeadb9d9fcfff01714f62e06d124f954f40"
       }
     },
     {
       "identity" : "xctest-dynamic-overlay",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/pointfreeco/xctest-dynamic-overlay",
+      "location" : "https://github.com/pointfreeco/xctest-dynamic-overlay.git",
       "state" : {
-        "revision" : "23cbf2294e350076ea4dbd7d5d047c1e76b03631",
-        "version" : "1.0.2"
+        "branch" : "unimplemented-macro",
+        "revision" : "f58986e658aa0ab97da5734f1419aaf29d41c336"
       }
     }
   ],

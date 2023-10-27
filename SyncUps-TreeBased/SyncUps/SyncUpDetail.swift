@@ -19,8 +19,10 @@ class SyncUpDetailModel: ObservableObject {
   @Dependency(\.speechClient.authorizationStatus) var authorizationStatus
   @Dependency(\.uuid) var uuid
 
-  var onConfirmDeletion: () -> Void = unimplemented("SyncUpDetailModel.onConfirmDeletion")
+  @Unimplemented var onConfirmDeletion: () -> Void
 
+  @CasePathable
+  @dynamicMemberLookup
   enum Destination {
     case alert(AlertState<AlertAction>)
     case edit(SyncUpFormModel)
@@ -217,28 +219,16 @@ struct SyncUpDetailView: View {
         self.model.editButtonTapped()
       }
     }
-    .navigationDestination(
-      unwrapping: self.$model.destination,
-      case: /SyncUpDetailModel.Destination.meeting
-    ) { $meeting in
+    .navigationDestination(unwrapping: self.$model.destination.meeting) { $meeting in
       MeetingView(meeting: meeting, syncUp: self.model.syncUp)
     }
-    .navigationDestination(
-      unwrapping: self.$model.destination,
-      case: /SyncUpDetailModel.Destination.record
-    ) { $model in
+    .navigationDestination(unwrapping: self.$model.destination.record) { $model in
       RecordMeetingView(model: model)
     }
-    .alert(
-      unwrapping: self.$model.destination,
-      case: /SyncUpDetailModel.Destination.alert
-    ) { action in
+    .alert(unwrapping: self.$model.destination.alert) { action in
       await self.model.alertButtonTapped(action)
     }
-    .sheet(
-      unwrapping: self.$model.destination,
-      case: /SyncUpDetailModel.Destination.edit
-    ) { $editModel in
+    .sheet(unwrapping: self.$model.destination.edit) { $editModel in
       NavigationStack {
         SyncUpFormView(model: editModel)
           .navigationTitle(self.model.syncUp.title)

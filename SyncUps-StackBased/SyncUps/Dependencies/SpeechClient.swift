@@ -2,8 +2,11 @@ import Dependencies
 @preconcurrency import Speech
 
 struct SpeechClient {
+  @Unimplemented(default: SFSpeechRecognizerAuthorizationStatus.notDetermined)
   var authorizationStatus: @Sendable () -> SFSpeechRecognizerAuthorizationStatus
+  @Unimplemented(default: SFSpeechRecognizerAuthorizationStatus.notDetermined)
   var requestAuthorization: @Sendable () async -> SFSpeechRecognizerAuthorizationStatus
+  @Unimplemented(default: AsyncThrowingStream<SpeechRecognitionResult, Error>.finished())
   var startTask:
     @Sendable (SFSpeechAudioBufferRecognitionRequest) async -> AsyncThrowingStream<
       SpeechRecognitionResult, Error
@@ -69,11 +72,7 @@ extension SpeechClient: DependencyKey {
     )
   }
 
-  static let testValue = SpeechClient(
-    authorizationStatus: unimplemented("SpeechClient.authorizationStatus", placeholder: .denied),
-    requestAuthorization: unimplemented("SpeechClient.requestAuthorization", placeholder: .denied),
-    startTask: unimplemented("SpeechClient.startTask")
-  )
+  static let testValue = SpeechClient()
 
   static func fail(after duration: Duration) -> Self {
     return Self(

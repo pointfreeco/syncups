@@ -18,9 +18,10 @@ class RecordMeetingModel: ObservableObject {
   @Dependency(\.soundEffectClient) var soundEffectClient
   @Dependency(\.speechClient) var speechClient
 
-  var onMeetingFinished: (String) async -> Void = unimplemented(
-    "RecordMeetingModel.onMeetingFinished")
+  @Unimplemented var onMeetingFinished: (String) async -> Void
 
+  @CasePathable
+  @dynamicMemberLookup
   enum Destination {
     case alert(AlertState<AlertAction>)
   }
@@ -214,10 +215,7 @@ struct RecordMeetingView: View {
       }
     }
     .navigationBarBackButtonHidden(true)
-    .alert(
-      unwrapping: self.$model.destination,
-      case: /RecordMeetingModel.Destination.alert
-    ) { action in
+    .alert(unwrapping: self.$model.destination.alert) { action in
       await self.model.alertButtonTapped(action)
     }
     .task { await self.model.task() }

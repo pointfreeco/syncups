@@ -34,6 +34,7 @@
 		CAC7A59E2ABA374500985FC1 /* ConcurrencyExtras in Frameworks */ = {isa = PBXBuildFile; productRef = CAC7A59D2ABA374500985FC1 /* ConcurrencyExtras */; };
 		CAC7A5A12ABA374D00985FC1 /* ConcurrencyExtras in Frameworks */ = {isa = PBXBuildFile; productRef = CAC7A5A02ABA374D00985FC1 /* ConcurrencyExtras */; };
 		CAC7A5A32ABA375800985FC1 /* BaseTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAC7A5A22ABA375800985FC1 /* BaseTestCase.swift */; };
+		DC561EB52AEC5D2F004DB7A3 /* XCTestDynamicOverlay in Frameworks */ = {isa = PBXBuildFile; productRef = DC561EB42AEC5D2F004DB7A3 /* XCTestDynamicOverlay */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -89,6 +90,7 @@
 				CA350CC22984511300434F8A /* Tagged in Frameworks */,
 				CA350CBC298450E700434F8A /* SwiftUINavigation in Frameworks */,
 				CA350CBF2984510200434F8A /* IdentifiedCollections in Frameworks */,
+				DC561EB52AEC5D2F004DB7A3 /* XCTestDynamicOverlay in Frameworks */,
 				CA350CC52984515C00434F8A /* Dependencies in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -219,6 +221,7 @@
 				CA350CC12984511300434F8A /* Tagged */,
 				CA350CC42984515C00434F8A /* Dependencies */,
 				CAC7A59D2ABA374500985FC1 /* ConcurrencyExtras */,
+				DC561EB42AEC5D2F004DB7A3 /* XCTestDynamicOverlay */,
 			);
 			productName = SyncUps;
 			productReference = CA350C712984506E00434F8A /* SyncUps-StackBased.app */;
@@ -303,6 +306,7 @@
 				CA350CC02984511300434F8A /* XCRemoteSwiftPackageReference "swift-tagged" */,
 				CA350CC32984515C00434F8A /* XCRemoteSwiftPackageReference "swift-dependencies" */,
 				CAC7A59C2ABA374500985FC1 /* XCRemoteSwiftPackageReference "swift-concurrency-extras" */,
+				DC561EB32AEC5D2F004DB7A3 /* XCRemoteSwiftPackageReference "xctest-dynamic-overlay" */,
 			);
 			productRefGroup = CA350C722984506E00434F8A /* Products */;
 			projectDirPath = "";
@@ -714,8 +718,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/pointfreeco/swiftui-navigation.git";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.0;
+				branch = "case-key-paths";
+				kind = branch;
 			};
 		};
 		CA350CBD2984510200434F8A /* XCRemoteSwiftPackageReference "swift-identified-collections" */ = {
@@ -750,6 +754,14 @@
 				minimumVersion = 1.0.0;
 			};
 		};
+		DC561EB32AEC5D2F004DB7A3 /* XCRemoteSwiftPackageReference "xctest-dynamic-overlay" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pointfreeco/xctest-dynamic-overlay.git";
+			requirement = {
+				branch = "unimplemented-macro";
+				kind = branch;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -782,6 +794,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = CAC7A59C2ABA374500985FC1 /* XCRemoteSwiftPackageReference "swift-concurrency-extras" */;
 			productName = ConcurrencyExtras;
+		};
+		DC561EB42AEC5D2F004DB7A3 /* XCTestDynamicOverlay */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DC561EB32AEC5D2F004DB7A3 /* XCRemoteSwiftPackageReference "xctest-dynamic-overlay" */;
+			productName = XCTestDynamicOverlay;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

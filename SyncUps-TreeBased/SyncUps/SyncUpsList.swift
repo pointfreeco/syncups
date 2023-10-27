@@ -18,6 +18,8 @@ final class SyncUpsListModel: ObservableObject {
   @Dependency(\.mainQueue) var mainQueue
   @Dependency(\.uuid) var uuid
 
+  @CasePathable
+  @dynamicMemberLookup
   enum Destination {
     case add(SyncUpFormModel)
     case alert(AlertState<AlertAction>)
@@ -167,10 +169,7 @@ struct SyncUpsList: View {
         }
       }
       .navigationTitle("Daily Sync-ups")
-      .sheet(
-        unwrapping: self.$model.destination,
-        case: /SyncUpsListModel.Destination.add
-      ) { $model in
+      .sheet(unwrapping: self.$model.destination.add) { $model in
         NavigationStack {
           SyncUpFormView(model: model)
             .navigationTitle("New sync-up")
@@ -188,16 +187,10 @@ struct SyncUpsList: View {
             }
         }
       }
-      .navigationDestination(
-        unwrapping: self.$model.destination,
-        case: /SyncUpsListModel.Destination.detail
-      ) { $detailModel in
+      .navigationDestination(unwrapping: self.$model.destination.detail) { $detailModel in
         SyncUpDetailView(model: detailModel)
       }
-      .alert(
-        unwrapping: self.$model.destination,
-        case: /SyncUpsListModel.Destination.alert
-      ) {
+      .alert(unwrapping: self.$model.destination.alert) {
         self.model.alertButtonTapped($0)
       }
     }

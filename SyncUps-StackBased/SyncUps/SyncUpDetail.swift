@@ -17,10 +17,12 @@ class SyncUpDetailModel: Hashable, ObservableObject {
   @Dependency(\.speechClient.authorizationStatus) var authorizationStatus
   @Dependency(\.uuid) var uuid
 
-  var onConfirmDeletion: () -> Void = unimplemented("SyncUpDetailModel.onConfirmDeletion")
-  var onMeetingTapped: (Meeting) -> Void = unimplemented("SyncUpDetailModel.onMeetingTapped")
-  var onMeetingStarted: (SyncUp) -> Void = unimplemented("SyncUpDetailModel.onMeetingStarted")
+  @Unimplemented var onConfirmDeletion: () -> Void
+  @Unimplemented var onMeetingTapped: (Meeting) -> Void
+  @Unimplemented var onMeetingStarted: (SyncUp) -> Void
 
+  @CasePathable
+  @dynamicMemberLookup
   enum Destination {
     case alert(AlertState<AlertAction>)
     case edit(SyncUpFormModel)
@@ -187,16 +189,10 @@ struct SyncUpDetailView: View {
         self.model.editButtonTapped()
       }
     }
-    .alert(
-      unwrapping: self.$model.destination,
-      case: /SyncUpDetailModel.Destination.alert
-    ) { action in
+    .alert(unwrapping: self.$model.destination.alert) { action in
       await self.model.alertButtonTapped(action)
     }
-    .sheet(
-      unwrapping: self.$model.destination,
-      case: /SyncUpDetailModel.Destination.edit
-    ) { $editModel in
+    .sheet(unwrapping: self.$model.destination.edit) { $editModel in
       NavigationStack {
         SyncUpFormView(model: editModel)
           .navigationTitle(self.model.syncUp.title)

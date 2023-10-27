@@ -130,7 +130,7 @@ final class RecordMeetingTests: BaseTestCase {
 
     model.endMeetingButtonTapped()
 
-    let alert = try XCTUnwrap(model.destination, case: /RecordMeetingModel.Destination.alert)
+    let alert = try XCTUnwrap(model.destination?.alert)
 
     XCTAssertNoDifference(alert, .endMeeting(isDiscardable: true))
 
@@ -164,7 +164,7 @@ final class RecordMeetingTests: BaseTestCase {
 
     model.endMeetingButtonTapped()
 
-    let alert = try XCTUnwrap(model.destination, case: /RecordMeetingModel.Destination.alert)
+    let alert = try XCTUnwrap(model.destination?.alert)
 
     XCTAssertNoDifference(alert, .endMeeting(isDiscardable: true))
 
@@ -223,7 +223,7 @@ final class RecordMeetingTests: BaseTestCase {
 
     model.nextButtonTapped()
 
-    let alert = try XCTUnwrap(model.destination, case: /RecordMeetingModel.Destination.alert)
+    let alert = try XCTUnwrap(model.destination?.alert)
 
     XCTAssertNoDifference(alert, .endMeeting(isDiscardable: false))
 
@@ -285,7 +285,7 @@ final class RecordMeetingTests: BaseTestCase {
     //     https://forums.swift.org/t/reliably-testing-code-that-adopts-swift-concurrency/57304
     try await Task.sleep(for: .milliseconds(100))
 
-    let alert = try XCTUnwrap(model.destination, case: /RecordMeetingModel.Destination.alert)
+    let alert = try XCTUnwrap(model.destination?.alert)
     XCTAssertEqual(alert, .speechRecognizerFailed)
 
     model.destination = nil  // NB: Simulate SwiftUI closing alert.
@@ -327,7 +327,7 @@ final class RecordMeetingTests: BaseTestCase {
     //     https://forums.swift.org/t/reliably-testing-code-that-adopts-swift-concurrency/57304
     try await Task.sleep(for: .milliseconds(100))
 
-    let alert = try XCTUnwrap(model.destination, case: /RecordMeetingModel.Destination.alert)
+    let alert = try XCTUnwrap(model.destination?.alert)
     XCTAssertEqual(alert, .speechRecognizerFailed)
 
     await model.alertButtonTapped(.confirmDiscard)

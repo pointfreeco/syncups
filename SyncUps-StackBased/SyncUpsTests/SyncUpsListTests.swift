@@ -25,7 +25,7 @@ final class SyncUpsListTests: BaseTestCase {
 
     model.addSyncUpButtonTapped()
 
-    let addModel = try XCTUnwrap(model.destination, case: /SyncUpsListModel.Destination.add)
+    let addModel = try XCTUnwrap(model.destination?.add)
 
     addModel.syncUp.title = "Engineering"
     addModel.syncUp.attendees[0].name = "Blob"
@@ -108,7 +108,7 @@ final class SyncUpsListTests: BaseTestCase {
       SyncUpsListModel()
     }
 
-    let alert = try XCTUnwrap(model.destination, case: /SyncUpsListModel.Destination.alert)
+    let alert = try XCTUnwrap(model.destination?.alert)
 
     XCTAssertNoDifference(alert, .dataFailedToLoad)
 

@@ -1,3 +1,4 @@
+import CasePaths
 import Combine
 import Dependencies
 import SwiftUI
@@ -17,6 +18,8 @@ class AppModel: ObservableObject {
 
   private var detailCancellable: AnyCancellable?
 
+  @CasePathable
+  @dynamicMemberLookup
   enum Destination: Hashable {
     case detail(SyncUpDetailModel)
     case meeting(Meeting, syncUp: SyncUp)
