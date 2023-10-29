@@ -17,9 +17,9 @@ class SyncUpDetailModel: Hashable, ObservableObject {
   @Dependency(\.speechClient.authorizationStatus) var authorizationStatus
   @Dependency(\.uuid) var uuid
 
-  @Unimplemented var onConfirmDeletion: () -> Void
-  @Unimplemented var onMeetingTapped: (Meeting) -> Void
-  @Unimplemented var onMeetingStarted: (SyncUp) -> Void
+  @DependencyEndpoint var onConfirmDeletion: () -> Void
+  @DependencyEndpoint var onMeetingTapped: (Meeting) -> Void
+  @DependencyEndpoint var onMeetingStarted: (SyncUp) -> Void
 
   @CasePathable
   @dynamicMemberLookup

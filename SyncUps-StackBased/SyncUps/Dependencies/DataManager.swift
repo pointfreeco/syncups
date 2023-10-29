@@ -2,8 +2,8 @@ import Dependencies
 import Foundation
 
 struct DataManager: Sendable {
-  @Unimplemented var load: @Sendable (URL) throws -> Data
-  @Unimplemented var save: @Sendable (Data, URL) throws -> Void
+  @DependencyEndpoint var load: @Sendable (URL) throws -> Data
+  @DependencyEndpoint var save: @Sendable (Data, URL) throws -> Void
 }
 
 extension DataManager: DependencyKey {

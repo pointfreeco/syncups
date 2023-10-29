@@ -2,15 +2,17 @@ import Dependencies
 @preconcurrency import Speech
 
 struct SpeechClient {
-  @Unimplemented(default: SFSpeechRecognizerAuthorizationStatus.notDetermined)
-  var authorizationStatus: @Sendable () -> SFSpeechRecognizerAuthorizationStatus
-  @Unimplemented(default: SFSpeechRecognizerAuthorizationStatus.notDetermined)
-  var requestAuthorization: @Sendable () async -> SFSpeechRecognizerAuthorizationStatus
-  @Unimplemented(default: AsyncThrowingStream<SpeechRecognitionResult, Error>.finished())
+  @DependencyEndpoint
+  var authorizationStatus: @Sendable () -> SFSpeechRecognizerAuthorizationStatus = { .denied }
+  @DependencyEndpoint
+  var requestAuthorization: @Sendable () async -> SFSpeechRecognizerAuthorizationStatus = {
+    .denied
+  }
+  @DependencyEndpoint
   var startTask:
     @Sendable (SFSpeechAudioBufferRecognitionRequest) async -> AsyncThrowingStream<
       SpeechRecognitionResult, Error
-    >
+    > = { _ in .finished() }
 }
 
 extension SpeechClient: DependencyKey {

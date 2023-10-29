@@ -57,15 +57,11 @@ final class SyncUpDetailTests: BaseTestCase {
       syncUp: .mock
     )
 
-    let onMeetingStartedExpectation = self.expectation(description: "onMeetingStarted")
-    model.onMeetingStarted = { syncUp in
+    model.$onMeetingStarted { syncUp in
       XCTAssertEqual(syncUp, .mock)
-      onMeetingStartedExpectation.fulfill()
     }
 
     await model.alertButtonTapped(.continueWithoutRecording)
-
-    await self.fulfillment(of: [onMeetingStartedExpectation])
   }
 
   func testSpeechAuthorized() async throws {
@@ -75,15 +71,11 @@ final class SyncUpDetailTests: BaseTestCase {
       SyncUpDetailModel(syncUp: .mock)
     }
 
-    let onMeetingStartedExpectation = self.expectation(description: "onMeetingStarted")
-    model.onMeetingStarted = { syncUp in
+    model.$onMeetingStarted { syncUp in
       XCTAssertEqual(syncUp, .mock)
-      onMeetingStartedExpectation.fulfill()
     }
 
     model.startMeetingButtonTapped()
-
-    await self.fulfillment(of: [onMeetingStartedExpectation])
   }
 
   func testEdit() throws {

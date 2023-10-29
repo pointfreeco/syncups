@@ -18,7 +18,7 @@ class RecordMeetingModel: Hashable, ObservableObject {
   @Dependency(\.soundEffectClient) var soundEffectClient
   @Dependency(\.speechClient) var speechClient
 
-  @Unimplemented var onMeetingFinished: (String) async -> Void
+  @DependencyEndpoint var onMeetingFinished: (String) async -> Void
 
   @CasePathable
   @dynamicMemberLookup

@@ -94,7 +94,7 @@ final class SyncUpsListModel: ObservableObject {
   private func bind() {
     switch self.destination {
     case let .detail(syncUpDetailModel):
-      syncUpDetailModel.onConfirmDeletion = { [weak self, id = syncUpDetailModel.syncUp.id] in
+      syncUpDetailModel.$onConfirmDeletion { [weak self, id = syncUpDetailModel.syncUp.id] in
         withAnimation {
           self?.syncUps.remove(id: id)
           self?.destination = nil

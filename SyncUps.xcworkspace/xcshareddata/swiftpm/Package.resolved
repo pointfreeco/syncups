@@ -105,7 +105,7 @@
       "location" : "https://github.com/pointfreeco/xctest-dynamic-overlay.git",
       "state" : {
         "branch" : "unimplemented-macro",
-        "revision" : "f58986e658aa0ab97da5734f1419aaf29d41c336"
+        "revision" : "ea6aeca2efa633aa312f895960eeac018af353a1"
       }
     }
   ],

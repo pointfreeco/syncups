@@ -2,8 +2,8 @@ import AVFoundation
 import Dependencies
 
 struct SoundEffectClient {
-  @Unimplemented var load: @Sendable (String) -> Void
-  @Unimplemented var play: @Sendable () -> Void
+  @DependencyEndpoint var load: @Sendable (String) -> Void
+  @DependencyEndpoint var play: @Sendable () -> Void
 }
 
 extension SoundEffectClient: DependencyKey {

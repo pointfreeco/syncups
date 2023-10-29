@@ -16,7 +16,7 @@ final class SyncUpsListModel: ObservableObject {
   @Dependency(\.mainQueue) var mainQueue
   @Dependency(\.uuid) var uuid
 
-  @Unimplemented var onSyncUpTapped: (SyncUp) -> Void
+  @DependencyEndpoint var onSyncUpTapped: (SyncUp) -> Void
 
   @CasePathable
   @dynamicMemberLookup

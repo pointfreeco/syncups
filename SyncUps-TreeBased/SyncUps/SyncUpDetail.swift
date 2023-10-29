@@ -19,7 +19,7 @@ class SyncUpDetailModel: ObservableObject {
   @Dependency(\.speechClient.authorizationStatus) var authorizationStatus
   @Dependency(\.uuid) var uuid
 
-  @Unimplemented var onConfirmDeletion: () -> Void
+  @DependencyEndpoint var onConfirmDeletion: () -> Void
 
   @CasePathable
   @dynamicMemberLookup
@@ -120,7 +120,7 @@ class SyncUpDetailModel: ObservableObject {
   private func bind() {
     switch destination {
     case let .record(recordMeetingModel):
-      recordMeetingModel.onMeetingFinished = { [weak self] transcript async in
+      recordMeetingModel.$onMeetingFinished { [weak self] transcript async in
         guard let self else { return }
 
         let didCancel = nil == (try? await self.clock.sleep(for: .milliseconds(400)))

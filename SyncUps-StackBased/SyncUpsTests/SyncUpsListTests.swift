@@ -131,14 +131,12 @@ final class SyncUpsListTests: BaseTestCase {
   }
 
   func testSave() async throws {
-    let expectation = self.expectation(description: "DataManager.save")
     let savedData = LockIsolated<Data>(Data())
 
     let model = withDependencies {
       $0.dataManager.load = { _ in try JSONEncoder().encode([SyncUp]()) }
-      $0.dataManager.save = { data, url in
+      $0.dataManager.$save { data, url in
         savedData.setValue(data)
-        expectation.fulfill()
       }
       $0.mainQueue = self.mainQueue.eraseToAnyScheduler()
     } operation: {
@@ -149,7 +147,6 @@ final class SyncUpsListTests: BaseTestCase {
 
     model.confirmAddSyncUpButtonTapped()
     await self.mainQueue.advance(by: .seconds(1))
-    await self.fulfillment(of: [expectation], timeout: 1)
     XCTAssertEqual(
       try JSONDecoder().decode([SyncUp].self, from: savedData.value),
       [.mock]
