@@ -100,10 +100,13 @@ final class SyncUpDetailTests: BaseTestCase {
       )
     }
 
+    let onSyncUpUpdatedExpectation = self.expectation(description: "onSyncUpUpdated")
+    defer { self.wait(for: [onSyncUpUpdatedExpectation], timeout: 0) }
+    model.onSyncUpUpdated = { _ in onSyncUpUpdatedExpectation.fulfill() }
+
     model.editButtonTapped()
 
     let editModel = try XCTUnwrap(model.destination, case: /SyncUpDetailModel.Destination.edit)
-
     editModel.syncUp.title = "Engineering"
     editModel.syncUp.theme = .lavender
     model.doneEditingButtonTapped()

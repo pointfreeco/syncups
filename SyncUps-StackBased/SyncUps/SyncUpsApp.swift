@@ -25,7 +25,6 @@ struct UITestingView: View {
     withDependencies {
       $0.continuousClock = ContinuousClock()
       $0.date = DateGenerator { Date() }
-      $0.mainQueue = DispatchQueue.main.eraseToAnyScheduler()
       $0.soundEffectClient = .noop
       $0.uuid = UUIDGenerator { UUID() }
       switch testName {

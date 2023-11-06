@@ -1,21 +1,32 @@
-import Combine
 import Dependencies
 import IdentifiedCollections
 import SwiftUI
 import SwiftUINavigation
 
 @MainActor
-final class SyncUpsListModel: ObservableObject {
-  @Published var destination: Destination? {
+@Observable
+final class SyncUpsListModel {
+  var destination: Destination? {
     didSet { self.bind() }
   }
-  @Published var syncUps: IdentifiedArrayOf<SyncUp>
+  var syncUps: IdentifiedArrayOf<SyncUp> {
+    didSet {
+      self.saveDebouncedTask?.cancel()
+      self.saveDebouncedTask = Task {
+        try await self.clock.sleep(for: .seconds(1))
+        try self.dataManager.save(
+          JSONEncoder().encode(syncUps), .syncUps
+        )
+      }
+    }
+  }
+  private var saveDebouncedTask: Task<Void, Error>?
 
-  private var destinationCancellable: AnyCancellable?
-  private var cancellables: Set<AnyCancellable> = []
-
+  @ObservationIgnored
+  @Dependency(\.continuousClock) var clock
+  @ObservationIgnored
   @Dependency(\.dataManager) var dataManager
-  @Dependency(\.mainQueue) var mainQueue
+  @ObservationIgnored
   @Dependency(\.uuid) var uuid
 
   enum Destination {
@@ -43,14 +54,6 @@ final class SyncUpsListModel: ObservableObject {
       self.destination = .alert(.dataFailedToLoad)
     } catch {
     }
-
-    self.$syncUps
-      .dropFirst()
-      .debounce(for: .seconds(1), scheduler: self.mainQueue)
-      .sink { [weak self] syncUps in
-        try? self?.dataManager.save(JSONEncoder().encode(syncUps), .syncUps)
-      }
-      .store(in: &self.cancellables)
   }
 
   func addSyncUpButtonTapped() {
@@ -99,10 +102,9 @@ final class SyncUpsListModel: ObservableObject {
         }
       }
 
-      self.destinationCancellable = syncUpDetailModel.$syncUp
-        .sink { [weak self] syncUp in
-          self?.syncUps[id: syncUp.id] = syncUp
-        }
+      syncUpDetailModel.onSyncUpUpdated = { [weak self] syncUp in
+        self?.syncUps[id: syncUp.id] = syncUp
+      }
 
     case .add, .alert, .none:
       break
@@ -145,7 +147,7 @@ extension AlertState where Action == SyncUpsListModel.AlertAction {
 }
 
 struct SyncUpsList: View {
-  @ObservedObject var model: SyncUpsListModel
+  @State var model: SyncUpsListModel
 
   var body: some View {
     NavigationStack {
