@@ -1,21 +1,22 @@
-import Combine
 import Dependencies
 import SwiftUI
 
 @MainActor
-class AppModel: ObservableObject {
-  @Published var path: [Destination] {
+@Observable
+class AppModel {
+  var path: [Destination] {
     didSet { self.bind() }
   }
-  @Published var syncUpsList: SyncUpsListModel {
+  var syncUpsList: SyncUpsListModel {
     didSet { self.bind() }
   }
 
+  @ObservationIgnored
   @Dependency(\.continuousClock) var clock
+  @ObservationIgnored
   @Dependency(\.date.now) var now
+  @ObservationIgnored
   @Dependency(\.uuid) var uuid
-
-  private var detailCancellable: AnyCancellable?
 
   enum Destination: Hashable {
     case detail(SyncUpDetailModel)
@@ -77,10 +78,9 @@ class AppModel: ObservableObject {
       self?.path.append(.meeting(meeting, syncUp: model.syncUp))
     }
 
-    self.detailCancellable = model.$syncUp
-      .sink { [weak self] syncUp in
-        self?.syncUpsList.syncUps[id: syncUp.id] = syncUp
-      }
+    model.onSyncUpUpdated = { [weak self] syncUp in
+      self?.syncUpsList.syncUps[id: syncUp.id] = syncUp
+    }
   }
 
   private func bindRecord(model: RecordMeetingModel) {
@@ -108,7 +108,7 @@ class AppModel: ObservableObject {
 }
 
 struct AppView: View {
-  @ObservedObject var model: AppModel
+  @State var model: AppModel
 
   var body: some View {
     NavigationStack(path: self.$model.path) {

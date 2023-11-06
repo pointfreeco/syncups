@@ -21,7 +21,6 @@ final class AppTests: BaseTestCase {
     let model = withDependencies {
       $0.continuousClock = ImmediateClock()
       $0.date.now = Date(timeIntervalSince1970: 1_234_567_890)
-      $0.mainQueue = .immediate
       $0.dataManager = .mock(initialData: try? JSONEncoder().encode([syncUp]))
       $0.soundEffectClient = .noop
       $0.speechClient.authorizationStatus = { .authorized }
@@ -63,11 +62,11 @@ final class AppTests: BaseTestCase {
   }
 
   func testDelete() async throws {
-    let model = try withDependencies { dependencies in
-      dependencies.dataManager = .mock(
+    let model = try withDependencies {
+      $0.continuousClock = ImmediateClock()
+      $0.dataManager = .mock(
         initialData: try JSONEncoder().encode([SyncUp.mock])
       )
-      dependencies.mainQueue = .immediate
     } operation: {
       AppModel(syncUpsList: SyncUpsListModel())
     }
@@ -89,8 +88,9 @@ final class AppTests: BaseTestCase {
   }
 
   func testDetailEdit() async throws {
-    let model = try withDependencies { dependencies in
-      dependencies.dataManager = .mock(
+    let model = try withDependencies {
+      $0.continuousClock = ImmediateClock()
+      $0.dataManager = .mock(
         initialData: try JSONEncoder().encode([
           SyncUp(
             id: SyncUp.ID(uuidString: "00000000-0000-0000-0000-000000000000")!,
@@ -100,7 +100,6 @@ final class AppTests: BaseTestCase {
           )
         ])
       )
-      dependencies.mainQueue = .immediate
     } operation: {
       AppModel(syncUpsList: SyncUpsListModel())
     }

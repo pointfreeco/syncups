@@ -1,19 +1,30 @@
-import Combine
 import Dependencies
 import IdentifiedCollections
 import SwiftUI
 import SwiftUINavigation
 
 @MainActor
+@Observable
 final class SyncUpsListModel: ObservableObject {
-  @Published var destination: Destination?
-  @Published var syncUps: IdentifiedArrayOf<SyncUp>
+  var destination: Destination?
+  var syncUps: IdentifiedArrayOf<SyncUp> {
+    didSet {
+      self.saveDebouncedTask?.cancel()
+      self.saveDebouncedTask = Task {
+        try await self.clock.sleep(for: .seconds(1))
+        try self.dataManager.save(
+          JSONEncoder().encode(syncUps), .syncUps
+        )
+      }
+    }
+  }
+  private var saveDebouncedTask: Task<Void, Error>?
 
-  private var destinationCancellable: AnyCancellable?
-  private var cancellables: Set<AnyCancellable> = []
-
+  @ObservationIgnored
+  @Dependency(\.continuousClock) var clock
+  @ObservationIgnored
   @Dependency(\.dataManager) var dataManager
-  @Dependency(\.mainQueue) var mainQueue
+  @ObservationIgnored
   @Dependency(\.uuid) var uuid
 
   var onSyncUpTapped: (SyncUp) -> Void = unimplemented("SyncUpsListModel.onSyncUpTapped")
@@ -41,14 +52,6 @@ final class SyncUpsListModel: ObservableObject {
       self.destination = .alert(.dataFailedToLoad)
     } catch {
     }
-
-    self.$syncUps
-      .dropFirst()
-      .debounce(for: .seconds(1), scheduler: self.mainQueue)
-      .sink { [weak self] syncUps in
-        try? self?.dataManager.save(JSONEncoder().encode(syncUps), .syncUps)
-      }
-      .store(in: &self.cancellables)
   }
 
   func addSyncUpButtonTapped() {
