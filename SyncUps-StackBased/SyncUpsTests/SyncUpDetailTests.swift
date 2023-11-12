@@ -57,11 +57,15 @@ final class SyncUpDetailTests: BaseTestCase {
       syncUp: .mock
     )
 
-    model.$onMeetingStarted { syncUp in
+    let onMeetingStartedExpectation = self.expectation(description: "onMeetingStarted")
+    model.onMeetingStarted = { syncUp in
       XCTAssertEqual(syncUp, .mock)
+      onMeetingStartedExpectation.fulfill()
     }
 
     await model.alertButtonTapped(.continueWithoutRecording)
+
+    await self.fulfillment(of: [onMeetingStartedExpectation])
   }
 
   func testSpeechAuthorized() async throws {
@@ -71,11 +75,15 @@ final class SyncUpDetailTests: BaseTestCase {
       SyncUpDetailModel(syncUp: .mock)
     }
 
-    model.$onMeetingStarted { syncUp in
+    let onMeetingStartedExpectation = self.expectation(description: "onMeetingStarted")
+    model.onMeetingStarted = { syncUp in
       XCTAssertEqual(syncUp, .mock)
+      onMeetingStartedExpectation.fulfill()
     }
 
     model.startMeetingButtonTapped()
+
+    await self.fulfillment(of: [onMeetingStartedExpectation])
   }
 
   func testEdit() throws {
@@ -92,10 +100,13 @@ final class SyncUpDetailTests: BaseTestCase {
       )
     }
 
+    let onSyncUpUpdatedExpectation = self.expectation(description: "onSyncUpUpdated")
+    defer { self.wait(for: [onSyncUpUpdatedExpectation], timeout: 0) }
+    model.onSyncUpUpdated = { _ in onSyncUpUpdatedExpectation.fulfill() }
+
     model.editButtonTapped()
 
     let editModel = try XCTUnwrap(model.destination?.edit)
-
     editModel.syncUp.title = "Engineering"
     editModel.syncUp.theme = .lavender
     model.doneEditingButtonTapped()

@@ -1,25 +1,45 @@
 import Clocks
 import CustomDump
 import Dependencies
+import DependenciesMacros
 import SwiftUI
 import SwiftUINavigation
 import XCTestDynamicOverlay
 
 @MainActor
-class SyncUpDetailModel: Hashable, ObservableObject {
-  @Published var destination: Destination?
-  @Published var isDismissed = false
-  @Published var syncUp: SyncUp
+@Observable
+final class SyncUpDetailModel {
+  var destination: Destination?
+  var isDismissed = false
+  var syncUp: SyncUp {
+    didSet {
+      self.onSyncUpUpdated(self.syncUp)
+    }
+  }
 
+  @ObservationIgnored
   @Dependency(\.continuousClock) var clock
+  @ObservationIgnored
   @Dependency(\.date.now) var now
+  @ObservationIgnored
   @Dependency(\.openSettings) var openSettings
+  @ObservationIgnored
   @Dependency(\.speechClient.authorizationStatus) var authorizationStatus
+  @ObservationIgnored
   @Dependency(\.uuid) var uuid
 
-  @DependencyEndpoint var onConfirmDeletion: () -> Void
-  @DependencyEndpoint var onMeetingTapped: (Meeting) -> Void
-  @DependencyEndpoint var onMeetingStarted: (SyncUp) -> Void
+  @DependencyEndpoint
+  @ObservationIgnored
+  var onConfirmDeletion: () -> Void
+  @DependencyEndpoint
+  @ObservationIgnored
+  var onMeetingTapped: (Meeting) -> Void
+  @DependencyEndpoint
+  @ObservationIgnored
+  var onMeetingStarted: (SyncUp) -> Void
+  @DependencyEndpoint
+  @ObservationIgnored
+  var onSyncUpUpdated: (SyncUp) -> Void
 
   @CasePathable
   @dynamicMemberLookup
@@ -39,13 +59,6 @@ class SyncUpDetailModel: Hashable, ObservableObject {
   ) {
     self.destination = destination
     self.syncUp = syncUp
-  }
-
-  nonisolated static func == (lhs: SyncUpDetailModel, rhs: SyncUpDetailModel) -> Bool {
-    lhs === rhs
-  }
-  nonisolated func hash(into hasher: inout Hasher) {
-    hasher.combine(ObjectIdentifier(self))
   }
 
   func deleteMeetings(atOffsets indices: IndexSet) {
@@ -114,8 +127,17 @@ class SyncUpDetailModel: Hashable, ObservableObject {
   }
 }
 
+extension SyncUpDetailModel: Hashable {
+  nonisolated static func == (lhs: SyncUpDetailModel, rhs: SyncUpDetailModel) -> Bool {
+    lhs === rhs
+  }
+  nonisolated func hash(into hasher: inout Hasher) {
+    hasher.combine(ObjectIdentifier(self))
+  }
+}
+
 struct SyncUpDetailView: View {
-  @ObservedObject var model: SyncUpDetailModel
+  @State var model: SyncUpDetailModel
 
   var body: some View {
     List {

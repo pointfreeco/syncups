@@ -30,8 +30,10 @@ final class RecordMeetingTests: BaseTestCase {
       )
     }
 
-    model.$onMeetingFinished {
+    let onMeetingFinishedExpectation = self.expectation(description: "onMeetingFinished")
+    model.onMeetingFinished = {
       XCTAssertEqual($0, "")
+      onMeetingFinishedExpectation.fulfill()
     }
 
     let task = Task {
@@ -64,6 +66,7 @@ final class RecordMeetingTests: BaseTestCase {
 
     await task.value
 
+    await self.fulfillment(of: [onMeetingFinishedExpectation])
     XCTAssertEqual(model.isDismissed, true)
     XCTAssertEqual(soundEffectPlayCount.value, 2)
   }
@@ -73,7 +76,7 @@ final class RecordMeetingTests: BaseTestCase {
       $0.continuousClock = ImmediateClock()
       $0.soundEffectClient = .noop
       $0.speechClient.authorizationStatus = { .authorized }
-      $0.speechClient.startTask = { _ in
+      $0.speechClient.startTask = { @Sendable _ in
         AsyncThrowingStream { continuation in
           continuation.yield(
             SpeechRecognitionResult(
@@ -94,12 +97,15 @@ final class RecordMeetingTests: BaseTestCase {
       )
     }
 
-    model.$onMeetingFinished {
+    let onMeetingFinishedExpectation = self.expectation(description: "onMeetingFinished")
+    model.onMeetingFinished = {
       XCTAssertEqual($0, "I completed the project")
+      onMeetingFinishedExpectation.fulfill()
     }
 
     await model.task()
 
+    await self.fulfillment(of: [onMeetingFinishedExpectation])
     XCTAssertEqual(model.isDismissed, true)
   }
 
@@ -114,8 +120,10 @@ final class RecordMeetingTests: BaseTestCase {
       RecordMeetingModel(syncUp: .mock)
     }
 
-    model.$onMeetingFinished {
+    let onMeetingFinishedExpectation = self.expectation(description: "onMeetingFinished")
+    model.onMeetingFinished = {
       XCTAssertEqual($0, "")
+      onMeetingFinishedExpectation.fulfill()
     }
 
     let task = Task {
@@ -135,6 +143,7 @@ final class RecordMeetingTests: BaseTestCase {
 
     await model.alertButtonTapped(.confirmSave)
 
+    await self.fulfillment(of: [onMeetingFinishedExpectation])
     XCTAssertEqual(model.isDismissed, true)
 
     task.cancel()
@@ -152,7 +161,7 @@ final class RecordMeetingTests: BaseTestCase {
       RecordMeetingModel(syncUp: .mock)
     }
 
-    model.$onMeetingFinished { _ in XCTFail() }
+    model.onMeetingFinished = { _ in XCTFail() }
 
     let task = Task {
       await model.task()
@@ -196,8 +205,10 @@ final class RecordMeetingTests: BaseTestCase {
       )
     }
 
-    model.$onMeetingFinished {
+    let onMeetingFinishedExpectation = self.expectation(description: "onMeetingFinished")
+    model.onMeetingFinished = {
       XCTAssertEqual($0, "")
+      onMeetingFinishedExpectation.fulfill()
     }
 
     let task = Task {
@@ -230,6 +241,7 @@ final class RecordMeetingTests: BaseTestCase {
 
     await model.alertButtonTapped(.confirmSave)
 
+    await self.fulfillment(of: [onMeetingFinishedExpectation])
     XCTAssertEqual(model.isDismissed, true)
     XCTAssertEqual(soundEffectPlayCount.value, 2)
 
@@ -242,7 +254,7 @@ final class RecordMeetingTests: BaseTestCase {
       $0.continuousClock = ImmediateClock()
       $0.soundEffectClient = .noop
       $0.speechClient.authorizationStatus = { .authorized }
-      $0.speechClient.startTask = { _ in
+      $0.speechClient.startTask = { @Sendable _ in
         AsyncThrowingStream {
           $0.yield(
             SpeechRecognitionResult(
@@ -264,8 +276,10 @@ final class RecordMeetingTests: BaseTestCase {
       )
     }
 
-    model.$onMeetingFinished { transcript in
+    let onMeetingFinishedExpectation = self.expectation(description: "onMeetingFinished")
+    model.onMeetingFinished = { transcript in
       XCTAssertEqual(transcript, "I completed the project ❌")
+      onMeetingFinishedExpectation.fulfill()
     }
 
     let task = Task {
@@ -287,6 +301,7 @@ final class RecordMeetingTests: BaseTestCase {
     await task.value
 
     XCTAssertEqual(model.secondsElapsed, 3)
+    await self.fulfillment(of: [onMeetingFinishedExpectation])
   }
 
   func testSpeechRecognitionFailure_Discard() async throws {
@@ -294,7 +309,7 @@ final class RecordMeetingTests: BaseTestCase {
       $0.continuousClock = ImmediateClock()
       $0.soundEffectClient = .noop
       $0.speechClient.authorizationStatus = { .authorized }
-      $0.speechClient.startTask = { _ in
+      $0.speechClient.startTask = { @Sendable _ in
         struct SpeechRecognitionFailure: Error {}
         return AsyncThrowingStream.finished(throwing: SpeechRecognitionFailure())
       }

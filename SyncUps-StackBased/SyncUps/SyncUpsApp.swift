@@ -25,7 +25,6 @@ struct UITestingView: View {
     withDependencies {
       $0.continuousClock = ContinuousClock()
       $0.date = DateGenerator { Date() }
-      $0.mainQueue = DispatchQueue.main.eraseToAnyScheduler()
       $0.soundEffectClient = .noop
       $0.uuid = UUIDGenerator { UUID() }
       switch testName {
@@ -36,7 +35,7 @@ struct UITestingView: View {
       case "testRecord", "testRecord_Discard":
         $0.date = DateGenerator { Date(timeIntervalSince1970: 1234567890) }
         $0.speechClient.authorizationStatus = { .authorized }
-        $0.speechClient.startTask = { _ in
+        $0.speechClient.startTask = { @Sendable _ in
           AsyncThrowingStream {
             $0.yield(
               SpeechRecognitionResult(

@@ -30,6 +30,7 @@
 		CA350CCF2984518A00434F8A /* SyncUpsListUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350CCE2984518A00434F8A /* SyncUpsListUITests.swift */; };
 		CA350CD2298452F300434F8A /* ding.wav in Resources */ = {isa = PBXBuildFile; fileRef = CA350CD1298452F300434F8A /* ding.wav */; };
 		CAC7A5A52ABA3D5700985FC1 /* BaseTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAC7A5A42ABA3D5700985FC1 /* BaseTestCase.swift */; };
+		DC53DCC32AFEB89F00668ED8 /* DependenciesMacros in Frameworks */ = {isa = PBXBuildFile; productRef = DC53DCC22AFEB89F00668ED8 /* DependenciesMacros */; };
 		DC561EB22AEC5D20004DB7A3 /* XCTestDynamicOverlay in Frameworks */ = {isa = PBXBuildFile; productRef = DC561EB12AEC5D20004DB7A3 /* XCTestDynamicOverlay */; };
 /* End PBXBuildFile section */
 
@@ -82,6 +83,7 @@
 			files = (
 				DC561EB22AEC5D20004DB7A3 /* XCTestDynamicOverlay in Frameworks */,
 				CA350CC22984511300434F8A /* Tagged in Frameworks */,
+				DC53DCC32AFEB89F00668ED8 /* DependenciesMacros in Frameworks */,
 				CA350CBC298450E700434F8A /* SwiftUINavigation in Frameworks */,
 				CA350CBF2984510200434F8A /* IdentifiedCollections in Frameworks */,
 				CA350CC52984515C00434F8A /* Dependencies in Frameworks */,
@@ -112,6 +114,7 @@
 				CA350C732984506E00434F8A /* SyncUps */,
 				CA350C842984506F00434F8A /* SyncUpsTests */,
 				CA350C8E2984506F00434F8A /* SyncUpsUITests */,
+				DC53DCC12AFEB89F00668ED8 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -181,6 +184,13 @@
 			path = Resources;
 			sourceTree = "<group>";
 		};
+		DC53DCC12AFEB89F00668ED8 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -203,6 +213,7 @@
 				CA350CC12984511300434F8A /* Tagged */,
 				CA350CC42984515C00434F8A /* Dependencies */,
 				DC561EB12AEC5D20004DB7A3 /* XCTestDynamicOverlay */,
+				DC53DCC22AFEB89F00668ED8 /* DependenciesMacros */,
 			);
 			productName = SyncUps;
 			productReference = CA350C712984506E00434F8A /* SyncUps-TreeBased.app */;
@@ -717,16 +728,16 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/pointfreeco/swift-dependencies.git";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.0;
+				branch = macros;
+				kind = branch;
 			};
 		};
 		DC561EB02AEC5D20004DB7A3 /* XCRemoteSwiftPackageReference "xctest-dynamic-overlay" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/pointfreeco/xctest-dynamic-overlay.git";
 			requirement = {
-				branch = "unimplemented-macro";
-				kind = branch;
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
@@ -751,6 +762,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = CA350CC32984515C00434F8A /* XCRemoteSwiftPackageReference "swift-dependencies" */;
 			productName = Dependencies;
+		};
+		DC53DCC22AFEB89F00668ED8 /* DependenciesMacros */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CA350CC32984515C00434F8A /* XCRemoteSwiftPackageReference "swift-dependencies" */;
+			productName = DependenciesMacros;
 		};
 		DC561EB12AEC5D20004DB7A3 /* XCTestDynamicOverlay */ = {
 			isa = XCSwiftPackageProductDependency;

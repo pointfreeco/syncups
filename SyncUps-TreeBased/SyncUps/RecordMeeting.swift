@@ -1,24 +1,30 @@
 import Clocks
 import Dependencies
+import DependenciesMacros
 import Speech
 import SwiftUI
 import SwiftUINavigation
-import XCTestDynamicOverlay
 
 @MainActor
-class RecordMeetingModel: ObservableObject {
-  @Published var destination: Destination?
-  @Published var isDismissed = false
-  @Published var secondsElapsed = 0
-  @Published var speakerIndex = 0
+@Observable
+class RecordMeetingModel {
+  var destination: Destination?
+  var isDismissed = false
+  var secondsElapsed = 0
+  var speakerIndex = 0
   let syncUp: SyncUp
   private var transcript = ""
 
+  @ObservationIgnored
   @Dependency(\.continuousClock) var clock
+  @ObservationIgnored
   @Dependency(\.soundEffectClient) var soundEffectClient
+  @ObservationIgnored
   @Dependency(\.speechClient) var speechClient
 
-  @DependencyEndpoint var onMeetingFinished: (String) async -> Void
+  @DependencyEndpoint
+  @ObservationIgnored
+  var onMeetingFinished: (_ transcript: String) async -> Void
 
   @CasePathable
   @dynamicMemberLookup
@@ -81,7 +87,7 @@ class RecordMeetingModel: ObservableObject {
   }
 
   func task() async {
-    self.soundEffectClient.load("ding.wav")
+    self.soundEffectClient.load(fileName: "ding.wav")
 
     let authorization =
       await self.speechClient.authorizationStatus() == .notDetermined
@@ -102,12 +108,14 @@ class RecordMeetingModel: ObservableObject {
 
   private func finishMeeting() async {
     self.isDismissed = true
-    await self.onMeetingFinished(self.transcript)
+    await self.onMeetingFinished(transcript: self.transcript)
   }
 
   private func startSpeechRecognition() async {
     do {
-      let speechTask = await self.speechClient.startTask(SFSpeechAudioBufferRecognitionRequest())
+      let speechTask = await self.speechClient.startTask(
+        request: SFSpeechAudioBufferRecognitionRequest()
+      )
       for try await result in speechTask {
         self.transcript = result.bestTranscription.formattedString
       }
@@ -180,7 +188,7 @@ extension AlertState where Action == RecordMeetingModel.AlertAction {
 
 struct RecordMeetingView: View {
   @Environment(\.dismiss) var dismiss
-  @ObservedObject var model: RecordMeetingModel
+  @State var model: RecordMeetingModel
 
   var body: some View {
     ZStack {

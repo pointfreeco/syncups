@@ -84,7 +84,7 @@ final class SyncUpDetailTests: BaseTestCase {
       $0.date.now = Date(timeIntervalSince1970: 1_234_567_890)
       $0.soundEffectClient = .noop
       $0.speechClient.authorizationStatus = { .authorized }
-      $0.speechClient.startTask = { _ in
+      $0.speechClient.startTask = { @Sendable _ in
         AsyncThrowingStream { continuation in
           continuation.yield(
             SpeechRecognitionResult(
@@ -110,6 +110,8 @@ final class SyncUpDetailTests: BaseTestCase {
         )
       )
     }
+
+    model.$onSyncUpUpdated { _ in }
 
     let recordModel = try XCTUnwrap(model.destination?.record)
 
@@ -141,6 +143,10 @@ final class SyncUpDetailTests: BaseTestCase {
         )
       )
     }
+
+    let onSyncUpUpdatedExpectation = self.expectation(description: "onSyncUpUpdated")
+    defer { self.wait(for: [onSyncUpUpdatedExpectation], timeout: 0) }
+    model.onSyncUpUpdated = { _ in onSyncUpUpdatedExpectation.fulfill() }
 
     model.editButtonTapped()
 

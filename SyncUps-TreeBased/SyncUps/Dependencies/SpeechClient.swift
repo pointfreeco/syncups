@@ -1,16 +1,15 @@
 import Dependencies
+import DependenciesMacros
 @preconcurrency import Speech
 
+@DependencyClient
 struct SpeechClient {
-  @DependencyEndpoint
   var authorizationStatus: @Sendable () -> SFSpeechRecognizerAuthorizationStatus = { .denied }
-  @DependencyEndpoint
   var requestAuthorization: @Sendable () async -> SFSpeechRecognizerAuthorizationStatus = {
     .denied
   }
-  @DependencyEndpoint
   var startTask:
-    @Sendable (SFSpeechAudioBufferRecognitionRequest) async -> AsyncThrowingStream<
+    @Sendable (_ request: SFSpeechAudioBufferRecognitionRequest) async -> AsyncThrowingStream<
       SpeechRecognitionResult, Error
     > = { _ in .finished() }
 }

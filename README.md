@@ -19,9 +19,8 @@ While we have built the SyncUps application in the style that makes the most sen
 that some of our choices aren’t for everyone. We would love if others fork this repo and rebuild 
 it in the style of their choice.
 
-Don’t like to use an `ObservableObject` for each screen? Prefer to use `@StateObject` instead of 
-`@ObservedObject`? Want to use an architectural pattern such as VIPER? Have a different way of 
-handling dependencies? 
+Don’t like to use an observable model for each screen? Prefer to use `@EnvironmentObject` instead?
+Want to use an architectural pattern such as VIPER? Have a different way of handling dependencies? 
 
 Please show us! Just complete the following steps:
 
@@ -96,7 +95,7 @@ some key additions:
 Here is a list of ports of the app:
 
 * [Scrumdinger](https://developer.apple.com/tutorials/app-dev-training/getting-started-with-scrumdinger): Apple's original Scrumdinger application.
-* [Composable Architecture](https://github.com/pointfreeco/swift-composable-architecture/tree/223e46bdc05c90845869f9e03f4898821f30fa7e/Examples/SyncUps): A port of the SyncUps app to the Composable Architecture.
+* [Composable Architecture](https://github.com/pointfreeco/swift-composable-architecture/tree/main/Examples/SyncUps): A port of the SyncUps app to the Composable Architecture.
 * [https://github.com/nashysolutions/standups](https://github.com/nashysolutions/standups)
 
 [modern-swiftui-collection]: https://www.pointfree.co/collections/swiftui/modern-swiftui

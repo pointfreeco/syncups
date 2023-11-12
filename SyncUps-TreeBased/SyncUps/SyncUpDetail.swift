@@ -1,25 +1,39 @@
 import Clocks
 import CustomDump
 import Dependencies
+import DependenciesMacros
 import SwiftUI
 import SwiftUINavigation
 import XCTestDynamicOverlay
 
 @MainActor
-class SyncUpDetailModel: ObservableObject {
-  @Published var destination: Destination? {
+@Observable
+class SyncUpDetailModel {
+  var destination: Destination? {
     didSet { self.bind() }
   }
-  @Published var isDismissed = false
-  @Published var syncUp: SyncUp
+  var isDismissed = false
+  var syncUp: SyncUp {
+    didSet { self.onSyncUpUpdated(self.syncUp) }
+  }
 
+  @ObservationIgnored
   @Dependency(\.continuousClock) var clock
+  @ObservationIgnored
   @Dependency(\.date.now) var now
+  @ObservationIgnored
   @Dependency(\.openSettings) var openSettings
+  @ObservationIgnored
   @Dependency(\.speechClient.authorizationStatus) var authorizationStatus
+  @ObservationIgnored
   @Dependency(\.uuid) var uuid
 
-  @DependencyEndpoint var onConfirmDeletion: () -> Void
+  @DependencyEndpoint
+  @ObservationIgnored 
+  var onConfirmDeletion: () -> Void
+  @DependencyEndpoint
+  @ObservationIgnored 
+  var onSyncUpUpdated: (SyncUp) -> Void
 
   @CasePathable
   @dynamicMemberLookup
@@ -120,7 +134,7 @@ class SyncUpDetailModel: ObservableObject {
   private func bind() {
     switch destination {
     case let .record(recordMeetingModel):
-      recordMeetingModel.$onMeetingFinished { [weak self] transcript async in
+      recordMeetingModel.onMeetingFinished = { [weak self] transcript async in
         guard let self else { return }
 
         let didCancel = nil == (try? await self.clock.sleep(for: .milliseconds(400)))
@@ -145,7 +159,7 @@ class SyncUpDetailModel: ObservableObject {
 
 struct SyncUpDetailView: View {
   @Environment(\.dismiss) var dismiss
-  @ObservedObject var model: SyncUpDetailModel
+  @State var model: SyncUpDetailModel
 
   var body: some View {
     List {
