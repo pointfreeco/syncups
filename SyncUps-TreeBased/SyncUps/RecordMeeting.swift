@@ -7,7 +7,7 @@ import SwiftUINavigation
 
 @MainActor
 @Observable
-class RecordMeetingModel {
+final class RecordMeetingModel {
   var destination: Destination?
   var isDismissed = false
   var secondsElapsed = 0
@@ -147,6 +147,15 @@ class RecordMeetingModel {
   }
 }
 
+extension RecordMeetingModel: Hashable {
+  nonisolated static func == (lhs: RecordMeetingModel, rhs: RecordMeetingModel) -> Bool {
+    lhs === rhs
+  }
+  nonisolated func hash(into hasher: inout Hasher) {
+    hasher.combine(ObjectIdentifier(self))
+  }
+}
+
 extension AlertState where Action == RecordMeetingModel.AlertAction {
   static func endMeeting(isDiscardable: Bool) -> Self {
     Self {
@@ -223,7 +232,7 @@ struct RecordMeetingView: View {
       }
     }
     .navigationBarBackButtonHidden(true)
-    .alert(unwrapping: self.$model.destination.alert) { action in
+    .alert(self.$model.destination.alert) { action in
       await self.model.alertButtonTapped(action)
     }
     .task { await self.model.task() }

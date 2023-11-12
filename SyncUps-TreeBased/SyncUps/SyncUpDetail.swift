@@ -8,7 +8,7 @@ import XCTestDynamicOverlay
 
 @MainActor
 @Observable
-class SyncUpDetailModel {
+final class SyncUpDetailModel {
   var destination: Destination? {
     didSet { self.bind() }
   }
@@ -157,6 +157,15 @@ class SyncUpDetailModel {
   }
 }
 
+extension SyncUpDetailModel: Hashable {
+  nonisolated static func == (lhs: SyncUpDetailModel, rhs: SyncUpDetailModel) -> Bool {
+    lhs === rhs
+  }
+  nonisolated func hash(into hasher: inout Hasher) {
+    hasher.combine(ObjectIdentifier(self))
+  }
+}
+
 struct SyncUpDetailView: View {
   @Environment(\.dismiss) var dismiss
   @State var model: SyncUpDetailModel
@@ -233,16 +242,16 @@ struct SyncUpDetailView: View {
         self.model.editButtonTapped()
       }
     }
-    .navigationDestination(unwrapping: self.$model.destination.meeting) { $meeting in
+    .navigationDestination(item: self.$model.destination.meeting) { meeting in
       MeetingView(meeting: meeting, syncUp: self.model.syncUp)
     }
-    .navigationDestination(unwrapping: self.$model.destination.record) { $model in
+    .navigationDestination(item: self.$model.destination.record) { model in
       RecordMeetingView(model: model)
     }
-    .alert(unwrapping: self.$model.destination.alert) { action in
+    .alert(self.$model.destination.alert) { action in
       await self.model.alertButtonTapped(action)
     }
-    .sheet(unwrapping: self.$model.destination.edit) { $editModel in
+    .sheet(item: self.$model.destination.edit) { editModel in
       NavigationStack {
         SyncUpFormView(model: editModel)
           .navigationTitle(self.model.syncUp.title)

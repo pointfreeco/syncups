@@ -146,7 +146,7 @@ struct SyncUpsList: View {
       }
     }
     .navigationTitle("Daily Sync-ups")
-    .sheet(unwrapping: self.$model.destination.add) { $model in
+    .sheet(item: self.$model.destination.add) { model in
       NavigationStack {
         SyncUpFormView(model: model)
           .navigationTitle("New sync-up")
@@ -164,7 +164,7 @@ struct SyncUpsList: View {
           }
       }
     }
-    .alert(unwrapping: self.$model.destination.alert) {
+    .alert(self.$model.destination.alert) {
       self.model.alertButtonTapped($0)
     }
   }

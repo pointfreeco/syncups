@@ -230,7 +230,7 @@ struct RecordMeetingView: View {
       }
     }
     .navigationBarBackButtonHidden(true)
-    .alert(unwrapping: self.$model.destination.alert) { action in
+    .alert(self.$model.destination.alert) { action in
       await self.model.alertButtonTapped(action)
     }
     .task { await self.model.task() }

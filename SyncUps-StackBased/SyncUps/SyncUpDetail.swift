@@ -211,10 +211,10 @@ struct SyncUpDetailView: View {
         self.model.editButtonTapped()
       }
     }
-    .alert(unwrapping: self.$model.destination.alert) { action in
+    .alert(self.$model.destination.alert) { action in
       await self.model.alertButtonTapped(action)
     }
-    .sheet(unwrapping: self.$model.destination.edit) { $editModel in
+    .sheet(item: self.$model.destination.edit) { editModel in
       NavigationStack {
         SyncUpFormView(model: editModel)
           .navigationTitle(self.model.syncUp.title)
