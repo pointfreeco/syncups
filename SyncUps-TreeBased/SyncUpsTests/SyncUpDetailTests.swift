@@ -111,7 +111,9 @@ final class SyncUpDetailTests: BaseTestCase {
       )
     }
 
-    model.$onSyncUpUpdated { _ in }
+    let onSyncUpUpdatedExpectation = self.expectation(description: "onSyncUpUpdated")
+    defer { self.wait(for: [onSyncUpUpdatedExpectation], timeout: 0) }
+    model.onSyncUpUpdated = { _ in onSyncUpUpdatedExpectation.fulfill() }
 
     let recordModel = try XCTUnwrap(model.destination?.record)
 

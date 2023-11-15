@@ -16,7 +16,7 @@ final class SyncUpsListTests: BaseTestCase {
     let model = withDependencies {
       $0.continuousClock = ImmediateClock()
       $0.dataManager = .mock()
-      $0.dataManager.save = { data, _ in savedData.setValue(data) }
+      $0.dataManager.save = { @Sendable data, _ in savedData.setValue(data) }
       $0.uuid = .incrementing
     } operation: {
       SyncUpsListModel()
@@ -118,7 +118,7 @@ final class SyncUpsListTests: BaseTestCase {
 
   func testLoadingDataFileNotFound() async throws {
     let model = withDependencies {
-      $0.dataManager.load = { _ in
+      $0.dataManager.load = { @Sendable _ in
         struct FileNotFound: Error {}
         throw FileNotFound()
       }
@@ -134,8 +134,8 @@ final class SyncUpsListTests: BaseTestCase {
     let savedData = LockIsolated<Data>(Data())
 
     let model = withDependencies {
-      $0.dataManager.load = { _ in try JSONEncoder().encode([SyncUp]()) }
-      $0.dataManager.save = { data, _ in
+      $0.dataManager.load = { @Sendable _ in try JSONEncoder().encode([SyncUp]()) }
+      $0.dataManager.save = { @Sendable data, _ in
         savedData.setValue(data)
         expectation.fulfill()
       }
