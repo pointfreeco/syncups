@@ -1,5 +1,6 @@
 import Clocks
 import Dependencies
+import DependenciesMacros
 import Speech
 import SwiftUI
 import SwiftUINavigation
@@ -7,7 +8,7 @@ import XCTestDynamicOverlay
 
 @MainActor
 @Observable
-class RecordMeetingModel: Hashable {
+final class RecordMeetingModel {
   var destination: Destination?
   var isDismissed = false
   var secondsElapsed = 0
@@ -22,10 +23,12 @@ class RecordMeetingModel: Hashable {
   @ObservationIgnored
   @Dependency(\.speechClient) var speechClient
 
-  var onMeetingFinished: (String) async -> Void = unimplemented(
-    "RecordMeetingModel.onMeetingFinished"
-  )
+  @DependencyEndpoint
+  @ObservationIgnored 
+  var onMeetingFinished: (_ transcript: String) async -> Void
 
+  @CasePathable
+  @dynamicMemberLookup
   enum Destination {
     case alert(AlertState<AlertAction>)
   }
@@ -41,13 +44,6 @@ class RecordMeetingModel: Hashable {
   ) {
     self.destination = destination
     self.syncUp = syncUp
-  }
-
-  nonisolated static func == (lhs: RecordMeetingModel, rhs: RecordMeetingModel) -> Bool {
-    lhs === rhs
-  }
-  nonisolated func hash(into hasher: inout Hasher) {
-    hasher.combine(ObjectIdentifier(self))
   }
 
   var durationRemaining: Duration {
@@ -92,7 +88,7 @@ class RecordMeetingModel: Hashable {
   }
 
   func task() async {
-    self.soundEffectClient.load("ding.wav")
+    self.soundEffectClient.load(fileName: "ding.wav")
 
     let authorization =
       await self.speechClient.authorizationStatus() == .notDetermined
@@ -113,7 +109,9 @@ class RecordMeetingModel: Hashable {
 
   private func startSpeechRecognition() async {
     do {
-      let speechTask = await self.speechClient.startTask(SFSpeechAudioBufferRecognitionRequest())
+      let speechTask = await self.speechClient.startTask(
+        request: SFSpeechAudioBufferRecognitionRequest()
+      )
       for try await result in speechTask {
         self.transcript = result.bestTranscription.formattedString
       }
@@ -143,9 +141,11 @@ class RecordMeetingModel: Hashable {
 
   private func finishMeeting() async {
     self.isDismissed = true
-    await self.onMeetingFinished(self.transcript)
+    await self.onMeetingFinished(transcript: self.transcript)
   }
 }
+
+extension RecordMeetingModel: HashableObject {}
 
 extension AlertState where Action == RecordMeetingModel.AlertAction {
   static func endMeeting(isDiscardable: Bool) -> Self {
@@ -223,10 +223,7 @@ struct RecordMeetingView: View {
       }
     }
     .navigationBarBackButtonHidden(true)
-    .alert(
-      unwrapping: self.$model.destination,
-      case: /RecordMeetingModel.Destination.alert
-    ) { action in
+    .alert(self.$model.destination.alert) { action in
       await self.model.alertButtonTapped(action)
     }
     .task { await self.model.task() }

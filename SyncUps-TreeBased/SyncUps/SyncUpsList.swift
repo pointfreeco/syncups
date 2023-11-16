@@ -14,9 +14,7 @@ final class SyncUpsListModel {
       self.saveDebouncedTask?.cancel()
       self.saveDebouncedTask = Task {
         try await self.clock.sleep(for: .seconds(1))
-        try self.dataManager.save(
-          JSONEncoder().encode(syncUps), .syncUps
-        )
+        try self.dataManager.save(JSONEncoder().encode(self.syncUps), to: .syncUps)
       }
     }
   }
@@ -29,6 +27,8 @@ final class SyncUpsListModel {
   @ObservationIgnored
   @Dependency(\.uuid) var uuid
 
+  @CasePathable
+  @dynamicMemberLookup
   enum Destination {
     case add(SyncUpFormModel)
     case alert(AlertState<AlertAction>)
@@ -48,7 +48,7 @@ final class SyncUpsListModel {
     do {
       self.syncUps = try JSONDecoder().decode(
         IdentifiedArray.self,
-        from: self.dataManager.load(.syncUps)
+        from: self.dataManager.load(from: .syncUps)
       )
     } catch is DecodingError {
       self.destination = .alert(.dataFailedToLoad)
@@ -169,10 +169,7 @@ struct SyncUpsList: View {
         }
       }
       .navigationTitle("Daily Sync-ups")
-      .sheet(
-        unwrapping: self.$model.destination,
-        case: /SyncUpsListModel.Destination.add
-      ) { $model in
+      .sheet(item: self.$model.destination.add) { model in
         NavigationStack {
           SyncUpFormView(model: model)
             .navigationTitle("New sync-up")
@@ -190,16 +187,10 @@ struct SyncUpsList: View {
             }
         }
       }
-      .navigationDestination(
-        unwrapping: self.$model.destination,
-        case: /SyncUpsListModel.Destination.detail
-      ) { $detailModel in
+      .navigationDestination(item: self.$model.destination.detail) { detailModel in
         SyncUpDetailView(model: detailModel)
       }
-      .alert(
-        unwrapping: self.$model.destination,
-        case: /SyncUpsListModel.Destination.alert
-      ) {
+      .alert(self.$model.destination.alert) {
         self.model.alertButtonTapped($0)
       }
     }

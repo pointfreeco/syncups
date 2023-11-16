@@ -24,7 +24,7 @@ final class AppTests: BaseTestCase {
       $0.dataManager = .mock(initialData: try? JSONEncoder().encode([syncUp]))
       $0.soundEffectClient = .noop
       $0.speechClient.authorizationStatus = { .authorized }
-      $0.speechClient.startTask = { _ in
+      $0.speechClient.startTask = { @Sendable _ in
         AsyncThrowingStream { continuation in
           continuation.yield(
             SpeechRecognitionResult(
@@ -46,7 +46,7 @@ final class AppTests: BaseTestCase {
       )
     }
 
-    let recordModel = try XCTUnwrap(model.path[1], case: /AppModel.Destination.record)
+    let recordModel = try XCTUnwrap(model.path[1].record)
     await recordModel.task()
 
     XCTAssertNoDifference(
@@ -73,11 +73,11 @@ final class AppTests: BaseTestCase {
 
     model.syncUpsList.syncUpTapped(syncUp: model.syncUpsList.syncUps[0])
 
-    let detailModel = try XCTUnwrap(model.path[0], case: /AppModel.Destination.detail)
+    let detailModel = try XCTUnwrap(model.path[0].detail)
 
     detailModel.deleteButtonTapped()
 
-    let alert = try XCTUnwrap(detailModel.destination, case: /SyncUpDetailModel.Destination.alert)
+    let alert = try XCTUnwrap(detailModel.destination?.alert)
 
     XCTAssertNoDifference(alert, .deleteSyncUp)
 
@@ -106,12 +106,11 @@ final class AppTests: BaseTestCase {
 
     model.syncUpsList.syncUpTapped(syncUp: model.syncUpsList.syncUps[0])
 
-    let detailModel = try XCTUnwrap(model.path[0], case: /AppModel.Destination.detail)
+    let detailModel = try XCTUnwrap(model.path[0].detail)
 
     detailModel.editButtonTapped()
 
-    let editModel = try XCTUnwrap(
-      detailModel.destination, case: /SyncUpDetailModel.Destination.edit)
+    let editModel = try XCTUnwrap(detailModel.destination?.edit)
 
     editModel.syncUp.title = "Design"
     detailModel.doneEditingButtonTapped()

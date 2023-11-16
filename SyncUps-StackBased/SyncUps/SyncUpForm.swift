@@ -3,7 +3,7 @@ import SwiftUI
 import SwiftUINavigation
 
 @Observable
-class SyncUpFormModel {
+final class SyncUpFormModel: Identifiable {
   var focus: Field?
   var syncUp: SyncUp
 

@@ -34,6 +34,8 @@
 		CAC7A59E2ABA374500985FC1 /* ConcurrencyExtras in Frameworks */ = {isa = PBXBuildFile; productRef = CAC7A59D2ABA374500985FC1 /* ConcurrencyExtras */; };
 		CAC7A5A12ABA374D00985FC1 /* ConcurrencyExtras in Frameworks */ = {isa = PBXBuildFile; productRef = CAC7A5A02ABA374D00985FC1 /* ConcurrencyExtras */; };
 		CAC7A5A32ABA375800985FC1 /* BaseTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAC7A5A22ABA375800985FC1 /* BaseTestCase.swift */; };
+		DC53DCC02AFEB89300668ED8 /* DependenciesMacros in Frameworks */ = {isa = PBXBuildFile; productRef = DC53DCBF2AFEB89300668ED8 /* DependenciesMacros */; };
+		DC561EB52AEC5D2F004DB7A3 /* XCTestDynamicOverlay in Frameworks */ = {isa = PBXBuildFile; productRef = DC561EB42AEC5D2F004DB7A3 /* XCTestDynamicOverlay */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -89,6 +91,8 @@
 				CA350CC22984511300434F8A /* Tagged in Frameworks */,
 				CA350CBC298450E700434F8A /* SwiftUINavigation in Frameworks */,
 				CA350CBF2984510200434F8A /* IdentifiedCollections in Frameworks */,
+				DC53DCC02AFEB89300668ED8 /* DependenciesMacros in Frameworks */,
+				DC561EB52AEC5D2F004DB7A3 /* XCTestDynamicOverlay in Frameworks */,
 				CA350CC52984515C00434F8A /* Dependencies in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -219,6 +223,8 @@
 				CA350CC12984511300434F8A /* Tagged */,
 				CA350CC42984515C00434F8A /* Dependencies */,
 				CAC7A59D2ABA374500985FC1 /* ConcurrencyExtras */,
+				DC561EB42AEC5D2F004DB7A3 /* XCTestDynamicOverlay */,
+				DC53DCBF2AFEB89300668ED8 /* DependenciesMacros */,
 			);
 			productName = SyncUps;
 			productReference = CA350C712984506E00434F8A /* SyncUps-StackBased.app */;
@@ -303,6 +309,7 @@
 				CA350CC02984511300434F8A /* XCRemoteSwiftPackageReference "swift-tagged" */,
 				CA350CC32984515C00434F8A /* XCRemoteSwiftPackageReference "swift-dependencies" */,
 				CAC7A59C2ABA374500985FC1 /* XCRemoteSwiftPackageReference "swift-concurrency-extras" */,
+				DC561EB32AEC5D2F004DB7A3 /* XCRemoteSwiftPackageReference "xctest-dynamic-overlay" */,
 			);
 			productRefGroup = CA350C722984506E00434F8A /* Products */;
 			projectDirPath = "";
@@ -715,7 +722,7 @@
 			repositoryURL = "https://github.com/pointfreeco/swiftui-navigation.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.0;
+				minimumVersion = 1.2.0;
 			};
 		};
 		CA350CBD2984510200434F8A /* XCRemoteSwiftPackageReference "swift-identified-collections" */ = {
@@ -739,12 +746,20 @@
 			repositoryURL = "https://github.com/pointfreeco/swift-dependencies.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.0;
+				minimumVersion = 1.1.1;
 			};
 		};
 		CAC7A59C2ABA374500985FC1 /* XCRemoteSwiftPackageReference "swift-concurrency-extras" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/pointfreeco/swift-concurrency-extras";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
+		DC561EB32AEC5D2F004DB7A3 /* XCRemoteSwiftPackageReference "xctest-dynamic-overlay" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pointfreeco/xctest-dynamic-overlay.git";
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 1.0.0;
@@ -782,6 +797,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = CAC7A59C2ABA374500985FC1 /* XCRemoteSwiftPackageReference "swift-concurrency-extras" */;
 			productName = ConcurrencyExtras;
+		};
+		DC53DCBF2AFEB89300668ED8 /* DependenciesMacros */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CA350CC32984515C00434F8A /* XCRemoteSwiftPackageReference "swift-dependencies" */;
+			productName = DependenciesMacros;
+		};
+		DC561EB42AEC5D2F004DB7A3 /* XCTestDynamicOverlay */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DC561EB32AEC5D2F004DB7A3 /* XCRemoteSwiftPackageReference "xctest-dynamic-overlay" */;
+			productName = XCTestDynamicOverlay;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

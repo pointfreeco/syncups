@@ -1,3 +1,4 @@
+import CasePaths
 import Dependencies
 import SwiftUI
 
@@ -18,6 +19,8 @@ class AppModel {
   @ObservationIgnored
   @Dependency(\.uuid) var uuid
 
+  @CasePathable
+  @dynamicMemberLookup
   enum Destination: Hashable {
     case detail(SyncUpDetailModel)
     case meeting(Meeting, syncUp: SyncUp)

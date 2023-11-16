@@ -1,9 +1,11 @@
 import Dependencies
+import DependenciesMacros
 import Foundation
 
+@DependencyClient
 struct DataManager: Sendable {
-  var load: @Sendable (URL) throws -> Data
-  var save: @Sendable (Data, URL) throws -> Void
+  var load: @Sendable (_ from: URL) throws -> Data
+  var save: @Sendable (Data, _ to: URL) throws -> Void
 }
 
 extension DataManager: DependencyKey {
@@ -12,10 +14,7 @@ extension DataManager: DependencyKey {
     save: { data, url in try data.write(to: url) }
   )
 
-  static let testValue = DataManager(
-    load: unimplemented("DataManager.load"),
-    save: unimplemented("DataManager.save")
-  )
+  static let testValue = DataManager()
 }
 
 extension DependencyValues {

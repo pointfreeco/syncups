@@ -16,7 +16,7 @@ final class SyncUpListTests: BaseTestCase {
     let model = withDependencies {
       $0.continuousClock = ImmediateClock()
       $0.dataManager = .mock()
-      $0.dataManager.save = { data, _ in savedData.setValue(data) }
+      $0.dataManager.save = { @Sendable data, _ in savedData.setValue(data) }
       $0.uuid = .incrementing
     } operation: {
       SyncUpsListModel()
@@ -24,7 +24,7 @@ final class SyncUpListTests: BaseTestCase {
 
     model.addSyncUpButtonTapped()
 
-    let addModel = try XCTUnwrap(model.destination, case: /SyncUpsListModel.Destination.add)
+    let addModel = try XCTUnwrap(model.destination?.add)
 
     addModel.syncUp.title = "Engineering"
     addModel.syncUp.attendees[0].name = "Blob"
@@ -109,11 +109,11 @@ final class SyncUpListTests: BaseTestCase {
 
     model.syncUpTapped(syncUp: model.syncUps[0])
 
-    let detailModel = try XCTUnwrap(model.destination, case: /SyncUpsListModel.Destination.detail)
+    let detailModel = try XCTUnwrap(model.destination?.detail)
 
     detailModel.deleteButtonTapped()
 
-    let alert = try XCTUnwrap(detailModel.destination, case: /SyncUpDetailModel.Destination.alert)
+    let alert = try XCTUnwrap(detailModel.destination?.alert)
 
     XCTAssertNoDifference(alert, .deleteSyncUp)
 
@@ -143,12 +143,11 @@ final class SyncUpListTests: BaseTestCase {
 
     model.syncUpTapped(syncUp: model.syncUps[0])
 
-    let detailModel = try XCTUnwrap(model.destination, case: /SyncUpsListModel.Destination.detail)
+    let detailModel = try XCTUnwrap(model.destination?.detail)
 
     detailModel.editButtonTapped()
 
-    let editModel = try XCTUnwrap(
-      detailModel.destination, case: /SyncUpDetailModel.Destination.edit)
+    let editModel = try XCTUnwrap(detailModel.destination?.edit)
 
     editModel.syncUp.title = "Design"
     detailModel.doneEditingButtonTapped()
@@ -178,7 +177,7 @@ final class SyncUpListTests: BaseTestCase {
       SyncUpsListModel()
     }
 
-    let alert = try XCTUnwrap(model.destination, case: /SyncUpsListModel.Destination.alert)
+    let alert = try XCTUnwrap(model.destination?.alert)
 
     XCTAssertNoDifference(alert, .dataFailedToLoad)
 
@@ -189,7 +188,7 @@ final class SyncUpListTests: BaseTestCase {
 
   func testLoadingDataFileNotFound() async throws {
     let model = withDependencies {
-      $0.dataManager.load = { _ in
+      $0.dataManager.load = { @Sendable _ in
         struct FileNotFound: Error {}
         throw FileNotFound()
       }
@@ -201,15 +200,11 @@ final class SyncUpListTests: BaseTestCase {
   }
 
   func testSave() async throws {
-    let expectation = self.expectation(description: "DataManager.save")
     let savedData = LockIsolated<Data>(Data())
 
     let model = withDependencies {
-      $0.dataManager.load = { _ in try JSONEncoder().encode([SyncUp]()) }
-      $0.dataManager.save = { data, url in
-        savedData.setValue(data)
-        expectation.fulfill()
-      }
+      $0.dataManager.load = { @Sendable _ in try JSONEncoder().encode([SyncUp]()) }
+      $0.dataManager.save = { @Sendable data, _ in savedData.setValue(data) }
       $0.continuousClock = self.clock
     } operation: {
       SyncUpsListModel(
@@ -223,6 +218,5 @@ final class SyncUpListTests: BaseTestCase {
       try JSONDecoder().decode([SyncUp].self, from: savedData.value),
       [.mock]
     )
-    await self.fulfillment(of: [expectation], timeout: 1)
   }
 }

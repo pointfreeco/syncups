@@ -16,7 +16,7 @@ final class SyncUpDetailTests: BaseTestCase {
 
     model.startMeetingButtonTapped()
 
-    let alert = try XCTUnwrap(model.destination, case: /SyncUpDetailModel.Destination.alert)
+    let alert = try XCTUnwrap(model.destination?.alert)
 
     XCTAssertNoDifference(alert, .speechRecognitionRestricted)
   }
@@ -30,7 +30,7 @@ final class SyncUpDetailTests: BaseTestCase {
 
     model.startMeetingButtonTapped()
 
-    let alert = try XCTUnwrap(model.destination, case: /SyncUpDetailModel.Destination.alert)
+    let alert = try XCTUnwrap(model.destination?.alert)
 
     XCTAssertNoDifference(alert, .speechRecognitionDenied)
   }
@@ -59,7 +59,7 @@ final class SyncUpDetailTests: BaseTestCase {
 
     await model.alertButtonTapped(.continueWithoutRecording)
 
-    let recordModel = try XCTUnwrap(model.destination, case: /SyncUpDetailModel.Destination.record)
+    let recordModel = try XCTUnwrap(model.destination?.record)
 
     XCTAssertEqual(recordModel.syncUp, model.syncUp)
   }
@@ -73,7 +73,7 @@ final class SyncUpDetailTests: BaseTestCase {
 
     model.startMeetingButtonTapped()
 
-    let recordModel = try XCTUnwrap(model.destination, case: /SyncUpDetailModel.Destination.record)
+    let recordModel = try XCTUnwrap(model.destination?.record)
 
     XCTAssertEqual(recordModel.syncUp, model.syncUp)
   }
@@ -84,7 +84,7 @@ final class SyncUpDetailTests: BaseTestCase {
       $0.date.now = Date(timeIntervalSince1970: 1_234_567_890)
       $0.soundEffectClient = .noop
       $0.speechClient.authorizationStatus = { .authorized }
-      $0.speechClient.startTask = { _ in
+      $0.speechClient.startTask = { @Sendable _ in
         AsyncThrowingStream { continuation in
           continuation.yield(
             SpeechRecognitionResult(
@@ -115,7 +115,7 @@ final class SyncUpDetailTests: BaseTestCase {
     defer { self.wait(for: [onSyncUpUpdatedExpectation], timeout: 0) }
     model.onSyncUpUpdated = { _ in onSyncUpUpdatedExpectation.fulfill() }
 
-    let recordModel = try XCTUnwrap(model.destination, case: /SyncUpDetailModel.Destination.record)
+    let recordModel = try XCTUnwrap(model.destination?.record)
 
     await recordModel.task()
 
@@ -152,7 +152,7 @@ final class SyncUpDetailTests: BaseTestCase {
 
     model.editButtonTapped()
 
-    let editModel = try XCTUnwrap(model.destination, case: /SyncUpDetailModel.Destination.edit)
+    let editModel = try XCTUnwrap(model.destination?.edit)
 
     editModel.syncUp.title = "Engineering"
     editModel.syncUp.theme = .lavender

@@ -1,13 +1,14 @@
 import Clocks
 import CustomDump
 import Dependencies
+import DependenciesMacros
 import SwiftUI
 import SwiftUINavigation
 import XCTestDynamicOverlay
 
 @MainActor
 @Observable
-class SyncUpDetailModel: Hashable {
+final class SyncUpDetailModel {
   var destination: Destination?
   var isDismissed = false
   var syncUp: SyncUp {
@@ -27,11 +28,21 @@ class SyncUpDetailModel: Hashable {
   @ObservationIgnored
   @Dependency(\.uuid) var uuid
 
-  var onConfirmDeletion: () -> Void = unimplemented("SyncUpDetailModel.onConfirmDeletion")
-  var onMeetingTapped: (Meeting) -> Void = unimplemented("SyncUpDetailModel.onMeetingTapped")
-  var onMeetingStarted: (SyncUp) -> Void = unimplemented("SyncUpDetailModel.onMeetingStarted")
-  var onSyncUpUpdated: (SyncUp) -> Void = unimplemented("SyncUpDetailModel.onSyncUpUpdated")
+  @DependencyEndpoint
+  @ObservationIgnored
+  var onConfirmDeletion: () -> Void
+  @DependencyEndpoint
+  @ObservationIgnored
+  var onMeetingTapped: (Meeting) -> Void
+  @DependencyEndpoint
+  @ObservationIgnored
+  var onMeetingStarted: (SyncUp) -> Void
+  @DependencyEndpoint
+  @ObservationIgnored
+  var onSyncUpUpdated: (SyncUp) -> Void
 
+  @CasePathable
+  @dynamicMemberLookup
   enum Destination {
     case alert(AlertState<AlertAction>)
     case edit(SyncUpFormModel)
@@ -48,13 +59,6 @@ class SyncUpDetailModel: Hashable {
   ) {
     self.destination = destination
     self.syncUp = syncUp
-  }
-
-  nonisolated static func == (lhs: SyncUpDetailModel, rhs: SyncUpDetailModel) -> Bool {
-    lhs === rhs
-  }
-  nonisolated func hash(into hasher: inout Hasher) {
-    hasher.combine(ObjectIdentifier(self))
   }
 
   func deleteMeetings(atOffsets indices: IndexSet) {
@@ -122,6 +126,8 @@ class SyncUpDetailModel: Hashable {
     }
   }
 }
+
+extension SyncUpDetailModel: HashableObject {}
 
 struct SyncUpDetailView: View {
   @State var model: SyncUpDetailModel
@@ -198,16 +204,10 @@ struct SyncUpDetailView: View {
         self.model.editButtonTapped()
       }
     }
-    .alert(
-      unwrapping: self.$model.destination,
-      case: /SyncUpDetailModel.Destination.alert
-    ) { action in
+    .alert(self.$model.destination.alert) { action in
       await self.model.alertButtonTapped(action)
     }
-    .sheet(
-      unwrapping: self.$model.destination,
-      case: /SyncUpDetailModel.Destination.edit
-    ) { $editModel in
+    .sheet(item: self.$model.destination.edit) { editModel in
       NavigationStack {
         SyncUpFormView(model: editModel)
           .navigationTitle(self.model.syncUp.title)

@@ -1,4 +1,5 @@
 import Dependencies
+import DependenciesMacros
 import IdentifiedCollections
 import SwiftUI
 import SwiftUINavigation
@@ -12,9 +13,7 @@ final class SyncUpsListModel: ObservableObject {
       self.saveDebouncedTask?.cancel()
       self.saveDebouncedTask = Task {
         try await self.clock.sleep(for: .seconds(1))
-        try self.dataManager.save(
-          JSONEncoder().encode(syncUps), .syncUps
-        )
+        try self.dataManager.save(JSONEncoder().encode(self.syncUps), to: .syncUps)
       }
     }
   }
@@ -27,8 +26,12 @@ final class SyncUpsListModel: ObservableObject {
   @ObservationIgnored
   @Dependency(\.uuid) var uuid
 
-  var onSyncUpTapped: (SyncUp) -> Void = unimplemented("SyncUpsListModel.onSyncUpTapped")
+  @DependencyEndpoint
+  @ObservationIgnored
+  var onSyncUpTapped: (SyncUp) -> Void
 
+  @CasePathable
+  @dynamicMemberLookup
   enum Destination {
     case add(SyncUpFormModel)
     case alert(AlertState<AlertAction>)
@@ -46,7 +49,7 @@ final class SyncUpsListModel: ObservableObject {
     do {
       self.syncUps = try JSONDecoder().decode(
         IdentifiedArray.self,
-        from: self.dataManager.load(.syncUps)
+        from: self.dataManager.load(from: .syncUps)
       )
     } catch is DecodingError {
       self.destination = .alert(.dataFailedToLoad)
@@ -143,10 +146,7 @@ struct SyncUpsList: View {
       }
     }
     .navigationTitle("Daily Sync-ups")
-    .sheet(
-      unwrapping: self.$model.destination,
-      case: /SyncUpsListModel.Destination.add
-    ) { $model in
+    .sheet(item: self.$model.destination.add) { model in
       NavigationStack {
         SyncUpFormView(model: model)
           .navigationTitle("New sync-up")
@@ -164,10 +164,7 @@ struct SyncUpsList: View {
           }
       }
     }
-    .alert(
-      unwrapping: self.$model.destination,
-      case: /SyncUpsListModel.Destination.alert
-    ) {
+    .alert(self.$model.destination.alert) {
       self.model.alertButtonTapped($0)
     }
   }

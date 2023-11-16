@@ -1,8 +1,10 @@
 import AVFoundation
 import Dependencies
+import DependenciesMacros
 
+@DependencyClient
 struct SoundEffectClient {
-  var load: @Sendable (String) -> Void
+  var load: @Sendable (_ fileName: String) -> Void
   var play: @Sendable () -> Void
 }
 
@@ -26,10 +28,7 @@ extension SoundEffectClient: DependencyKey {
     )
   }
 
-  static let testValue = Self(
-    load: unimplemented("SoundEffectClient.load"),
-    play: unimplemented("SoundEffectClient.play")
-  )
+  static let testValue = Self()
 
   static let noop = Self(
     load: { _ in },
