@@ -157,14 +157,7 @@ final class SyncUpDetailModel {
   }
 }
 
-extension SyncUpDetailModel: Hashable {
-  nonisolated static func == (lhs: SyncUpDetailModel, rhs: SyncUpDetailModel) -> Bool {
-    lhs === rhs
-  }
-  nonisolated func hash(into hasher: inout Hasher) {
-    hasher.combine(ObjectIdentifier(self))
-  }
-}
+extension SyncUpDetailModel: HashableObject {}
 
 struct SyncUpDetailView: View {
   @Environment(\.dismiss) var dismiss

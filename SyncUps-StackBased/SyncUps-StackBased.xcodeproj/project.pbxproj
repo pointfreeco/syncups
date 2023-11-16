@@ -722,7 +722,7 @@
 			repositoryURL = "https://github.com/pointfreeco/swiftui-navigation.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 1.1.0;
+				minimumVersion = 1.2.0;
 			};
 		};
 		CA350CBD2984510200434F8A /* XCRemoteSwiftPackageReference "swift-identified-collections" */ = {
@@ -746,7 +746,7 @@
 			repositoryURL = "https://github.com/pointfreeco/swift-dependencies.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 1.1.0;
+				minimumVersion = 1.1.1;
 			};
 		};
 		CAC7A59C2ABA374500985FC1 /* XCRemoteSwiftPackageReference "swift-concurrency-extras" */ = {

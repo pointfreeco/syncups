@@ -147,14 +147,7 @@ final class RecordMeetingModel {
   }
 }
 
-extension RecordMeetingModel: Hashable {
-  nonisolated static func == (lhs: RecordMeetingModel, rhs: RecordMeetingModel) -> Bool {
-    lhs === rhs
-  }
-  nonisolated func hash(into hasher: inout Hasher) {
-    hasher.combine(ObjectIdentifier(self))
-  }
-}
+extension RecordMeetingModel: HashableObject {}
 
 extension AlertState where Action == RecordMeetingModel.AlertAction {
   static func endMeeting(isDiscardable: Bool) -> Self {

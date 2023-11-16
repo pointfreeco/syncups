@@ -2,9 +2,10 @@ import Dependencies
 import DependenciesMacros
 import Foundation
 
+@DependencyClient
 struct DataManager: Sendable {
-  @DependencyEndpoint var load: @Sendable (_ from: URL) throws -> Data
-  @DependencyEndpoint var save: @Sendable (Data, _ to: URL) throws -> Void
+  var load: @Sendable (_ from: URL) throws -> Data
+  var save: @Sendable (Data, _ to: URL) throws -> Void
 }
 
 extension DataManager: DependencyKey {
