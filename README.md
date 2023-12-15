@@ -96,7 +96,7 @@ Here is a list of ports of the app:
 
 * [Scrumdinger](https://developer.apple.com/tutorials/app-dev-training/getting-started-with-scrumdinger): Apple's original Scrumdinger application.
 * [Composable Architecture](https://github.com/pointfreeco/swift-composable-architecture/tree/main/Examples/SyncUps): A port of the SyncUps app to the Composable Architecture.
-* [https://github.com/nashysolutions/standups](https://github.com/nashysolutions/standups)
+* **Yours could be here! [Submit today](#Call-to-action)!**
 
 [modern-swiftui-collection]: https://www.pointfree.co/collections/swiftui/modern-swiftui
 [scrumdinger]: https://developer.apple.com/tutorials/app-dev-training/getting-started-with-scrumdinger
