@@ -8,9 +8,6 @@
       location = "group:LICENSE">
    </FileRef>
    <FileRef
-      location = "group:SyncUps-StackBased/SyncUps-StackBased.xcodeproj">
-   </FileRef>
-   <FileRef
-      location = "group:SyncUps-TreeBased/SyncUps-TreeBased.xcodeproj">
+      location = "group:SyncUps/SyncUps.xcodeproj">
    </FileRef>
 </Workspace>
