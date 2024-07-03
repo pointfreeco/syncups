@@ -2,11 +2,11 @@
   import ConcurrencyExtras
   @_spi(Experimental) import Testing
 
-  @Suite  //(MainSerialExecutorTrait())
+  @Suite(MainSerialExecutorTrait())
   struct BaseTestSuite {
   }
 
-  private struct MainSerialExecutorTrait: CustomExecutionTrait, SuiteTrait {
+  private struct MainSerialExecutorTrait: CustomExecutionTrait, SuiteTrait, TestTrait {
     let isRecursive = true
 
     func execute(
@@ -14,9 +14,9 @@
       for test: Test,
       testCase: Test.Case?
     ) async throws {
-      //    try await withMainSerialExecutor {
-      try await function()
-      //    }
+      try await withMainSerialExecutor {
+        try await function()
+      }
     }
   }
 #endif
