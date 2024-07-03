@@ -21,21 +21,20 @@
 		CA350CB7298450BF00434F8A /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350CAA298450BF00434F8A /* Models.swift */; };
 		CA350CB8298450BF00434F8A /* Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350CAB298450BF00434F8A /* Helpers.swift */; };
 		CA350CB9298450BF00434F8A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CA350CAC298450BF00434F8A /* Assets.xcassets */; };
-		CA350CBC298450E700434F8A /* SwiftUINavigation in Frameworks */ = {isa = PBXBuildFile; productRef = CA350CBB298450E700434F8A /* SwiftUINavigation */; };
-		CA350CBF2984510200434F8A /* IdentifiedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = CA350CBE2984510200434F8A /* IdentifiedCollections */; };
-		CA350CC22984511300434F8A /* Tagged in Frameworks */ = {isa = PBXBuildFile; productRef = CA350CC12984511300434F8A /* Tagged */; };
-		CA350CC52984515C00434F8A /* Dependencies in Frameworks */ = {isa = PBXBuildFile; productRef = CA350CC42984515C00434F8A /* Dependencies */; };
 		CA350CCA2984518200434F8A /* RecordMeetingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350CC62984518200434F8A /* RecordMeetingTests.swift */; };
 		CA350CCB2984518200434F8A /* SyncUpsListTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350CC72984518200434F8A /* SyncUpsListTests.swift */; };
 		CA350CCC2984518200434F8A /* SyncUpFormTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350CC82984518200434F8A /* SyncUpFormTests.swift */; };
 		CA350CCD2984518200434F8A /* SyncUpDetailTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350CC92984518200434F8A /* SyncUpDetailTests.swift */; };
 		CA350CCF2984518A00434F8A /* SyncUpsListUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350CCE2984518A00434F8A /* SyncUpsListUITests.swift */; };
 		CA350CD2298452F300434F8A /* ding.wav in Resources */ = {isa = PBXBuildFile; fileRef = CA350CD1298452F300434F8A /* ding.wav */; };
-		CAC7A59E2ABA374500985FC1 /* ConcurrencyExtras in Frameworks */ = {isa = PBXBuildFile; productRef = CAC7A59D2ABA374500985FC1 /* ConcurrencyExtras */; };
-		CAC7A5A12ABA374D00985FC1 /* ConcurrencyExtras in Frameworks */ = {isa = PBXBuildFile; productRef = CAC7A5A02ABA374D00985FC1 /* ConcurrencyExtras */; };
+		CAAF4DC92C3586AD00774888 /* IssueReporting in Frameworks */ = {isa = PBXBuildFile; productRef = CAAF4DC82C3586AD00774888 /* IssueReporting */; };
+		CAAF4DCC2C3586C900774888 /* IdentifiedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = CAAF4DCB2C3586C900774888 /* IdentifiedCollections */; };
+		CAAF4DCF2C3586E200774888 /* Tagged in Frameworks */ = {isa = PBXBuildFile; productRef = CAAF4DCE2C3586E200774888 /* Tagged */; };
+		CAAF4DD42C35899500774888 /* Dependencies in Frameworks */ = {isa = PBXBuildFile; productRef = CAAF4DD32C35899500774888 /* Dependencies */; };
+		CAAF4DD72C3589A700774888 /* ConcurrencyExtras in Frameworks */ = {isa = PBXBuildFile; productRef = CAAF4DD62C3589A700774888 /* ConcurrencyExtras */; };
+		CAAF4DD92C3589D400774888 /* DependenciesMacros in Frameworks */ = {isa = PBXBuildFile; productRef = CAAF4DD82C3589D400774888 /* DependenciesMacros */; };
+		CAAF4DDC2C358A4500774888 /* SwiftUINavigation in Frameworks */ = {isa = PBXBuildFile; productRef = CAAF4DDB2C358A4500774888 /* SwiftUINavigation */; };
 		CAC7A5A32ABA375800985FC1 /* BaseTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAC7A5A22ABA375800985FC1 /* BaseTestCase.swift */; };
-		DC53DCC02AFEB89300668ED8 /* DependenciesMacros in Frameworks */ = {isa = PBXBuildFile; productRef = DC53DCBF2AFEB89300668ED8 /* DependenciesMacros */; };
-		DC561EB52AEC5D2F004DB7A3 /* XCTestDynamicOverlay in Frameworks */ = {isa = PBXBuildFile; productRef = DC561EB42AEC5D2F004DB7A3 /* XCTestDynamicOverlay */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -87,13 +86,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CAC7A59E2ABA374500985FC1 /* ConcurrencyExtras in Frameworks */,
-				CA350CC22984511300434F8A /* Tagged in Frameworks */,
-				CA350CBC298450E700434F8A /* SwiftUINavigation in Frameworks */,
-				CA350CBF2984510200434F8A /* IdentifiedCollections in Frameworks */,
-				DC53DCC02AFEB89300668ED8 /* DependenciesMacros in Frameworks */,
-				DC561EB52AEC5D2F004DB7A3 /* XCTestDynamicOverlay in Frameworks */,
-				CA350CC52984515C00434F8A /* Dependencies in Frameworks */,
+				CAAF4DD72C3589A700774888 /* ConcurrencyExtras in Frameworks */,
+				CAAF4DCF2C3586E200774888 /* Tagged in Frameworks */,
+				CAAF4DD92C3589D400774888 /* DependenciesMacros in Frameworks */,
+				CAAF4DC92C3586AD00774888 /* IssueReporting in Frameworks */,
+				CAAF4DCC2C3586C900774888 /* IdentifiedCollections in Frameworks */,
+				CAAF4DDC2C358A4500774888 /* SwiftUINavigation in Frameworks */,
+				CAAF4DD42C35899500774888 /* Dependencies in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -101,7 +100,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CAC7A5A12ABA374D00985FC1 /* ConcurrencyExtras in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -218,13 +216,13 @@
 			);
 			name = SyncUps;
 			packageProductDependencies = (
-				CA350CBB298450E700434F8A /* SwiftUINavigation */,
-				CA350CBE2984510200434F8A /* IdentifiedCollections */,
-				CA350CC12984511300434F8A /* Tagged */,
-				CA350CC42984515C00434F8A /* Dependencies */,
-				CAC7A59D2ABA374500985FC1 /* ConcurrencyExtras */,
-				DC561EB42AEC5D2F004DB7A3 /* XCTestDynamicOverlay */,
-				DC53DCBF2AFEB89300668ED8 /* DependenciesMacros */,
+				CAAF4DC82C3586AD00774888 /* IssueReporting */,
+				CAAF4DCB2C3586C900774888 /* IdentifiedCollections */,
+				CAAF4DCE2C3586E200774888 /* Tagged */,
+				CAAF4DD32C35899500774888 /* Dependencies */,
+				CAAF4DD62C3589A700774888 /* ConcurrencyExtras */,
+				CAAF4DD82C3589D400774888 /* DependenciesMacros */,
+				CAAF4DDB2C358A4500774888 /* SwiftUINavigation */,
 			);
 			productName = SyncUps;
 			productReference = CA350C712984506E00434F8A /* SyncUps.app */;
@@ -245,7 +243,6 @@
 			);
 			name = SyncUpsTests;
 			packageProductDependencies = (
-				CAC7A5A02ABA374D00985FC1 /* ConcurrencyExtras */,
 			);
 			productName = SyncUpsTests;
 			productReference = CA350C812984506F00434F8A /* SyncUpsTests.xctest */;
@@ -304,12 +301,13 @@
 			);
 			mainGroup = CA350C682984506E00434F8A;
 			packageReferences = (
-				CA350CBA298450E700434F8A /* XCRemoteSwiftPackageReference "swiftui-navigation" */,
-				CA350CBD2984510200434F8A /* XCRemoteSwiftPackageReference "swift-identified-collections" */,
-				CA350CC02984511300434F8A /* XCRemoteSwiftPackageReference "swift-tagged" */,
-				CA350CC32984515C00434F8A /* XCRemoteSwiftPackageReference "swift-dependencies" */,
-				CAC7A59C2ABA374500985FC1 /* XCRemoteSwiftPackageReference "swift-concurrency-extras" */,
-				DC561EB32AEC5D2F004DB7A3 /* XCRemoteSwiftPackageReference "xctest-dynamic-overlay" */,
+				CAAF4DC72C3586AD00774888 /* XCRemoteSwiftPackageReference "xctest-dynamic-overlay" */,
+				CAAF4DCA2C3586C900774888 /* XCRemoteSwiftPackageReference "swift-identified-collections" */,
+				CAAF4DCD2C3586E200774888 /* XCRemoteSwiftPackageReference "swift-tagged" */,
+				CAAF4DD12C35874200774888 /* XCRemoteSwiftPackageReference "swift-syntax" */,
+				CAAF4DD22C35899500774888 /* XCRemoteSwiftPackageReference "swift-dependencies" */,
+				CAAF4DD52C3589A700774888 /* XCRemoteSwiftPackageReference "swift-concurrency-extras" */,
+				CAAF4DDA2C358A4500774888 /* XCRemoteSwiftPackageReference "swiftui-navigation" */,
 			);
 			productRefGroup = CA350C722984506E00434F8A /* Products */;
 			projectDirPath = "";
@@ -647,7 +645,7 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = "SyncUps";
+				TEST_TARGET_NAME = SyncUps;
 			};
 			name = Debug;
 		};
@@ -671,7 +669,7 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = "SyncUps";
+				TEST_TARGET_NAME = SyncUps;
 			};
 			name = Release;
 		};
@@ -717,96 +715,99 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		CA350CBA298450E700434F8A /* XCRemoteSwiftPackageReference "swiftui-navigation" */ = {
+		CAAF4DC72C3586AD00774888 /* XCRemoteSwiftPackageReference "xctest-dynamic-overlay" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/pointfreeco/swiftui-navigation.git";
+			repositoryURL = "https://github.com/pointfreeco/xctest-dynamic-overlay.git";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.2.0;
+				branch = "swift-testing";
+				kind = branch;
 			};
 		};
-		CA350CBD2984510200434F8A /* XCRemoteSwiftPackageReference "swift-identified-collections" */ = {
+		CAAF4DCA2C3586C900774888 /* XCRemoteSwiftPackageReference "swift-identified-collections" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/pointfreeco/swift-identified-collections.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.0;
+				minimumVersion = 1.1.0;
 			};
 		};
-		CA350CC02984511300434F8A /* XCRemoteSwiftPackageReference "swift-tagged" */ = {
+		CAAF4DCD2C3586E200774888 /* XCRemoteSwiftPackageReference "swift-tagged" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/pointfreeco/swift-tagged.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 0.9.0;
+				minimumVersion = 0.10.0;
 			};
 		};
-		CA350CC32984515C00434F8A /* XCRemoteSwiftPackageReference "swift-dependencies" */ = {
+		CAAF4DD12C35874200774888 /* XCRemoteSwiftPackageReference "swift-syntax" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/swiftlang/swift-syntax";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 510.0.2;
+			};
+		};
+		CAAF4DD22C35899500774888 /* XCRemoteSwiftPackageReference "swift-dependencies" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/pointfreeco/swift-dependencies.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 1.1.1;
+				minimumVersion = 1.3.1;
 			};
 		};
-		CAC7A59C2ABA374500985FC1 /* XCRemoteSwiftPackageReference "swift-concurrency-extras" */ = {
+		CAAF4DD52C3589A700774888 /* XCRemoteSwiftPackageReference "swift-concurrency-extras" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/pointfreeco/swift-concurrency-extras";
+			repositoryURL = "https://github.com/pointfreeco/swift-concurrency-extras.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.0;
+				minimumVersion = 1.1.0;
 			};
 		};
-		DC561EB32AEC5D2F004DB7A3 /* XCRemoteSwiftPackageReference "xctest-dynamic-overlay" */ = {
+		CAAF4DDA2C358A4500774888 /* XCRemoteSwiftPackageReference "swiftui-navigation" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/pointfreeco/xctest-dynamic-overlay.git";
+			repositoryURL = "https://github.com/pointfreeco/swiftui-navigation.git";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.0;
+				branch = "swift-testing";
+				kind = branch;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		CA350CBB298450E700434F8A /* SwiftUINavigation */ = {
+		CAAF4DC82C3586AD00774888 /* IssueReporting */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = CA350CBA298450E700434F8A /* XCRemoteSwiftPackageReference "swiftui-navigation" */;
-			productName = SwiftUINavigation;
+			package = CAAF4DC72C3586AD00774888 /* XCRemoteSwiftPackageReference "xctest-dynamic-overlay" */;
+			productName = IssueReporting;
 		};
-		CA350CBE2984510200434F8A /* IdentifiedCollections */ = {
+		CAAF4DCB2C3586C900774888 /* IdentifiedCollections */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = CA350CBD2984510200434F8A /* XCRemoteSwiftPackageReference "swift-identified-collections" */;
+			package = CAAF4DCA2C3586C900774888 /* XCRemoteSwiftPackageReference "swift-identified-collections" */;
 			productName = IdentifiedCollections;
 		};
-		CA350CC12984511300434F8A /* Tagged */ = {
+		CAAF4DCE2C3586E200774888 /* Tagged */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = CA350CC02984511300434F8A /* XCRemoteSwiftPackageReference "swift-tagged" */;
+			package = CAAF4DCD2C3586E200774888 /* XCRemoteSwiftPackageReference "swift-tagged" */;
 			productName = Tagged;
 		};
-		CA350CC42984515C00434F8A /* Dependencies */ = {
+		CAAF4DD32C35899500774888 /* Dependencies */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = CA350CC32984515C00434F8A /* XCRemoteSwiftPackageReference "swift-dependencies" */;
+			package = CAAF4DD22C35899500774888 /* XCRemoteSwiftPackageReference "swift-dependencies" */;
 			productName = Dependencies;
 		};
-		CAC7A59D2ABA374500985FC1 /* ConcurrencyExtras */ = {
+		CAAF4DD62C3589A700774888 /* ConcurrencyExtras */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = CAC7A59C2ABA374500985FC1 /* XCRemoteSwiftPackageReference "swift-concurrency-extras" */;
+			package = CAAF4DD52C3589A700774888 /* XCRemoteSwiftPackageReference "swift-concurrency-extras" */;
 			productName = ConcurrencyExtras;
 		};
-		CAC7A5A02ABA374D00985FC1 /* ConcurrencyExtras */ = {
+		CAAF4DD82C3589D400774888 /* DependenciesMacros */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = CAC7A59C2ABA374500985FC1 /* XCRemoteSwiftPackageReference "swift-concurrency-extras" */;
-			productName = ConcurrencyExtras;
-		};
-		DC53DCBF2AFEB89300668ED8 /* DependenciesMacros */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = CA350CC32984515C00434F8A /* XCRemoteSwiftPackageReference "swift-dependencies" */;
+			package = CAAF4DD22C35899500774888 /* XCRemoteSwiftPackageReference "swift-dependencies" */;
 			productName = DependenciesMacros;
 		};
-		DC561EB42AEC5D2F004DB7A3 /* XCTestDynamicOverlay */ = {
+		CAAF4DDB2C358A4500774888 /* SwiftUINavigation */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = DC561EB32AEC5D2F004DB7A3 /* XCRemoteSwiftPackageReference "xctest-dynamic-overlay" */;
-			productName = XCTestDynamicOverlay;
+			package = CAAF4DDA2C358A4500774888 /* XCRemoteSwiftPackageReference "swiftui-navigation" */;
+			productName = SwiftUINavigation;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

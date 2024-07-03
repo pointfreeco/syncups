@@ -1,6 +1,7 @@
 import Dependencies
 import DependenciesMacros
 import IdentifiedCollections
+import IssueReporting
 import SwiftUI
 import SwiftUINavigation
 
@@ -26,9 +27,8 @@ final class SyncUpsListModel: ObservableObject {
   @ObservationIgnored
   @Dependency(\.uuid) var uuid
 
-  @DependencyEndpoint
   @ObservationIgnored
-  var onSyncUpTapped: (SyncUp) -> Void
+  var onSyncUpTapped: (SyncUp) -> Void = unimplemented("onSyncUpTapped")
 
   @CasePathable
   @dynamicMemberLookup
