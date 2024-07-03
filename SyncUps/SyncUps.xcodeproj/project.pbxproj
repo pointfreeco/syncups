@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		2A368893298ADD2500E8C33A /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A368892298ADD2500E8C33A /* App.swift */; };
+		CA1C303C2C358CDB001EE466 /* BaseTestSuite.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1C303B2C358CDB001EE466 /* BaseTestSuite.swift */; };
+		CA1C303F2C358FEB001EE466 /* CustomDump in Frameworks */ = {isa = PBXBuildFile; productRef = CA1C303E2C358FEB001EE466 /* CustomDump */; };
 		CA1D22EA2991BC7000B529DE /* AppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1D22E92991BC7000B529DE /* AppTests.swift */; };
 		CA350C752984506E00434F8A /* SyncUpsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350C742984506E00434F8A /* SyncUpsApp.swift */; };
 		CA350CAF298450BF00434F8A /* SyncUpDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350CA1298450BF00434F8A /* SyncUpDetail.swift */; };
@@ -56,6 +58,7 @@
 
 /* Begin PBXFileReference section */
 		2A368892298ADD2500E8C33A /* App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
+		CA1C303B2C358CDB001EE466 /* BaseTestSuite.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseTestSuite.swift; sourceTree = "<group>"; };
 		CA1D22E92991BC7000B529DE /* AppTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTests.swift; sourceTree = "<group>"; };
 		CA350C712984506E00434F8A /* SyncUps.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SyncUps.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA350C742984506E00434F8A /* SyncUpsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncUpsApp.swift; sourceTree = "<group>"; };
@@ -89,6 +92,7 @@
 				CAAF4DD72C3589A700774888 /* ConcurrencyExtras in Frameworks */,
 				CAAF4DCF2C3586E200774888 /* Tagged in Frameworks */,
 				CAAF4DD92C3589D400774888 /* DependenciesMacros in Frameworks */,
+				CA1C303F2C358FEB001EE466 /* CustomDump in Frameworks */,
 				CAAF4DC92C3586AD00774888 /* IssueReporting in Frameworks */,
 				CAAF4DCC2C3586C900774888 /* IdentifiedCollections in Frameworks */,
 				CAAF4DDC2C358A4500774888 /* SwiftUINavigation in Frameworks */,
@@ -113,6 +117,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		CA1C303A2C358CD1001EE466 /* Internal */ = {
+			isa = PBXGroup;
+			children = (
+				CAC7A5A22ABA375800985FC1 /* BaseTestCase.swift */,
+				CA1C303B2C358CDB001EE466 /* BaseTestSuite.swift */,
+			);
+			path = Internal;
+			sourceTree = "<group>";
+		};
 		CA350C682984506E00434F8A = {
 			isa = PBXGroup;
 			children = (
@@ -155,8 +168,8 @@
 		CA350C842984506F00434F8A /* SyncUpsTests */ = {
 			isa = PBXGroup;
 			children = (
+				CA1C303A2C358CD1001EE466 /* Internal */,
 				CA1D22E92991BC7000B529DE /* AppTests.swift */,
-				CAC7A5A22ABA375800985FC1 /* BaseTestCase.swift */,
 				CA350CC62984518200434F8A /* RecordMeetingTests.swift */,
 				CA350CC92984518200434F8A /* SyncUpDetailTests.swift */,
 				CA350CC82984518200434F8A /* SyncUpFormTests.swift */,
@@ -223,6 +236,7 @@
 				CAAF4DD62C3589A700774888 /* ConcurrencyExtras */,
 				CAAF4DD82C3589D400774888 /* DependenciesMacros */,
 				CAAF4DDB2C358A4500774888 /* SwiftUINavigation */,
+				CA1C303E2C358FEB001EE466 /* CustomDump */,
 			);
 			productName = SyncUps;
 			productReference = CA350C712984506E00434F8A /* SyncUps.app */;
@@ -308,6 +322,7 @@
 				CAAF4DD22C35899500774888 /* XCRemoteSwiftPackageReference "swift-dependencies" */,
 				CAAF4DD52C3589A700774888 /* XCRemoteSwiftPackageReference "swift-concurrency-extras" */,
 				CAAF4DDA2C358A4500774888 /* XCRemoteSwiftPackageReference "swiftui-navigation" */,
+				CA1C303D2C358FEB001EE466 /* XCRemoteSwiftPackageReference "swift-custom-dump" */,
 			);
 			productRefGroup = CA350C722984506E00434F8A /* Products */;
 			projectDirPath = "";
@@ -370,6 +385,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CA1C303C2C358CDB001EE466 /* BaseTestSuite.swift in Sources */,
 				CA350CCD2984518200434F8A /* SyncUpDetailTests.swift in Sources */,
 				CAC7A5A32ABA375800985FC1 /* BaseTestCase.swift in Sources */,
 				CA350CCA2984518200434F8A /* RecordMeetingTests.swift in Sources */,
@@ -715,6 +731,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		CA1C303D2C358FEB001EE466 /* XCRemoteSwiftPackageReference "swift-custom-dump" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pointfreeco/swift-custom-dump.git";
+			requirement = {
+				branch = "swift-testing";
+				kind = branch;
+			};
+		};
 		CAAF4DC72C3586AD00774888 /* XCRemoteSwiftPackageReference "xctest-dynamic-overlay" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/pointfreeco/xctest-dynamic-overlay.git";
@@ -774,6 +798,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		CA1C303E2C358FEB001EE466 /* CustomDump */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CA1C303D2C358FEB001EE466 /* XCRemoteSwiftPackageReference "swift-custom-dump" */;
+			productName = CustomDump;
+		};
 		CAAF4DC82C3586AD00774888 /* IssueReporting */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = CAAF4DC72C3586AD00774888 /* XCRemoteSwiftPackageReference "xctest-dynamic-overlay" */;
