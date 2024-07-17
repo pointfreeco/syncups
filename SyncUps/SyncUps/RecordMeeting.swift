@@ -23,7 +23,6 @@ final class RecordMeetingModel {
   @ObservationIgnored
   @Dependency(\.speechClient) var speechClient
 
-  @ObservationIgnored 
   var onMeetingFinished: (_ transcript: String) async -> Void = unimplemented("onMeetingFinished")
 
   @CasePathable

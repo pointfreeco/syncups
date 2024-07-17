@@ -28,13 +28,9 @@ final class SyncUpDetailModel {
   @ObservationIgnored
   @Dependency(\.uuid) var uuid
 
-  @ObservationIgnored
-  var onConfirmDeletion: () -> Void = IssueReporting.unimplemented("onConfirmDeletion")
-  @ObservationIgnored
+  var onConfirmDeletion: () -> Void = unimplemented("onConfirmDeletion")
   var onMeetingTapped: (Meeting) -> Void = unimplemented("onMeetingTapped")
-  @ObservationIgnored
   var onMeetingStarted: (SyncUp) -> Void = unimplemented("onMeetingStarted")
-  @ObservationIgnored
   var onSyncUpUpdated: (SyncUp) -> Void = unimplemented("onSyncUpUpdated")
 
   @CasePathable

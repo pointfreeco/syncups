@@ -288,7 +288,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1420;
-				LastUpgradeCheck = 1500;
+				LastUpgradeCheck = 1600;
 				TargetAttributes = {
 					CA350C702984506E00434F8A = {
 						CreatedOnToolsVersion = 14.2;
@@ -594,7 +594,6 @@
 		CA350C992984506F00434F8A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
@@ -619,7 +618,6 @@
 		CA350C9A2984506F00434F8A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
@@ -643,7 +641,6 @@
 		CA350C9C2984506F00434F8A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -668,7 +665,6 @@
 		CA350C9D2984506F00434F8A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -775,8 +771,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/pointfreeco/swift-dependencies.git";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.3.1;
+				branch = "swift-testing";
+				kind = branch;
 			};
 		};
 		CAAF4DD52C3589A700774888 /* XCRemoteSwiftPackageReference "swift-concurrency-extras" */ = {

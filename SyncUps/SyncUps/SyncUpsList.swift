@@ -27,7 +27,6 @@ final class SyncUpsListModel: ObservableObject {
   @ObservationIgnored
   @Dependency(\.uuid) var uuid
 
-  @ObservationIgnored
   var onSyncUpTapped: (SyncUp) -> Void = unimplemented("onSyncUpTapped")
 
   @CasePathable
