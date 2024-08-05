@@ -29,13 +29,13 @@
 		CA350CCD2984518200434F8A /* SyncUpDetailTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350CC92984518200434F8A /* SyncUpDetailTests.swift */; };
 		CA350CCF2984518A00434F8A /* SyncUpsListUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350CCE2984518A00434F8A /* SyncUpsListUITests.swift */; };
 		CA350CD2298452F300434F8A /* ding.wav in Resources */ = {isa = PBXBuildFile; fileRef = CA350CD1298452F300434F8A /* ding.wav */; };
+		CA8586B82C61210E00A53451 /* SwiftUINavigation in Frameworks */ = {isa = PBXBuildFile; productRef = CA8586B72C61210E00A53451 /* SwiftUINavigation */; };
 		CAAF4DC92C3586AD00774888 /* IssueReporting in Frameworks */ = {isa = PBXBuildFile; productRef = CAAF4DC82C3586AD00774888 /* IssueReporting */; };
 		CAAF4DCC2C3586C900774888 /* IdentifiedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = CAAF4DCB2C3586C900774888 /* IdentifiedCollections */; };
 		CAAF4DCF2C3586E200774888 /* Tagged in Frameworks */ = {isa = PBXBuildFile; productRef = CAAF4DCE2C3586E200774888 /* Tagged */; };
 		CAAF4DD42C35899500774888 /* Dependencies in Frameworks */ = {isa = PBXBuildFile; productRef = CAAF4DD32C35899500774888 /* Dependencies */; };
 		CAAF4DD72C3589A700774888 /* ConcurrencyExtras in Frameworks */ = {isa = PBXBuildFile; productRef = CAAF4DD62C3589A700774888 /* ConcurrencyExtras */; };
 		CAAF4DD92C3589D400774888 /* DependenciesMacros in Frameworks */ = {isa = PBXBuildFile; productRef = CAAF4DD82C3589D400774888 /* DependenciesMacros */; };
-		CAAF4DDC2C358A4500774888 /* SwiftUINavigation in Frameworks */ = {isa = PBXBuildFile; productRef = CAAF4DDB2C358A4500774888 /* SwiftUINavigation */; };
 		CAC7A5A32ABA375800985FC1 /* BaseTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAC7A5A22ABA375800985FC1 /* BaseTestCase.swift */; };
 /* End PBXBuildFile section */
 
@@ -93,9 +93,9 @@
 				CAAF4DCF2C3586E200774888 /* Tagged in Frameworks */,
 				CAAF4DD92C3589D400774888 /* DependenciesMacros in Frameworks */,
 				CA1C303F2C358FEB001EE466 /* CustomDump in Frameworks */,
+				CA8586B82C61210E00A53451 /* SwiftUINavigation in Frameworks */,
 				CAAF4DC92C3586AD00774888 /* IssueReporting in Frameworks */,
 				CAAF4DCC2C3586C900774888 /* IdentifiedCollections in Frameworks */,
-				CAAF4DDC2C358A4500774888 /* SwiftUINavigation in Frameworks */,
 				CAAF4DD42C35899500774888 /* Dependencies in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -235,8 +235,8 @@
 				CAAF4DD32C35899500774888 /* Dependencies */,
 				CAAF4DD62C3589A700774888 /* ConcurrencyExtras */,
 				CAAF4DD82C3589D400774888 /* DependenciesMacros */,
-				CAAF4DDB2C358A4500774888 /* SwiftUINavigation */,
 				CA1C303E2C358FEB001EE466 /* CustomDump */,
+				CA8586B72C61210E00A53451 /* SwiftUINavigation */,
 			);
 			productName = SyncUps;
 			productReference = CA350C712984506E00434F8A /* SyncUps.app */;
@@ -321,8 +321,8 @@
 				CAAF4DD12C35874200774888 /* XCRemoteSwiftPackageReference "swift-syntax" */,
 				CAAF4DD22C35899500774888 /* XCRemoteSwiftPackageReference "swift-dependencies" */,
 				CAAF4DD52C3589A700774888 /* XCRemoteSwiftPackageReference "swift-concurrency-extras" */,
-				CAAF4DDA2C358A4500774888 /* XCRemoteSwiftPackageReference "swiftui-navigation" */,
 				CA1C303D2C358FEB001EE466 /* XCRemoteSwiftPackageReference "swift-custom-dump" */,
+				CA8586B62C61210E00A53451 /* XCRemoteSwiftPackageReference "swift-navigation" */,
 			);
 			productRefGroup = CA350C722984506E00434F8A /* Products */;
 			projectDirPath = "";
@@ -731,16 +731,24 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/pointfreeco/swift-custom-dump.git";
 			requirement = {
-				branch = "swift-testing";
-				kind = branch;
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
+		CA8586B62C61210E00A53451 /* XCRemoteSwiftPackageReference "swift-navigation" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pointfreeco/swift-navigation";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
 			};
 		};
 		CAAF4DC72C3586AD00774888 /* XCRemoteSwiftPackageReference "xctest-dynamic-overlay" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/pointfreeco/xctest-dynamic-overlay.git";
 			requirement = {
-				branch = "swift-testing";
-				kind = branch;
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
 			};
 		};
 		CAAF4DCA2C3586C900774888 /* XCRemoteSwiftPackageReference "swift-identified-collections" */ = {
@@ -771,8 +779,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/pointfreeco/swift-dependencies.git";
 			requirement = {
-				branch = "swift-testing";
-				kind = branch;
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
 			};
 		};
 		CAAF4DD52C3589A700774888 /* XCRemoteSwiftPackageReference "swift-concurrency-extras" */ = {
@@ -783,14 +791,6 @@
 				minimumVersion = 1.1.0;
 			};
 		};
-		CAAF4DDA2C358A4500774888 /* XCRemoteSwiftPackageReference "swiftui-navigation" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/pointfreeco/swiftui-navigation.git";
-			requirement = {
-				branch = "swift-testing";
-				kind = branch;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -798,6 +798,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = CA1C303D2C358FEB001EE466 /* XCRemoteSwiftPackageReference "swift-custom-dump" */;
 			productName = CustomDump;
+		};
+		CA8586B72C61210E00A53451 /* SwiftUINavigation */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CA8586B62C61210E00A53451 /* XCRemoteSwiftPackageReference "swift-navigation" */;
+			productName = SwiftUINavigation;
 		};
 		CAAF4DC82C3586AD00774888 /* IssueReporting */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -828,11 +833,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = CAAF4DD22C35899500774888 /* XCRemoteSwiftPackageReference "swift-dependencies" */;
 			productName = DependenciesMacros;
-		};
-		CAAF4DDB2C358A4500774888 /* SwiftUINavigation */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = CAAF4DDA2C358A4500774888 /* XCRemoteSwiftPackageReference "swiftui-navigation" */;
-			productName = SwiftUINavigation;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

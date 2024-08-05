@@ -1,13 +1,13 @@
 {
-  "originHash" : "b951ae89ac68e45d012786af4abf0895ccf2af0c89d5e5ce1523083635e2e9b1",
+  "originHash" : "4330f83645f40a08674938f5dee887a1bbc67b200cdcfdc80b3b2c258d0336b8",
   "pins" : [
     {
       "identity" : "combine-schedulers",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/combine-schedulers",
       "state" : {
-        "branch" : "swift-testing",
-        "revision" : "a64f9e085eb5ef3e32e18be86a35dc44f1c7b562"
+        "revision" : "9fa31f4403da54855f1e2aeaeff478f4f0e40b13",
+        "version" : "1.0.2"
       }
     },
     {
@@ -15,8 +15,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-case-paths",
       "state" : {
-        "revision" : "bdd3bf565e84eab0fd612d07749e5b360d5e7d15",
-        "version" : "1.5.1"
+        "revision" : "71344dd930fde41e8f3adafe260adcbb2fc2a3dc",
+        "version" : "1.5.4"
       }
     },
     {
@@ -24,8 +24,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-clocks",
       "state" : {
-        "branch" : "swift-testing",
-        "revision" : "74e4934df3d903a07f1fc4d80fb8459ba48e0b33"
+        "revision" : "3581e280bf0d90c3fb9236fb23e75a5d8c46b533",
+        "version" : "1.0.4"
       }
     },
     {
@@ -51,8 +51,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-custom-dump.git",
       "state" : {
-        "branch" : "swift-testing",
-        "revision" : "3ef5cd130d8d364f26855ce8dd73ac493900c7ff"
+        "revision" : "82645ec760917961cfa08c9c0c7104a57a0fa4b1",
+        "version" : "1.3.3"
       }
     },
     {
@@ -60,8 +60,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-dependencies.git",
       "state" : {
-        "branch" : "swift-testing",
-        "revision" : "b168abcb06e415bb86f8e2955f0a8361a9928ce0"
+        "revision" : "4b521568a7fd257e83ce9a8d77f9865c1d01a7ca",
+        "version" : "1.3.6"
       }
     },
     {
@@ -71,6 +71,24 @@
       "state" : {
         "revision" : "2f5ab6e091dd032b63dacbda052405756010dc3b",
         "version" : "1.1.0"
+      }
+    },
+    {
+      "identity" : "swift-navigation",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pointfreeco/swift-navigation",
+      "state" : {
+        "revision" : "f6aee4300a956e90e6d000f29c26aa793beefbb2",
+        "version" : "2.0.0"
+      }
+    },
+    {
+      "identity" : "swift-perception",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pointfreeco/swift-perception",
+      "state" : {
+        "revision" : "1552c8f722ac256cc0b8daaf1a7073217d4fcdfb",
+        "version" : "1.3.4"
       }
     },
     {
@@ -92,21 +110,12 @@
       }
     },
     {
-      "identity" : "swiftui-navigation",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/pointfreeco/swiftui-navigation.git",
-      "state" : {
-        "branch" : "swift-testing",
-        "revision" : "6782598bdf144b70a22d6aa12da33fb19bc0ca23"
-      }
-    },
-    {
       "identity" : "xctest-dynamic-overlay",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/xctest-dynamic-overlay.git",
       "state" : {
-        "branch" : "swift-testing",
-        "revision" : "51c4a631bcadf658e30b78ba16d83ed6f62ff166"
+        "revision" : "357ca1e5dd31f613a1d43320870ebc219386a495",
+        "version" : "1.2.2"
       }
     }
   ],
