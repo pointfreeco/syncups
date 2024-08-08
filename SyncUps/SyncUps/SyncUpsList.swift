@@ -1,5 +1,4 @@
 import Dependencies
-import DependenciesMacros
 import IdentifiedCollections
 import IssueReporting
 import SwiftUI
