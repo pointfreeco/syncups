@@ -1,21 +1,19 @@
 #if canImport(Testing)
   import ConcurrencyExtras
-  @_spi(Experimental) import Testing
+  import Dependencies
+  import Testing
 
-  @Suite(MainSerialExecutorTrait())
-  struct BaseTestSuite {
-  }
-
-  private struct MainSerialExecutorTrait: CustomExecutionTrait, SuiteTrait, TestTrait {
-    let isRecursive = true
-
-    func execute(
-      _ function: @escaping () async throws -> Void,
-      for test: Test,
-      testCase: Test.Case?
-    ) async throws {
-      try await withMainSerialExecutor {
-        try await function()
+  // NB: Wrap all tests in this helper to prepare the test by setting up the main serial executor
+  //     and clearing out the dependencies cache.
+  //
+  //     Ideally we could hide these details in a testing trait, but unfortunately Swift Testing
+  //     does not yet support this functionality: https://forums.swift.org/t/status-of-customexecutiontrait/73358
+  func prepareTest(_ operation: () async throws -> Void) async rethrows {
+    try await withMainSerialExecutor {
+      try await withDependencies {
+        $0 = DependencyValues()
+      } operation: {
+        try await operation()
       }
     }
   }

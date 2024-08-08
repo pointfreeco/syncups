@@ -36,7 +36,6 @@
 		CAAF4DD42C35899500774888 /* Dependencies in Frameworks */ = {isa = PBXBuildFile; productRef = CAAF4DD32C35899500774888 /* Dependencies */; };
 		CAAF4DD72C3589A700774888 /* ConcurrencyExtras in Frameworks */ = {isa = PBXBuildFile; productRef = CAAF4DD62C3589A700774888 /* ConcurrencyExtras */; };
 		CAAF4DD92C3589D400774888 /* DependenciesMacros in Frameworks */ = {isa = PBXBuildFile; productRef = CAAF4DD82C3589D400774888 /* DependenciesMacros */; };
-		CAC7A5A32ABA375800985FC1 /* BaseTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAC7A5A22ABA375800985FC1 /* BaseTestCase.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -81,7 +80,6 @@
 		CA350CC92984518200434F8A /* SyncUpDetailTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncUpDetailTests.swift; sourceTree = "<group>"; };
 		CA350CCE2984518A00434F8A /* SyncUpsListUITests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncUpsListUITests.swift; sourceTree = "<group>"; };
 		CA350CD1298452F300434F8A /* ding.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = ding.wav; sourceTree = "<group>"; };
-		CAC7A5A22ABA375800985FC1 /* BaseTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseTestCase.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -120,7 +118,6 @@
 		CA1C303A2C358CD1001EE466 /* Internal */ = {
 			isa = PBXGroup;
 			children = (
-				CAC7A5A22ABA375800985FC1 /* BaseTestCase.swift */,
 				CA1C303B2C358CDB001EE466 /* BaseTestSuite.swift */,
 			);
 			path = Internal;
@@ -387,7 +384,6 @@
 			files = (
 				CA1C303C2C358CDB001EE466 /* BaseTestSuite.swift in Sources */,
 				CA350CCD2984518200434F8A /* SyncUpDetailTests.swift in Sources */,
-				CAC7A5A32ABA375800985FC1 /* BaseTestCase.swift in Sources */,
 				CA350CCA2984518200434F8A /* RecordMeetingTests.swift in Sources */,
 				CA350CCB2984518200434F8A /* SyncUpsListTests.swift in Sources */,
 				CA1D22EA2991BC7000B529DE /* AppTests.swift in Sources */,
