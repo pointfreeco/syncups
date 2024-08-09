@@ -1,10 +1,9 @@
 import Clocks
 import Dependencies
-import DependenciesMacros
+import IssueReporting
 import Speech
 import SwiftUI
 import SwiftUINavigation
-import XCTestDynamicOverlay
 
 @MainActor
 @Observable
@@ -23,9 +22,7 @@ final class RecordMeetingModel {
   @ObservationIgnored
   @Dependency(\.speechClient) var speechClient
 
-  @DependencyEndpoint
-  @ObservationIgnored 
-  var onMeetingFinished: (_ transcript: String) async -> Void
+  var onMeetingFinished: (_ transcript: String) async -> Void = unimplemented("onMeetingFinished")
 
   @CasePathable
   @dynamicMemberLookup
@@ -141,7 +138,7 @@ final class RecordMeetingModel {
 
   private func finishMeeting() async {
     self.isDismissed = true
-    await self.onMeetingFinished(transcript: self.transcript)
+    await self.onMeetingFinished(self.transcript)
   }
 }
 
