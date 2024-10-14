@@ -44,7 +44,7 @@ final class RecordMeetingModel {
   }
 
   var durationRemaining: Duration {
-    self.syncUp.duration - .seconds(self.secondsElapsed)
+    syncUp.duration - .seconds(secondsElapsed)
   }
 
   var isAlertOpen: Bool {
@@ -57,40 +57,39 @@ final class RecordMeetingModel {
   }
 
   func nextButtonTapped() {
-    guard self.speakerIndex < self.syncUp.attendees.count - 1
+    guard speakerIndex < syncUp.attendees.count - 1
     else {
-      self.destination = .alert(.endMeeting(isDiscardable: false))
+      destination = .alert(.endMeeting(isDiscardable: false))
       return
     }
 
-    self.speakerIndex += 1
-    self.soundEffectClient.play()
-    self.secondsElapsed =
-      self.speakerIndex * Int(self.syncUp.durationPerAttendee.components.seconds)
+    speakerIndex += 1
+    soundEffectClient.play()
+    secondsElapsed = speakerIndex * Int(syncUp.durationPerAttendee.components.seconds)
   }
 
   func endMeetingButtonTapped() {
-    self.destination = .alert(.endMeeting(isDiscardable: true))
+    destination = .alert(.endMeeting(isDiscardable: true))
   }
 
   func alertButtonTapped(_ action: AlertAction?) async {
     switch action {
     case .confirmSave?:
-      await self.finishMeeting()
+      await finishMeeting()
     case .confirmDiscard?:
-      self.isDismissed = true
+      isDismissed = true
     case nil:
       break
     }
   }
 
   func task() async {
-    self.soundEffectClient.load(fileName: "ding.wav")
+    soundEffectClient.load(fileName: "ding.wav")
 
     let authorization =
-      await self.speechClient.authorizationStatus() == .notDetermined
-      ? self.speechClient.requestAuthorization()
-      : self.speechClient.authorizationStatus()
+      await speechClient.authorizationStatus() == .notDetermined
+      ? speechClient.requestAuthorization()
+      : speechClient.authorizationStatus()
 
     await withTaskGroup(of: Void.self) { group in
       if authorization == .authorized {
@@ -106,39 +105,39 @@ final class RecordMeetingModel {
 
   private func startSpeechRecognition() async {
     do {
-      let speechTask = await self.speechClient.startTask(
+      let speechTask = await speechClient.startTask(
         request: SFSpeechAudioBufferRecognitionRequest()
       )
       for try await result in speechTask {
-        self.transcript = result.bestTranscription.formattedString
+        transcript = result.bestTranscription.formattedString
       }
     } catch {
-      if !self.transcript.isEmpty {
-        self.transcript += " ❌"
+      if !transcript.isEmpty {
+        transcript += " ❌"
       }
-      self.destination = .alert(.speechRecognizerFailed)
+      destination = .alert(.speechRecognizerFailed)
     }
   }
 
   private func startTimer() async {
-    for await _ in self.clock.timer(interval: .seconds(1)) where !self.isAlertOpen {
-      self.secondsElapsed += 1
+    for await _ in clock.timer(interval: .seconds(1)) where !isAlertOpen {
+      secondsElapsed += 1
 
-      let secondsPerAttendee = Int(self.syncUp.durationPerAttendee.components.seconds)
-      if self.secondsElapsed.isMultiple(of: secondsPerAttendee) {
-        if self.speakerIndex == self.syncUp.attendees.count - 1 {
-          await self.finishMeeting()
+      let secondsPerAttendee = Int(syncUp.durationPerAttendee.components.seconds)
+      if secondsElapsed.isMultiple(of: secondsPerAttendee) {
+        if speakerIndex == syncUp.attendees.count - 1 {
+          await finishMeeting()
           break
         }
-        self.speakerIndex += 1
-        self.soundEffectClient.play()
+        speakerIndex += 1
+        soundEffectClient.play()
       }
     }
   }
 
   private func finishMeeting() async {
-    self.isDismissed = true
-    await self.onMeetingFinished(self.transcript)
+    isDismissed = true
+    await onMeetingFinished(transcript)
   }
 }
 
@@ -235,14 +234,14 @@ struct MeetingHeaderView: View {
 
   var body: some View {
     VStack {
-      ProgressView(value: self.progress)
-        .progressViewStyle(MeetingProgressViewStyle(theme: self.theme))
+      ProgressView(value: progress)
+        .progressViewStyle(MeetingProgressViewStyle(theme: theme))
       HStack {
         VStack(alignment: .leading) {
           Text("Time Elapsed")
             .font(.caption)
           Label(
-            Duration.seconds(self.secondsElapsed).formatted(.units()),
+            Duration.seconds(secondsElapsed).formatted(.units()),
             systemImage: "hourglass.bottomhalf.fill"
           )
         }
@@ -250,7 +249,7 @@ struct MeetingHeaderView: View {
         VStack(alignment: .trailing) {
           Text("Time Remaining")
             .font(.caption)
-          Label(self.durationRemaining.formatted(.units()), systemImage: "hourglass.tophalf.fill")
+          Label(durationRemaining.formatted(.units()), systemImage: "hourglass.tophalf.fill")
             .font(.body.monospacedDigit())
             .labelStyle(.trailingIcon)
         }
@@ -260,12 +259,12 @@ struct MeetingHeaderView: View {
   }
 
   private var totalDuration: Duration {
-    .seconds(self.secondsElapsed) + self.durationRemaining
+    .seconds(secondsElapsed) + durationRemaining
   }
 
   private var progress: Double {
     guard totalDuration > .seconds(0) else { return 0 }
-    return Double(self.secondsElapsed) / Double(self.totalDuration.components.seconds)
+    return Double(secondsElapsed) / Double(totalDuration.components.seconds)
   }
 }
 
@@ -296,8 +295,8 @@ struct MeetingTimerView: View {
       .overlay {
         VStack {
           Group {
-            if self.speakerIndex < self.syncUp.attendees.count {
-              Text(self.syncUp.attendees[self.speakerIndex].name)
+            if speakerIndex < syncUp.attendees.count {
+              Text(syncUp.attendees[speakerIndex].name)
             } else {
               Text("Someone")
             }
@@ -308,14 +307,14 @@ struct MeetingTimerView: View {
             .font(.largeTitle)
             .padding(.top)
         }
-        .foregroundStyle(self.syncUp.theme.accentColor)
+        .foregroundStyle(syncUp.theme.accentColor)
       }
       .overlay {
-        ForEach(Array(self.syncUp.attendees.enumerated()), id: \.element.id) { index, attendee in
-          if index < self.speakerIndex + 1 {
-            SpeakerArc(totalSpeakers: self.syncUp.attendees.count, speakerIndex: index)
+        ForEach(Array(syncUp.attendees.enumerated()), id: \.element.id) { index, attendee in
+          if index < speakerIndex + 1 {
+            SpeakerArc(totalSpeakers: syncUp.attendees.count, speakerIndex: index)
               .rotation(Angle(degrees: -90))
-              .stroke(self.syncUp.theme.mainColor, lineWidth: 12)
+              .stroke(syncUp.theme.mainColor, lineWidth: 12)
           }
         }
       }
@@ -335,21 +334,21 @@ struct SpeakerArc: Shape {
       path.addArc(
         center: center,
         radius: radius,
-        startAngle: self.startAngle,
-        endAngle: self.endAngle,
+        startAngle: startAngle,
+        endAngle: endAngle,
         clockwise: false
       )
     }
   }
 
   private var degreesPerSpeaker: Double {
-    360.0 / Double(self.totalSpeakers)
+    360.0 / Double(totalSpeakers)
   }
   private var startAngle: Angle {
-    Angle(degrees: self.degreesPerSpeaker * Double(self.speakerIndex) + 1.0)
+    Angle(degrees: degreesPerSpeaker * Double(speakerIndex) + 1.0)
   }
   private var endAngle: Angle {
-    Angle(degrees: self.startAngle.degrees + self.degreesPerSpeaker - 1.0)
+    Angle(degrees: startAngle.degrees + degreesPerSpeaker - 1.0)
   }
 }
 
@@ -361,13 +360,13 @@ struct MeetingFooterView: View {
   var body: some View {
     VStack {
       HStack {
-        if self.speakerIndex < self.syncUp.attendees.count - 1 {
-          Text("Speaker \(self.speakerIndex + 1) of \(self.syncUp.attendees.count)")
+        if speakerIndex < syncUp.attendees.count - 1 {
+          Text("Speaker \(speakerIndex + 1) of \(syncUp.attendees.count)")
         } else {
           Text("No more speakers.")
         }
         Spacer()
-        Button(action: self.nextButtonTapped) {
+        Button(action: nextButtonTapped) {
           Image(systemName: "forward.fill")
         }
       }

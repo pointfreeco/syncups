@@ -12,7 +12,7 @@ final class SyncUpDetailModel {
   var isDismissed = false
   var syncUp: SyncUp {
     didSet {
-      self.onSyncUpUpdated(self.syncUp)
+      onSyncUpUpdated(syncUp)
     }
   }
 
@@ -53,28 +53,28 @@ final class SyncUpDetailModel {
   }
 
   func deleteMeetings(atOffsets indices: IndexSet) {
-    self.syncUp.meetings.remove(atOffsets: indices)
+    syncUp.meetings.remove(atOffsets: indices)
   }
 
   func meetingTapped(_ meeting: Meeting) {
-    self.onMeetingTapped(meeting)
+    onMeetingTapped(meeting)
   }
 
   func deleteButtonTapped() {
-    self.destination = .alert(.deleteSyncUp)
+    destination = .alert(.deleteSyncUp)
   }
 
   func alertButtonTapped(_ action: AlertAction?) async {
     switch action {
     case .confirmDeletion?:
-      self.onConfirmDeletion()
-      self.isDismissed = true
+      onConfirmDeletion()
+      isDismissed = true
 
     case .continueWithoutRecording?:
-      self.onMeetingStarted(self.syncUp)
+      onMeetingStarted(syncUp)
 
     case .openSettings?:
-      await self.openSettings()
+      await openSettings()
 
     case nil:
       break
@@ -82,7 +82,7 @@ final class SyncUpDetailModel {
   }
 
   func editButtonTapped() {
-    self.destination = .edit(
+    destination = .edit(
       withDependencies(from: self) {
         SyncUpFormModel(syncUp: self.syncUp)
       }
@@ -90,27 +90,27 @@ final class SyncUpDetailModel {
   }
 
   func cancelEditButtonTapped() {
-    self.destination = nil
+    destination = nil
   }
 
   func doneEditingButtonTapped() {
-    guard case let .edit(model) = self.destination
+    guard case let .edit(model) = destination
     else { return }
 
-    self.syncUp = model.syncUp
-    self.destination = nil
+    syncUp = model.syncUp
+    destination = nil
   }
 
   func startMeetingButtonTapped() {
-    switch self.authorizationStatus() {
+    switch authorizationStatus() {
     case .notDetermined, .authorized:
-      self.onMeetingStarted(self.syncUp)
+      onMeetingStarted(syncUp)
 
     case .denied:
-      self.destination = .alert(.speechRecognitionDenied)
+      destination = .alert(.speechRecognitionDenied)
 
     case .restricted:
-      self.destination = .alert(.speechRecognitionRestricted)
+      destination = .alert(.speechRecognitionRestricted)
 
     @unknown default:
       break
@@ -127,7 +127,7 @@ struct SyncUpDetailView: View {
     List {
       Section {
         Button {
-          self.model.startMeetingButtonTapped()
+          model.startMeetingButtonTapped()
         } label: {
           Label("Start Meeting", systemImage: "timer")
             .font(.headline)
@@ -136,27 +136,27 @@ struct SyncUpDetailView: View {
         HStack {
           Label("Length", systemImage: "clock")
           Spacer()
-          Text(self.model.syncUp.duration.formatted(.units()))
+          Text(model.syncUp.duration.formatted(.units()))
         }
 
         HStack {
           Label("Theme", systemImage: "paintpalette")
           Spacer()
-          Text(self.model.syncUp.theme.name)
+          Text(model.syncUp.theme.name)
             .padding(4)
-            .foregroundColor(self.model.syncUp.theme.accentColor)
-            .background(self.model.syncUp.theme.mainColor)
+            .foregroundColor(model.syncUp.theme.accentColor)
+            .background(model.syncUp.theme.mainColor)
             .cornerRadius(4)
         }
       } header: {
         Text("Sync-up Info")
       }
 
-      if !self.model.syncUp.meetings.isEmpty {
+      if !model.syncUp.meetings.isEmpty {
         Section {
-          ForEach(self.model.syncUp.meetings) { meeting in
+          ForEach(model.syncUp.meetings) { meeting in
             Button {
-              self.model.meetingTapped(meeting)
+              model.meetingTapped(meeting)
             } label: {
               HStack {
                 Image(systemName: "calendar")
@@ -166,7 +166,7 @@ struct SyncUpDetailView: View {
             }
           }
           .onDelete { indices in
-            self.model.deleteMeetings(atOffsets: indices)
+            model.deleteMeetings(atOffsets: indices)
           }
         } header: {
           Text("Past meetings")
@@ -174,7 +174,7 @@ struct SyncUpDetailView: View {
       }
 
       Section {
-        ForEach(self.model.syncUp.attendees) { attendee in
+        ForEach(model.syncUp.attendees) { attendee in
           Label(attendee.name, systemImage: "person")
         }
       } header: {
@@ -183,34 +183,34 @@ struct SyncUpDetailView: View {
 
       Section {
         Button("Delete") {
-          self.model.deleteButtonTapped()
+          model.deleteButtonTapped()
         }
         .foregroundColor(.red)
         .frame(maxWidth: .infinity)
       }
     }
-    .navigationTitle(self.model.syncUp.title)
+    .navigationTitle(model.syncUp.title)
     .toolbar {
       Button("Edit") {
-        self.model.editButtonTapped()
+        model.editButtonTapped()
       }
     }
-    .alert(self.$model.destination.alert) { action in
-      await self.model.alertButtonTapped(action)
+    .alert($model.destination.alert) { action in
+      await model.alertButtonTapped(action)
     }
-    .sheet(item: self.$model.destination.edit) { editModel in
+    .sheet(item: $model.destination.edit) { editModel in
       NavigationStack {
         SyncUpFormView(model: editModel)
-          .navigationTitle(self.model.syncUp.title)
+          .navigationTitle(model.syncUp.title)
           .toolbar {
             ToolbarItem(placement: .cancellationAction) {
               Button("Cancel") {
-                self.model.cancelEditButtonTapped()
+                model.cancelEditButtonTapped()
               }
             }
             ToolbarItem(placement: .confirmationAction) {
               Button("Done") {
-                self.model.doneEditingButtonTapped()
+                model.doneEditingButtonTapped()
               }
             }
           }
@@ -246,11 +246,13 @@ extension AlertState where Action == SyncUpDetailModel.AlertAction {
       TextState("Cancel")
     }
   } message: {
-    TextState("""
+    TextState(
+      """
       You previously denied speech recognition and so your meeting meeting will not be \
       recorded. You can enable speech recognition in settings, or you can continue without \
       recording.
-      """)
+      """
+    )
   }
 
   static let speechRecognitionRestricted = Self {
@@ -263,9 +265,11 @@ extension AlertState where Action == SyncUpDetailModel.AlertAction {
       TextState("Cancel")
     }
   } message: {
-    TextState("""
+    TextState(
+      """
       Your device does not support speech recognition and so your meeting will not be recorded.
-      """)
+      """
+    )
   }
 }
 

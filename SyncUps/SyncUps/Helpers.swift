@@ -15,7 +15,7 @@ struct Preview<Content: View>: View {
   var body: some View {
     VStack {
       DisclosureGroup {
-        Text(self.message)
+        Text(message)
           .frame(maxWidth: .infinity)
       } label: {
         HStack {
@@ -26,7 +26,7 @@ struct Preview<Content: View>: View {
       }
       .padding()
 
-      self.content
+      content
     }
   }
 }

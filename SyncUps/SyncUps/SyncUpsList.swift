@@ -10,10 +10,10 @@ final class SyncUpsListModel: ObservableObject {
   var destination: Destination?
   var syncUps: IdentifiedArrayOf<SyncUp> {
     didSet {
-      self.saveDebouncedTask?.cancel()
-      self.saveDebouncedTask = Task {
-        try await self.clock.sleep(for: .seconds(1))
-        try self.dataManager.save(JSONEncoder().encode(self.syncUps), to: .syncUps)
+      saveDebouncedTask?.cancel()
+      saveDebouncedTask = Task {
+        try await clock.sleep(for: .seconds(1))
+        try dataManager.save(JSONEncoder().encode(syncUps), to: .syncUps)
       }
     }
   }
@@ -56,7 +56,7 @@ final class SyncUpsListModel: ObservableObject {
   }
 
   func addSyncUpButtonTapped() {
-    self.destination = .add(
+    destination = .add(
       withDependencies(from: self) {
         SyncUpFormModel(syncUp: SyncUp(id: SyncUp.ID(self.uuid())))
       }
@@ -64,13 +64,13 @@ final class SyncUpsListModel: ObservableObject {
   }
 
   func dismissAddSyncUpButtonTapped() {
-    self.destination = nil
+    destination = nil
   }
 
   func confirmAddSyncUpButtonTapped() {
-    defer { self.destination = nil }
+    defer { destination = nil }
 
-    guard case let .add(syncUpFormModel) = self.destination
+    guard case let .add(syncUpFormModel) = destination
     else { return }
     var syncUp = syncUpFormModel.syncUp
 
@@ -78,20 +78,20 @@ final class SyncUpsListModel: ObservableObject {
       attendee.name.allSatisfy(\.isWhitespace)
     }
     if syncUp.attendees.isEmpty {
-      syncUp.attendees.append(Attendee(id: Attendee.ID(self.uuid())))
+      syncUp.attendees.append(Attendee(id: Attendee.ID(uuid())))
     }
-    self.syncUps.append(syncUp)
+    syncUps.append(syncUp)
   }
 
   func syncUpTapped(syncUp: SyncUp) {
-    self.onSyncUpTapped(syncUp)
+    onSyncUpTapped(syncUp)
   }
 
   func alertButtonTapped(_ action: AlertAction?) {
     switch action {
     case .confirmLoadMockData?:
       withAnimation {
-        self.syncUps = [
+        syncUps = [
           .mock,
           .designMock,
           .engineeringMock,
@@ -118,7 +118,8 @@ extension AlertState where Action == SyncUpsListModel.AlertAction {
       """
       Unfortunately your past data failed to load. Would you like to load some mock data to play \
       around with?
-      """)
+      """
+    )
   }
 }
 
