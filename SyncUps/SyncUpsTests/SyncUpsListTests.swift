@@ -1,19 +1,18 @@
 #if canImport(Testing)
-import CasePaths
-import CustomDump
-import Dependencies
-import Foundation
-import IdentifiedCollections
-import Testing
+  import CasePaths
+  import CustomDump
+  import Dependencies
+  import Foundation
+  import IdentifiedCollections
+  import Testing
 
-@testable import SyncUps
+  @testable import SyncUps
 
-@MainActor
-@Suite
-struct SyncUpsListTests {
-  @Test
-  func add() async throws {
-    try await prepareTest {
+  @MainActor
+  @Suite
+  struct SyncUpsListTests {
+    @Test
+    func add() async throws {
       let savedData = LockIsolated(Data?.none)
 
       let model = withDependencies {
@@ -57,11 +56,9 @@ struct SyncUpsListTests {
         ]
       )
     }
-  }
 
-  @Test
-  func add_ValidatedAttendees() async throws {
-    await prepareTest {
+    @Test
+    func addValidatedAttendees() async throws {
       let model = withDependencies {
         $0.continuousClock = ImmediateClock()
         $0.dataManager = .mock()
@@ -102,11 +99,9 @@ struct SyncUpsListTests {
         ]
       )
     }
-  }
 
-  @Test
-  func loadingDataDecodingFailed() async throws {
-    try await prepareTest {
+    @Test
+    func loadingDataDecodingFailed() async throws {
       let model = withDependencies {
         $0.continuousClock = ImmediateClock()
         $0.dataManager = .mock(
@@ -124,11 +119,9 @@ struct SyncUpsListTests {
 
       expectNoDifference(model.syncUps, [.mock, .designMock, .engineeringMock])
     }
-  }
 
-  @Test
-  func loadingDataFileNotFound() async throws {
-    await prepareTest {
+    @Test
+    func loadingDataFileNotFound() async throws {
       let model = withDependencies {
         $0.dataManager.load = { @Sendable _ in
           struct FileNotFound: Error {}
@@ -140,11 +133,9 @@ struct SyncUpsListTests {
 
       #expect(model.destination == nil)
     }
-  }
 
-  @Test
-  func save() async throws {
-    try await prepareTest {
+    @Test
+    func save() async throws {
       let clock = TestClock()
 
       let savedData = LockIsolated<Data>(Data())
@@ -172,5 +163,4 @@ struct SyncUpsListTests {
       )
     }
   }
-}
 #endif

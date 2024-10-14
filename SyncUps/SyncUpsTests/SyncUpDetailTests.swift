@@ -1,17 +1,16 @@
 #if canImport(Testing)
-import CasePaths
-import CustomDump
-import Dependencies
-import Testing
+  import CasePaths
+  import CustomDump
+  import Dependencies
+  import Testing
 
-@testable import SyncUps
+  @testable import SyncUps
 
-@MainActor
-@Suite
-struct SyncUpDetailTests {
-  @Test
-  func speechRestricted() async throws {
-    try await prepareTest {
+  @MainActor
+  @Suite
+  struct SyncUpDetailTests {
+    @Test
+    func speechRestricted() async throws {
       let model = withDependencies {
         $0.speechClient.authorizationStatus = { .restricted }
       } operation: {
@@ -24,11 +23,9 @@ struct SyncUpDetailTests {
 
       expectNoDifference(alert, .speechRecognitionRestricted)
     }
-  }
 
-  @Test
-  func speechDenied() async throws {
-    try await prepareTest {
+    @Test
+    func speechDenied() async throws {
       let model = withDependencies {
         $0.speechClient.authorizationStatus = { .denied }
       } operation: {
@@ -41,11 +38,9 @@ struct SyncUpDetailTests {
 
       expectNoDifference(alert, .speechRecognitionDenied)
     }
-  }
 
-  @Test
-  func openSettings() async {
-    await prepareTest {
+    @Test
+    func openSettings() async {
       let settingsOpened = LockIsolated(false)
       let model = withDependencies {
         $0.openSettings = { settingsOpened.setValue(true) }
@@ -60,11 +55,9 @@ struct SyncUpDetailTests {
 
       #expect(settingsOpened.value == true)
     }
-  }
 
-  @Test
-  func continueWithoutRecording() async throws {
-    await prepareTest {
+    @Test
+    func continueWithoutRecording() async throws {
       let model = SyncUpDetailModel(
         destination: .alert(.speechRecognitionDenied),
         syncUp: .mock
@@ -79,11 +72,9 @@ struct SyncUpDetailTests {
         await model.alertButtonTapped(.continueWithoutRecording)
       }
     }
-  }
 
-  @Test
-  func speechAuthorized() async throws {
-    await prepareTest {
+    @Test
+    func speechAuthorized() async throws {
       let model = withDependencies {
         $0.speechClient.authorizationStatus = { .authorized }
       } operation: {
@@ -99,11 +90,9 @@ struct SyncUpDetailTests {
         model.startMeetingButtonTapped()
       }
     }
-  }
 
-  @Test
-  func edit() async throws {
-    try await prepareTest {
+    @Test
+    func edit() async throws {
       let model = withDependencies {
         $0.uuid = .incrementing
       } operation: {
@@ -142,5 +131,4 @@ struct SyncUpDetailTests {
       }
     }
   }
-}
 #endif

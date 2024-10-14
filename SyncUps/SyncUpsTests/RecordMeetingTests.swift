@@ -1,17 +1,16 @@
 #if canImport(Testing)
-import CasePaths
-import CustomDump
-import Dependencies
-import Testing
+  import CasePaths
+  import CustomDump
+  import Dependencies
+  import Testing
 
-@testable import SyncUps
+  @testable import SyncUps
 
-@MainActor
-@Suite
-struct RecordMeetingTests {
-  @Test
-  func timer() async throws {
-    try await prepareTest {
+  @MainActor
+  @Suite
+  struct RecordMeetingTests {
+    @Test
+    func timer() async throws {
       let clock = TestClock()
       let soundEffectPlayCount = LockIsolated(0)
 
@@ -73,11 +72,9 @@ struct RecordMeetingTests {
         #expect(soundEffectPlayCount.value == 2)
       }
     }
-  }
 
-  @Test
-  func recordTranscript() async throws {
-    await prepareTest {
+    @Test
+    func recordTranscript() async throws {
       let model = withDependencies {
         $0.continuousClock = ImmediateClock()
         $0.soundEffectClient = .noop
@@ -112,11 +109,9 @@ struct RecordMeetingTests {
         await model.task()
       }
     }
-  }
 
-  @Test
-  func endMeetingSave() async throws {
-    try await prepareTest {
+    @Test
+    func endMeetingSave() async throws {
       let clock = TestClock()
 
       let model = withDependencies {
@@ -154,11 +149,9 @@ struct RecordMeetingTests {
         await task.value
       }
     }
-  }
 
-  @Test
-  func endMeetingDiscard() async throws {
-    try await prepareTest {
+    @Test
+    func endMeetingDiscard() async throws {
       let clock = TestClock()
 
       let model = withDependencies {
@@ -185,11 +178,9 @@ struct RecordMeetingTests {
       await task.value
       #expect(model.isDismissed == true)
     }
-  }
 
-  @Test
-  func nextSpeaker() async throws {
-    try await prepareTest {
+    @Test
+    func nextSpeaker() async throws {
       let clock = TestClock()
       let soundEffectPlayCount = LockIsolated(0)
 
@@ -255,11 +246,9 @@ struct RecordMeetingTests {
         await task.value
       }
     }
-  }
 
-  @Test
-  func speechRecognitionFailure_Continue() async throws {
-    try await prepareTest {
+    @Test
+    func speechRecognitionFailure_Continue() async throws {
       let model = withDependencies {
         $0.continuousClock = ImmediateClock()
         $0.soundEffectClient = .noop
@@ -312,11 +301,9 @@ struct RecordMeetingTests {
         #expect(model.secondsElapsed == 3)
       }
     }
-  }
 
-  @Test
-  func speechRecognitionFailure_Discard() async throws {
-    try await prepareTest {
+    @Test
+    func speechRecognitionFailure_Discard() async throws {
       let clock = TestClock()
 
       let model = withDependencies {
@@ -356,5 +343,4 @@ struct RecordMeetingTests {
       #expect(model.isDismissed == true)
     }
   }
-}
 #endif

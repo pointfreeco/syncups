@@ -27,20 +27,20 @@ final class SyncUpFormModel: Identifiable {
   }
 
   func deleteAttendees(atOffsets indices: IndexSet) {
-    self.syncUp.attendees.remove(atOffsets: indices)
-    if self.syncUp.attendees.isEmpty {
-      self.syncUp.attendees.append(Attendee(id: Attendee.ID(self.uuid())))
+    syncUp.attendees.remove(atOffsets: indices)
+    if syncUp.attendees.isEmpty {
+      syncUp.attendees.append(Attendee(id: Attendee.ID(uuid())))
     }
     guard let firstIndex = indices.first
     else { return }
-    let index = min(firstIndex, self.syncUp.attendees.count - 1)
-    self.focus = .attendee(self.syncUp.attendees[index].id)
+    let index = min(firstIndex, syncUp.attendees.count - 1)
+    focus = .attendee(syncUp.attendees[index].id)
   }
 
   func addAttendeeButtonTapped() {
-    let attendee = Attendee(id: Attendee.ID(self.uuid()))
-    self.syncUp.attendees.append(attendee)
-    self.focus = .attendee(attendee.id)
+    let attendee = Attendee(id: Attendee.ID(uuid()))
+    syncUp.attendees.append(attendee)
+    focus = .attendee(attendee.id)
   }
 }
 
@@ -51,36 +51,36 @@ struct SyncUpFormView: View {
   var body: some View {
     Form {
       Section {
-        TextField("Title", text: self.$model.syncUp.title)
-          .focused(self.$focus, equals: .title)
+        TextField("Title", text: $model.syncUp.title)
+          .focused($focus, equals: .title)
         HStack {
-          Slider(value: self.$model.syncUp.duration.seconds, in: 5...30, step: 1) {
+          Slider(value: $model.syncUp.duration.seconds, in: 5...30, step: 1) {
             Text("Length")
           }
           Spacer()
-          Text(self.model.syncUp.duration.formatted(.units()))
+          Text(model.syncUp.duration.formatted(.units()))
         }
-        ThemePicker(selection: self.$model.syncUp.theme)
+        ThemePicker(selection: $model.syncUp.theme)
       } header: {
         Text("Sync-up Info")
       }
       Section {
-        ForEach(self.$model.syncUp.attendees) { $attendee in
+        ForEach($model.syncUp.attendees) { $attendee in
           TextField("Name", text: $attendee.name)
-            .focused(self.$focus, equals: .attendee(attendee.id))
+            .focused($focus, equals: .attendee(attendee.id))
         }
         .onDelete { indices in
-          self.model.deleteAttendees(atOffsets: indices)
+          model.deleteAttendees(atOffsets: indices)
         }
 
         Button("New attendee") {
-          self.model.addAttendeeButtonTapped()
+          model.addAttendeeButtonTapped()
         }
       } header: {
         Text("Attendees")
       }
     }
-    .bind(self.$model.focus, to: self.$focus)
+    .bind($model.focus, to: $focus)
   }
 }
 
@@ -106,7 +106,7 @@ struct ThemePicker: View {
 
 extension Duration {
   fileprivate var seconds: Double {
-    get { Double(self.components.seconds / 60) }
+    get { Double(components.seconds / 60) }
     set { self = .seconds(newValue * 60) }
   }
 }

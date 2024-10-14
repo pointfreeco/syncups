@@ -1,16 +1,15 @@
 #if canImport(Testing)
-import CustomDump
-import Dependencies
-import Testing
+  import CustomDump
+  import Dependencies
+  import Testing
 
-@testable import SyncUps
+  @testable import SyncUps
 
-@MainActor
-@Suite
-struct SyncUpFormTests {
-  @Test
-  func addAttendee() async {
-    await prepareTest {
+  @MainActor
+  @Suite
+  struct SyncUpFormTests {
+    @Test
+    func addAttendee() async {
       let model = withDependencies {
         $0.uuid = .incrementing
       } operation: {
@@ -40,11 +39,9 @@ struct SyncUpFormTests {
         ]
       )
     }
-  }
-  
-  @Test
-  func focus_AddAttendee() async {
-    await prepareTest {
+
+    @Test
+    func focusAddAttendee() async {
       let model = withDependencies {
         $0.uuid = .incrementing
       } operation: {
@@ -62,15 +59,12 @@ struct SyncUpFormTests {
       model.addAttendeeButtonTapped()
 
       #expect(
-        model.focus ==
-          .attendee(Attendee.ID(uuidString: "00000000-0000-0000-0000-000000000001")!)
+        model.focus == .attendee(Attendee.ID(uuidString: "00000000-0000-0000-0000-000000000001")!)
       )
     }
-  }
 
-  @Test
-  func focus_RemoveAttendee() async {
-    await prepareTest {
+    @Test
+    func focusRemoveAttendee() async {
       let model = withDependencies {
         $0.uuid = .incrementing
       } operation: {
@@ -146,5 +140,4 @@ struct SyncUpFormTests {
       )
     }
   }
-}
 #endif

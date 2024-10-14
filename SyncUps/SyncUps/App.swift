@@ -6,10 +6,10 @@ import SwiftUI
 @Observable
 class AppModel {
   var path: [Destination] {
-    didSet { self.bind() }
+    didSet { bind() }
   }
   var syncUpsList: SyncUpsListModel {
-    didSet { self.bind() }
+    didSet { bind() }
   }
 
   @ObservationIgnored
@@ -37,23 +37,23 @@ class AppModel {
   }
 
   private func bind() {
-    self.syncUpsList.onSyncUpTapped = { [weak self] syncUp in
+    syncUpsList.onSyncUpTapped = { [weak self] syncUp in
       guard let self else { return }
       withDependencies(from: self) {
         self.path.append(.detail(SyncUpDetailModel(syncUp: syncUp)))
       }
     }
 
-    for destination in self.path {
+    for destination in path {
       switch destination {
       case let .detail(detailModel):
-        self.bindDetail(model: detailModel)
+        bindDetail(model: detailModel)
 
       case .meeting:
         break
 
       case let .record(recordModel):
-        self.bindRecord(model: recordModel)
+        bindRecord(model: recordModel)
       }
     }
   }
@@ -71,18 +71,19 @@ class AppModel {
     }
 
     model.onConfirmDeletion = { [weak model, weak self] in
-      guard let model else { return }
-      self?.syncUpsList.syncUps.remove(id: model.syncUp.id)
-      self?.path.removeLast()
+      guard let model, let self else { return }
+      syncUpsList.syncUps.remove(id: model.syncUp.id)
+      path.removeLast()
     }
 
     model.onMeetingTapped = { [weak model, weak self] meeting in
-      guard let model else { return }
-      self?.path.append(.meeting(meeting, syncUp: model.syncUp))
+      guard let model, let self else { return }
+      path.append(.meeting(meeting, syncUp: model.syncUp))
     }
 
     model.onSyncUpUpdated = { [weak self] syncUp in
-      self?.syncUpsList.syncUps[id: syncUp.id] = syncUp
+      guard let self else { return }
+      syncUpsList.syncUps[id: syncUp.id] = syncUp
     }
   }
 
@@ -91,7 +92,7 @@ class AppModel {
       guard let self else { return }
 
       guard
-        case let .some(.detail(detailModel)) = self.path.dropLast().last
+        case let .some(.detail(detailModel)) = path.dropLast().last
       else {
         return
       }
@@ -102,7 +103,7 @@ class AppModel {
         transcript: transcript
       )
 
-      let didCancel = (try? await self.clock.sleep(for: .milliseconds(400))) == nil
+      let didCancel = (try? await clock.sleep(for: .milliseconds(400))) == nil
       _ = withAnimation(didCancel ? nil : .default) {
         detailModel.syncUp.meetings.insert(meeting, at: 0)
       }
@@ -114,8 +115,8 @@ struct AppView: View {
   @State var model: AppModel
 
   var body: some View {
-    NavigationStack(path: self.$model.path) {
-      SyncUpsList(model: self.model.syncUpsList)
+    NavigationStack(path: $model.path) {
+      SyncUpsList(model: model.syncUpsList)
         .navigationDestination(for: AppModel.Destination.self) { destination in
           switch destination {
           case let .detail(detailModel):

@@ -1,18 +1,17 @@
 #if canImport(Testing)
-import CasePaths
-import CustomDump
-import Dependencies
-import Foundation
-import Testing
+  import CasePaths
+  import CustomDump
+  import Dependencies
+  import Foundation
+  import Testing
 
-@testable import SyncUps
+  @testable import SyncUps
 
-@MainActor
-@Suite
-struct AppTests {
-  @Test
-  func recordingWithTranscript() async throws {
-    try await prepareTest {
+  @MainActor
+  @Suite
+  struct AppTests {
+    @Test
+    func recordingWithTranscript() async throws {
       let syncUp = SyncUp(
         id: SyncUp.ID(),
         attendees: [
@@ -65,11 +64,9 @@ struct AppTests {
         ]
       )
     }
-  }
 
-  @Test
-  func delete() async throws {
-    try await prepareTest {
+    @Test
+    func delete() async throws {
       let model = try withDependencies {
         $0.continuousClock = ImmediateClock()
         $0.dataManager = .mock(
@@ -94,11 +91,9 @@ struct AppTests {
       expectNoDifference(model.path, [])
       expectNoDifference(model.syncUpsList.syncUps, [])
     }
-  }
 
-  @Test
-  func detailEdit() async throws {
-    try await prepareTest {
+    @Test
+    func detailEdit() async throws {
       let model = try withDependencies {
         $0.continuousClock = ImmediateClock()
         $0.dataManager = .mock(
@@ -114,18 +109,18 @@ struct AppTests {
       } operation: {
         AppModel(syncUpsList: SyncUpsListModel())
       }
-      
+
       model.syncUpsList.syncUpTapped(syncUp: model.syncUpsList.syncUps[0])
-      
+
       let detailModel = try #require(model.path[0].detail)
-      
+
       detailModel.editButtonTapped()
-      
+
       let editModel = try #require(detailModel.destination?.edit)
-      
+
       editModel.syncUp.title = "Design"
       detailModel.doneEditingButtonTapped()
-      
+
       #expect(detailModel.destination == nil)
       expectNoDifference(
         model.syncUpsList.syncUps,
@@ -141,5 +136,4 @@ struct AppTests {
       )
     }
   }
-}
 #endif

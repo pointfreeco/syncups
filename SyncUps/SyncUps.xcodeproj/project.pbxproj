@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		2A368893298ADD2500E8C33A /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A368892298ADD2500E8C33A /* App.swift */; };
-		CA1C303C2C358CDB001EE466 /* BaseTestSuite.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1C303B2C358CDB001EE466 /* BaseTestSuite.swift */; };
 		CA1C303F2C358FEB001EE466 /* CustomDump in Frameworks */ = {isa = PBXBuildFile; productRef = CA1C303E2C358FEB001EE466 /* CustomDump */; };
 		CA1D22EA2991BC7000B529DE /* AppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1D22E92991BC7000B529DE /* AppTests.swift */; };
 		CA350C752984506E00434F8A /* SyncUpsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350C742984506E00434F8A /* SyncUpsApp.swift */; };
@@ -57,7 +56,6 @@
 
 /* Begin PBXFileReference section */
 		2A368892298ADD2500E8C33A /* App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
-		CA1C303B2C358CDB001EE466 /* BaseTestSuite.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseTestSuite.swift; sourceTree = "<group>"; };
 		CA1D22E92991BC7000B529DE /* AppTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTests.swift; sourceTree = "<group>"; };
 		CA350C712984506E00434F8A /* SyncUps.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SyncUps.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA350C742984506E00434F8A /* SyncUpsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncUpsApp.swift; sourceTree = "<group>"; };
@@ -115,14 +113,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		CA1C303A2C358CD1001EE466 /* Internal */ = {
-			isa = PBXGroup;
-			children = (
-				CA1C303B2C358CDB001EE466 /* BaseTestSuite.swift */,
-			);
-			path = Internal;
-			sourceTree = "<group>";
-		};
 		CA350C682984506E00434F8A = {
 			isa = PBXGroup;
 			children = (
@@ -165,7 +155,6 @@
 		CA350C842984506F00434F8A /* SyncUpsTests */ = {
 			isa = PBXGroup;
 			children = (
-				CA1C303A2C358CD1001EE466 /* Internal */,
 				CA1D22E92991BC7000B529DE /* AppTests.swift */,
 				CA350CC62984518200434F8A /* RecordMeetingTests.swift */,
 				CA350CC92984518200434F8A /* SyncUpDetailTests.swift */,
@@ -382,7 +371,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CA1C303C2C358CDB001EE466 /* BaseTestSuite.swift in Sources */,
 				CA350CCD2984518200434F8A /* SyncUpDetailTests.swift in Sources */,
 				CA350CCA2984518200434F8A /* RecordMeetingTests.swift in Sources */,
 				CA350CCB2984518200434F8A /* SyncUpsListTests.swift in Sources */,
