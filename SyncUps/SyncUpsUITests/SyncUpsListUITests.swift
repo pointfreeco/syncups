@@ -11,13 +11,16 @@ final class SyncUpsListUITests: XCTestCase {
   var app: XCUIApplication!
 
   override func setUpWithError() throws {
-    self.app = XCUIApplication()
-    self.app.launchEnvironment["SWIFT_DEPENDENCIES_CONTEXT"] = "test"
-    self.app.launchEnvironment["UI_TEST_NAME"] = String(
-      self.name.split(separator: " ").last?.dropLast() ?? ""
-    )
-    self.app.launchEnvironment["TEST_UUID"] = UUID().uuidString
-    self.app.launch()
+    nonisolated(unsafe) let test = self
+    MainActor.assumeIsolated {
+      test.app = XCUIApplication()
+      test.app.launchEnvironment["SWIFT_DEPENDENCIES_CONTEXT"] = "test"
+      test.app.launchEnvironment["UI_TEST_NAME"] = String(
+        test.name.split(separator: " ").last?.dropLast() ?? ""
+      )
+      test.app.launchEnvironment["TEST_UUID"] = UUID().uuidString
+      test.app.launch()
+    }
   }
 
   // This test demonstrates the simple flow of tapping the "Add" button, filling in some fields in
