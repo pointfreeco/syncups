@@ -1,28 +1,19 @@
 import Dependencies
 import IdentifiedCollections
 import IssueReporting
+import Sharing
 import SwiftUI
 import SwiftUINavigation
 
 @MainActor
 @Observable
-final class SyncUpsListModel: ObservableObject {
+final class SyncUpsListModel {
   var destination: Destination?
-  var syncUps: IdentifiedArrayOf<SyncUp> {
-    didSet {
-      saveDebouncedTask?.cancel()
-      saveDebouncedTask = Task {
-        try await clock.sleep(for: .seconds(1))
-        try dataManager.save(JSONEncoder().encode(syncUps), to: .syncUps)
-      }
-    }
-  }
-  private var saveDebouncedTask: Task<Void, Error>?
+  @ObservationIgnored
+  @Shared(.syncUps) var syncUps
 
   @ObservationIgnored
   @Dependency(\.continuousClock) var clock
-  @ObservationIgnored
-  @Dependency(\.dataManager) var dataManager
   @ObservationIgnored
   @Dependency(\.uuid) var uuid
 
@@ -32,27 +23,12 @@ final class SyncUpsListModel: ObservableObject {
   @dynamicMemberLookup
   enum Destination {
     case add(SyncUpFormModel)
-    case alert(AlertState<AlertAction>)
-  }
-  enum AlertAction {
-    case confirmLoadMockData
   }
 
   init(
     destination: Destination? = nil
   ) {
     self.destination = destination
-    self.syncUps = []
-
-    do {
-      self.syncUps = try JSONDecoder().decode(
-        IdentifiedArray.self,
-        from: self.dataManager.load(from: .syncUps)
-      )
-    } catch is DecodingError {
-      self.destination = .alert(.dataFailedToLoad)
-    } catch {
-    }
   }
 
   func addSyncUpButtonTapped() {
@@ -80,51 +56,16 @@ final class SyncUpsListModel: ObservableObject {
     if syncUp.attendees.isEmpty {
       syncUp.attendees.append(Attendee(id: Attendee.ID(uuid())))
     }
-    syncUps.append(syncUp)
+    _ = $syncUps.withLock { $0.append(syncUp) }
   }
 
   func syncUpTapped(syncUp: SyncUp) {
     onSyncUpTapped(syncUp)
   }
-
-  func alertButtonTapped(_ action: AlertAction?) {
-    switch action {
-    case .confirmLoadMockData?:
-      withAnimation {
-        syncUps = [
-          .mock,
-          .designMock,
-          .engineeringMock,
-        ]
-      }
-    case nil:
-      break
-    }
-  }
-}
-
-extension AlertState where Action == SyncUpsListModel.AlertAction {
-  static let dataFailedToLoad = Self {
-    TextState("Data failed to load")
-  } actions: {
-    ButtonState(action: .confirmLoadMockData) {
-      TextState("Yes")
-    }
-    ButtonState(role: .cancel) {
-      TextState("No")
-    }
-  } message: {
-    TextState(
-      """
-      Unfortunately your past data failed to load. Would you like to load some mock data to play \
-      around with?
-      """
-    )
-  }
 }
 
 struct SyncUpsList: View {
-  @ObservedObject var model: SyncUpsListModel
+  @Bindable var model: SyncUpsListModel
 
   var body: some View {
     List {
@@ -163,9 +104,6 @@ struct SyncUpsList: View {
           }
       }
     }
-    .alert(self.$model.destination.alert) {
-      self.model.alertButtonTapped($0)
-    }
   }
 }
 
@@ -203,8 +141,10 @@ extension LabelStyle where Self == TrailingIconLabelStyle {
   static var trailingIcon: Self { Self() }
 }
 
-extension URL {
-  fileprivate static let syncUps = Self.documentsDirectory.appending(component: "sync-ups.json")
+extension PersistenceReaderKey where Self == FileStorageKey<IdentifiedArrayOf<SyncUp>>.Default {
+  static var syncUps: Self {
+    Self[.fileStorage(URL.documentsDirectory.appending(component: "sync-ups.json")), default: []]
+  }
 }
 
 struct SyncUpsList_Previews: PreviewProvider {
@@ -217,40 +157,14 @@ struct SyncUpsList_Previews: PreviewProvider {
         when its load endpoint is called it will load whatever data we want.
         """
     ) {
-      SyncUpsList(
-        model: withDependencies {
-          $0.dataManager = .mock(
-            initialData: try! JSONEncoder().encode([
-              SyncUp.mock,
-              .engineeringMock,
-              .designMock,
-            ])
-          )
-        } operation: {
-          SyncUpsListModel()
-        }
-      )
+      @Shared(.syncUps) var syncUps: IdentifiedArray = [
+        SyncUp.mock,
+        .engineeringMock,
+        .designMock,
+      ]
+      SyncUpsList(model: SyncUpsListModel())
     }
     .previewDisplayName("Mocking initial sync-ups")
-
-    Preview(
-      message: """
-        This preview demonstrates how to test the flow of loading bad data from disk, in which \
-        case an alert should be shown. This can be done by overridding the DataManager dependency \
-        so that its initial data does not properly decode into a collection of sync-ups.
-        """
-    ) {
-      SyncUpsList(
-        model: withDependencies {
-          $0.dataManager = .mock(
-            initialData: Data("!@#$% bad data ^&*()".utf8)
-          )
-        } operation: {
-          SyncUpsListModel()
-        }
-      )
-    }
-    .previewDisplayName("Load data failure")
 
     Preview(
       message: """
@@ -259,22 +173,18 @@ struct SyncUpsList_Previews: PreviewProvider {
         "Add sync-up" screen opened and with the last attendee text field focused.
         """
     ) {
+      var syncUp = SyncUp.mock
+      let lastAttendee = Attendee(id: Attendee.ID())
+      let _ = syncUp.attendees.append(lastAttendee)
       SyncUpsList(
-        model: withDependencies {
-          $0.dataManager = .mock()
-        } operation: {
-          var syncUp = SyncUp.mock
-          let lastAttendee = Attendee(id: Attendee.ID())
-          let _ = syncUp.attendees.append(lastAttendee)
-          return SyncUpsListModel(
-            destination: .add(
-              SyncUpFormModel(
-                focus: .attendee(lastAttendee.id),
-                syncUp: syncUp
-              )
+        model: SyncUpsListModel(
+          destination: .add(
+            SyncUpFormModel(
+              focus: .attendee(lastAttendee.id),
+              syncUp: syncUp
             )
           )
-        }
+        )
       )
     }
     .previewDisplayName("Deep link add flow")

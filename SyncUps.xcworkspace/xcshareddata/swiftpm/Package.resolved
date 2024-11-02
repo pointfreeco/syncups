@@ -1,5 +1,5 @@
 {
-  "originHash" : "4330f83645f40a08674938f5dee887a1bbc67b200cdcfdc80b3b2c258d0336b8",
+  "originHash" : "89d10cf0feeac2589697abac8fb10999ed3f9eceea5a9a60fd2d480b62a26ccf",
   "pins" : [
     {
       "identity" : "combine-schedulers",
@@ -67,10 +67,10 @@
     {
       "identity" : "swift-identified-collections",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/pointfreeco/swift-identified-collections.git",
+      "location" : "https://github.com/pointfreeco/swift-identified-collections",
       "state" : {
-        "revision" : "2f5ab6e091dd032b63dacbda052405756010dc3b",
-        "version" : "1.1.0"
+        "branch" : "index-constraint",
+        "revision" : "b2a160f7c435c4de037677fc1c5cfb9099e0e088"
       }
     },
     {
@@ -87,8 +87,17 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-perception",
       "state" : {
-        "revision" : "bc67aa8e461351c97282c2419153757a446ae1c9",
-        "version" : "1.3.5"
+        "branch" : "overload-resolution-fixes",
+        "revision" : "0389427284f43369eeac55d7111ea013a1bea4c0"
+      }
+    },
+    {
+      "identity" : "swift-sharing",
+      "kind" : "remoteSourceControl",
+      "location" : "http://github.com/pointfreeco/swift-sharing",
+      "state" : {
+        "branch" : "main",
+        "revision" : "c4e3d6dc494535c35b70bc8df620125333f3eaff"
       }
     },
     {

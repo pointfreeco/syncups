@@ -10,11 +10,11 @@
 		2A368893298ADD2500E8C33A /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A368892298ADD2500E8C33A /* App.swift */; };
 		CA1C303F2C358FEB001EE466 /* CustomDump in Frameworks */ = {isa = PBXBuildFile; productRef = CA1C303E2C358FEB001EE466 /* CustomDump */; };
 		CA1D22EA2991BC7000B529DE /* AppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1D22E92991BC7000B529DE /* AppTests.swift */; };
+		CA315CFD2CD5602D002467C9 /* Sharing in Frameworks */ = {isa = PBXBuildFile; productRef = CA315CFC2CD5602D002467C9 /* Sharing */; };
 		CA350C752984506E00434F8A /* SyncUpsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350C742984506E00434F8A /* SyncUpsApp.swift */; };
 		CA350CAF298450BF00434F8A /* SyncUpDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350CA1298450BF00434F8A /* SyncUpDetail.swift */; };
 		CA350CB0298450BF00434F8A /* RecordMeeting.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350CA2298450BF00434F8A /* RecordMeeting.swift */; };
 		CA350CB1298450BF00434F8A /* SyncUpForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350CA3298450BF00434F8A /* SyncUpForm.swift */; };
-		CA350CB2298450BF00434F8A /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350CA5298450BF00434F8A /* DataManager.swift */; };
 		CA350CB3298450BF00434F8A /* SpeechClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350CA6298450BF00434F8A /* SpeechClient.swift */; };
 		CA350CB4298450BF00434F8A /* OpenSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350CA7298450BF00434F8A /* OpenSettings.swift */; };
 		CA350CB5298450BF00434F8A /* SoundEffectClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350CA8298450BF00434F8A /* SoundEffectClient.swift */; };
@@ -64,7 +64,6 @@
 		CA350CA1298450BF00434F8A /* SyncUpDetail.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncUpDetail.swift; sourceTree = "<group>"; };
 		CA350CA2298450BF00434F8A /* RecordMeeting.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecordMeeting.swift; sourceTree = "<group>"; };
 		CA350CA3298450BF00434F8A /* SyncUpForm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncUpForm.swift; sourceTree = "<group>"; };
-		CA350CA5298450BF00434F8A /* DataManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
 		CA350CA6298450BF00434F8A /* SpeechClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpeechClient.swift; sourceTree = "<group>"; };
 		CA350CA7298450BF00434F8A /* OpenSettings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenSettings.swift; sourceTree = "<group>"; };
 		CA350CA8298450BF00434F8A /* SoundEffectClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SoundEffectClient.swift; sourceTree = "<group>"; };
@@ -85,6 +84,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CA315CFD2CD5602D002467C9 /* Sharing in Frameworks */,
 				CAAF4DD72C3589A700774888 /* ConcurrencyExtras in Frameworks */,
 				CAAF4DCF2C3586E200774888 /* Tagged in Frameworks */,
 				CAAF4DD92C3589D400774888 /* DependenciesMacros in Frameworks */,
@@ -175,7 +175,6 @@
 		CA350CA4298450BF00434F8A /* Dependencies */ = {
 			isa = PBXGroup;
 			children = (
-				CA350CA5298450BF00434F8A /* DataManager.swift */,
 				CA350CA6298450BF00434F8A /* SpeechClient.swift */,
 				CA350CA7298450BF00434F8A /* OpenSettings.swift */,
 				CA350CA8298450BF00434F8A /* SoundEffectClient.swift */,
@@ -223,6 +222,7 @@
 				CAAF4DD82C3589D400774888 /* DependenciesMacros */,
 				CA1C303E2C358FEB001EE466 /* CustomDump */,
 				CA8586B72C61210E00A53451 /* SwiftUINavigation */,
+				CA315CFC2CD5602D002467C9 /* Sharing */,
 			);
 			productName = SyncUps;
 			productReference = CA350C712984506E00434F8A /* SyncUps.app */;
@@ -309,6 +309,7 @@
 				CAAF4DD52C3589A700774888 /* XCRemoteSwiftPackageReference "swift-concurrency-extras" */,
 				CA1C303D2C358FEB001EE466 /* XCRemoteSwiftPackageReference "swift-custom-dump" */,
 				CA8586B62C61210E00A53451 /* XCRemoteSwiftPackageReference "swift-navigation" */,
+				CA315CDD2CD55FD8002467C9 /* XCRemoteSwiftPackageReference "swift-sharing" */,
 			);
 			productRefGroup = CA350C722984506E00434F8A /* Products */;
 			projectDirPath = "";
@@ -357,7 +358,6 @@
 				CA350C752984506E00434F8A /* SyncUpsApp.swift in Sources */,
 				CA350CB3298450BF00434F8A /* SpeechClient.swift in Sources */,
 				CA350CB5298450BF00434F8A /* SoundEffectClient.swift in Sources */,
-				CA350CB2298450BF00434F8A /* DataManager.swift in Sources */,
 				CA350CB6298450BF00434F8A /* SyncUpsList.swift in Sources */,
 				CA350CB8298450BF00434F8A /* Helpers.swift in Sources */,
 				CA350CB1298450BF00434F8A /* SyncUpForm.swift in Sources */,
@@ -455,7 +455,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -512,7 +512,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -717,6 +717,14 @@
 				minimumVersion = 1.0.0;
 			};
 		};
+		CA315CDD2CD55FD8002467C9 /* XCRemoteSwiftPackageReference "swift-sharing" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "http://github.com/pointfreeco/swift-sharing";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
 		CA8586B62C61210E00A53451 /* XCRemoteSwiftPackageReference "swift-navigation" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/pointfreeco/swift-navigation";
@@ -780,6 +788,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = CA1C303D2C358FEB001EE466 /* XCRemoteSwiftPackageReference "swift-custom-dump" */;
 			productName = CustomDump;
+		};
+		CA315CFC2CD5602D002467C9 /* Sharing */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CA315CDD2CD55FD8002467C9 /* XCRemoteSwiftPackageReference "swift-sharing" */;
+			productName = Sharing;
 		};
 		CA8586B72C61210E00A53451 /* SwiftUINavigation */ = {
 			isa = XCSwiftPackageProductDependency;

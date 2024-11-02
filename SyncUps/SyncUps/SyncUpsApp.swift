@@ -1,4 +1,6 @@
 import Dependencies
+import IdentifiedCollections
+import Sharing
 import SwiftUI
 
 @main
@@ -29,11 +31,10 @@ struct UITestingView: View {
       $0.date = DateGenerator { Date() }
       $0.soundEffectClient = .noop
       $0.uuid = UUIDGenerator { UUID() }
+      $0.defaultFileStorage = .inMemory
       switch testName {
-      case "testAdd":
-        $0.dataManager = .mock()
-      case "testDelete", "testEdit":
-        $0.dataManager = .mock(initialData: try? JSONEncoder().encode([SyncUp.mock]))
+      case "testAdd", "testDelete", "testEdit":
+        break
       case "testRecord", "testRecord_Discard":
         $0.date = DateGenerator { Date(timeIntervalSince1970: 1_234_567_890) }
         $0.speechClient.authorizationStatus = { .authorized }
@@ -48,20 +49,17 @@ struct UITestingView: View {
             $0.finish()
           }
         }
-        $0.dataManager = .mock(initialData: try? JSONEncoder().encode([SyncUp.mock]))
-      case "testPersistence":
-        let id = ProcessInfo.processInfo.environment["TEST_UUID"]!
-        let url = URL.documentsDirectory.appending(component: "\(id).json")
-        $0.dataManager = .init(
-          load: { _ in try Data(contentsOf: url) },
-          save: { data, _ in try data.write(to: url) }
-        )
-
       default:
         fatalError()
       }
     } operation: {
-      AppView(model: AppModel(syncUpsList: SyncUpsListModel()))
+      switch testName {
+      case "testDelete", "testEdit", "testRecord", "testRecord_Discard":
+        @Shared(.syncUps) var syncUps: IdentifiedArray = [SyncUp.mock]
+      default:
+        break
+      }
+      return AppView(model: AppModel(syncUpsList: SyncUpsListModel()))
     }
   }
 }

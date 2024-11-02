@@ -2,6 +2,8 @@ import CasePaths
 import CustomDump
 import Dependencies
 import Foundation
+import IdentifiedCollections
+import Sharing
 import Testing
 
 @testable import SyncUps
@@ -20,11 +22,11 @@ struct AppTests {
       duration: .seconds(10),
       title: "Engineering"
     )
+    @Shared(.syncUps) var syncUps: IdentifiedArray = [syncUp]
 
     let model = withDependencies {
       $0.continuousClock = ImmediateClock()
       $0.date.now = Date(timeIntervalSince1970: 1_234_567_890)
-      $0.dataManager = .mock(initialData: try? JSONEncoder().encode([syncUp]))
       $0.soundEffectClient = .noop
       $0.speechClient.authorizationStatus = { .authorized }
       $0.speechClient.startTask = { @Sendable _ in
@@ -66,11 +68,10 @@ struct AppTests {
 
   @Test
   func delete() async throws {
-    let model = try withDependencies {
+    @Shared(.syncUps) var syncUps: IdentifiedArray = [SyncUp.mock]
+
+    let model = withDependencies {
       $0.continuousClock = ImmediateClock()
-      $0.dataManager = .mock(
-        initialData: try JSONEncoder().encode([SyncUp.mock])
-      )
     } operation: {
       AppModel(syncUpsList: SyncUpsListModel())
     }
@@ -93,18 +94,17 @@ struct AppTests {
 
   @Test
   func detailEdit() async throws {
-    let model = try withDependencies {
-      $0.continuousClock = ImmediateClock()
-      $0.dataManager = .mock(
-        initialData: try JSONEncoder().encode([
-          SyncUp(
-            id: SyncUp.ID(uuidString: "00000000-0000-0000-0000-000000000000")!,
-            attendees: [
-              Attendee(id: Attendee.ID(uuidString: "00000000-0000-0000-0000-000000000001")!)
-            ]
-          )
-        ])
+    @Shared(.syncUps) var syncUps = [
+      SyncUp(
+        id: SyncUp.ID(uuidString: "00000000-0000-0000-0000-000000000000")!,
+        attendees: [
+          Attendee(id: Attendee.ID(uuidString: "00000000-0000-0000-0000-000000000001")!)
+        ]
       )
+    ]
+
+    let model = withDependencies {
+      $0.continuousClock = ImmediateClock()
     } operation: {
       AppModel(syncUpsList: SyncUpsListModel())
     }

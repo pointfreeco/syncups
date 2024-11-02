@@ -12,12 +12,8 @@ import Testing
 struct SyncUpsListTests {
   @Test
   func add() async throws {
-    let savedData = LockIsolated(Data?.none)
-
     let model = withDependencies {
       $0.continuousClock = ImmediateClock()
-      $0.dataManager = .mock()
-      $0.dataManager.save = { @Sendable data, _ in savedData.setValue(data) }
       $0.uuid = .incrementing
     } operation: {
       SyncUpsListModel()
@@ -60,7 +56,6 @@ struct SyncUpsListTests {
   func addValidatedAttendees() async throws {
     let model = withDependencies {
       $0.continuousClock = ImmediateClock()
-      $0.dataManager = .mock()
       $0.uuid = .incrementing
     } operation: {
       SyncUpsListModel(
@@ -99,66 +94,66 @@ struct SyncUpsListTests {
     )
   }
 
-  @Test
-  func loadingDataDecodingFailed() async throws {
-    let model = withDependencies {
-      $0.continuousClock = ImmediateClock()
-      $0.dataManager = .mock(
-        initialData: Data("!@#$ BAD DATA %^&*()".utf8)
-      )
-    } operation: {
-      SyncUpsListModel()
-    }
+//  @Test
+//  func loadingDataDecodingFailed() async throws {
+//    let model = withDependencies {
+//      $0.continuousClock = ImmediateClock()
+//      $0.dataManager = .mock(
+//        initialData: Data("!@#$ BAD DATA %^&*()".utf8)
+//      )
+//    } operation: {
+//      SyncUpsListModel()
+//    }
+//
+//    let alert = try #require(model.destination?.alert)
+//
+//    expectNoDifference(alert, .dataFailedToLoad)
+//
+//    model.alertButtonTapped(.confirmLoadMockData)
+//
+//    expectNoDifference(model.syncUps, [.mock, .designMock, .engineeringMock])
+//  }
 
-    let alert = try #require(model.destination?.alert)
-
-    expectNoDifference(alert, .dataFailedToLoad)
-
-    model.alertButtonTapped(.confirmLoadMockData)
-
-    expectNoDifference(model.syncUps, [.mock, .designMock, .engineeringMock])
-  }
-
-  @Test
-  func loadingDataFileNotFound() async throws {
-    let model = withDependencies {
-      $0.dataManager.load = { @Sendable _ in
-        struct FileNotFound: Error {}
-        throw FileNotFound()
-      }
-    } operation: {
-      SyncUpsListModel()
-    }
-
-    #expect(model.destination == nil)
-  }
-
-  @Test
-  func save() async throws {
-    let clock = TestClock()
-
-    let savedData = LockIsolated<Data>(Data())
-    await confirmation { confirmation in
-      let model = withDependencies {
-        $0.dataManager.load = { @Sendable _ in try JSONEncoder().encode([SyncUp]()) }
-        $0.dataManager.save = { @Sendable data, _ in
-          savedData.setValue(data)
-          confirmation()
-        }
-        $0.continuousClock = clock
-      } operation: {
-        SyncUpsListModel(
-          destination: .add(SyncUpFormModel(syncUp: .mock))
-        )
-      }
-
-      model.confirmAddSyncUpButtonTapped()
-      await clock.advance(by: .seconds(1))
-    }
-
-    expectNoDifference(
-      try JSONDecoder().decode([SyncUp].self, from: savedData.value),
-      [.mock]
-    )
-  }
+//  @Test
+//  func loadingDataFileNotFound() async throws {
+//    let model = withDependencies {
+//      $0.dataManager.load = { @Sendable _ in
+//        struct FileNotFound: Error {}
+//        throw FileNotFound()
+//      }
+//    } operation: {
+//      SyncUpsListModel()
+//    }
+//
+//    #expect(model.destination == nil)
+//  }
+//
+//  @Test
+//  func save() async throws {
+//    let clock = TestClock()
+//
+//    let savedData = LockIsolated<Data>(Data())
+//    await confirmation { confirmation in
+//      let model = withDependencies {
+//        $0.dataManager.load = { @Sendable _ in try JSONEncoder().encode([SyncUp]()) }
+//        $0.dataManager.save = { @Sendable data, _ in
+//          savedData.setValue(data)
+//          confirmation()
+//        }
+//        $0.continuousClock = clock
+//      } operation: {
+//        SyncUpsListModel(
+//          destination: .add(SyncUpFormModel(syncUp: .mock))
+//        )
+//      }
+//
+//      model.confirmAddSyncUpButtonTapped()
+//      await clock.advance(by: .seconds(1))
+//    }
+//
+//    expectNoDifference(
+//      try JSONDecoder().decode([SyncUp].self, from: savedData.value),
+//      [.mock]
+//    )
+//  }
 }

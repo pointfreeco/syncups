@@ -1,5 +1,7 @@
 import CasePaths
 import Dependencies
+import IdentifiedCollections
+import Sharing
 import SwiftUI
 
 @MainActor
@@ -72,7 +74,7 @@ class AppModel {
 
     model.onConfirmDeletion = { [weak model, weak self] in
       guard let model, let self else { return }
-      syncUpsList.syncUps.remove(id: model.syncUp.id)
+      _ = syncUpsList.$syncUps.withLock { $0.remove(id: model.syncUp.id) }
       path.removeLast()
     }
 
@@ -83,7 +85,7 @@ class AppModel {
 
     model.onSyncUpUpdated = { [weak self] syncUp in
       guard let self else { return }
-      syncUpsList.syncUps[id: syncUp.id] = syncUp
+      syncUpsList.$syncUps.withLock { $0[id: syncUp.id] = syncUp }
     }
   }
 
@@ -131,51 +133,41 @@ struct AppView: View {
   }
 }
 
-struct App_Previews: PreviewProvider {
-  static var previews: some View {
-    AppView(
-      model: withDependencies {
-        $0.dataManager = .mock(
-          initialData: try! JSONEncoder().encode([
-            SyncUp.mock,
-            .engineeringMock,
-            .designMock,
-          ])
-        )
-      } operation: {
-        AppModel(syncUpsList: SyncUpsListModel())
-      }
-    )
-    .previewDisplayName("Happy path")
+#Preview("Happy path") {
+  @Shared(.syncUps) var syncUps: IdentifiedArray = [
+    SyncUp.mock,
+    .engineeringMock,
+    .designMock,
+  ]
 
-    Preview(
-      message: """
-        The preview demonstrates how you can start the application navigated to a very specific \
-        screen just by constructing a piece of state. In particular we will start the app drilled \
-        down to the detail screen of a sync-up, and then further drilled down to the record screen \
-        for a new meeting.
-        """
-    ) {
-      AppView(
-        model: withDependencies {
-          $0.dataManager = .mock(
-            initialData: try! JSONEncoder().encode([
-              SyncUp.mock,
-              .engineeringMock,
-              .designMock,
-            ])
-          )
-        } operation: {
-          AppModel(
-            path: [
-              .detail(SyncUpDetailModel(syncUp: .mock)),
-              .record(RecordMeetingModel(syncUp: .mock)),
-            ],
-            syncUpsList: SyncUpsListModel()
-          )
-        }
+  AppView(
+    model: AppModel(syncUpsList: SyncUpsListModel())
+  )
+}
+
+#Preview("Deep link record flow") {
+  @Shared(.syncUps) var syncUps: IdentifiedArray = [
+    SyncUp.mock,
+    .engineeringMock,
+    .designMock,
+  ]
+
+  Preview(
+    message: """
+      The preview demonstrates how you can start the application navigated to a very specific \
+      screen just by constructing a piece of state. In particular we will start the app drilled \
+      down to the detail screen of a sync-up, and then further drilled down to the record screen \
+      for a new meeting.
+      """
+  ) {
+    AppView(
+      model: AppModel(
+        path: [
+          .detail(SyncUpDetailModel(syncUp: .mock)),
+          .record(RecordMeetingModel(syncUp: .mock)),
+        ],
+        syncUpsList: SyncUpsListModel()
       )
-    }
-    .previewDisplayName("Deep link record flow")
+    )
   }
 }
