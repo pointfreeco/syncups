@@ -6,7 +6,7 @@ import SwiftUINavigation
 
 @MainActor
 @Observable
-final class SyncUpsListModel: ObservableObject {
+final class SyncUpsListModel {
   var destination: Destination?
   var syncUps: IdentifiedArrayOf<SyncUp> {
     didSet {
@@ -124,7 +124,7 @@ extension AlertState where Action == SyncUpsListModel.AlertAction {
 }
 
 struct SyncUpsList: View {
-  @ObservedObject var model: SyncUpsListModel
+  @Bindable var model: SyncUpsListModel
 
   var body: some View {
     List {
