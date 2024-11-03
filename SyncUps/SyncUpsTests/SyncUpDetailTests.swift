@@ -1,6 +1,7 @@
 import CasePaths
 import CustomDump
 import Dependencies
+import Sharing
 import Testing
 
 @testable import SyncUps
@@ -13,7 +14,7 @@ struct SyncUpDetailTests {
     let model = withDependencies {
       $0.speechClient.authorizationStatus = { .restricted }
     } operation: {
-      SyncUpDetailModel(syncUp: .mock)
+      SyncUpDetailModel(syncUp: Shared(.mock))
     }
 
     model.startMeetingButtonTapped()
@@ -28,7 +29,7 @@ struct SyncUpDetailTests {
     let model = withDependencies {
       $0.speechClient.authorizationStatus = { .denied }
     } operation: {
-      SyncUpDetailModel(syncUp: .mock)
+      SyncUpDetailModel(syncUp: Shared(.mock))
     }
 
     model.startMeetingButtonTapped()
@@ -46,7 +47,7 @@ struct SyncUpDetailTests {
     } operation: {
       SyncUpDetailModel(
         destination: .alert(.speechRecognitionDenied),
-        syncUp: .mock
+        syncUp: Shared(.mock)
       )
     }
 
@@ -59,7 +60,7 @@ struct SyncUpDetailTests {
   func continueWithoutRecording() async throws {
     let model = SyncUpDetailModel(
       destination: .alert(.speechRecognitionDenied),
-      syncUp: .mock
+      syncUp: Shared(.mock)
     )
 
     await confirmation { confirmation in
@@ -77,7 +78,7 @@ struct SyncUpDetailTests {
     let model = withDependencies {
       $0.speechClient.authorizationStatus = { .authorized }
     } operation: {
-      SyncUpDetailModel(syncUp: .mock)
+      SyncUpDetailModel(syncUp: Shared(.mock))
     }
 
     await confirmation { confirmation in
@@ -98,35 +99,53 @@ struct SyncUpDetailTests {
       @Dependency(\.uuid) var uuid
 
       return SyncUpDetailModel(
-        syncUp: SyncUp(
-          id: SyncUp.ID(uuid()),
-          title: "Engineering"
+        syncUp: Shared(
+          SyncUp(
+            id: SyncUp.ID(uuid()),
+            title: "Engineering"
+          )
         )
       )
     }
 
-    try await confirmation { confirmation in
-      model.onSyncUpUpdated = { _ in confirmation() }
+    model.editButtonTapped()
 
-      model.editButtonTapped()
+    let editModel = try #require(model.destination?.edit)
+    editModel.syncUp.title = "Engineering"
+    editModel.syncUp.theme = .lavender
+    model.doneEditingButtonTapped()
 
-      let editModel = try #require(model.destination?.edit)
-      editModel.syncUp.title = "Engineering"
-      editModel.syncUp.theme = .lavender
-      model.doneEditingButtonTapped()
-
-      #expect(model.destination == nil)
-      expectNoDifference(
-        model.syncUp,
-        SyncUp(
-          id: SyncUp.ID(uuidString: "00000000-0000-0000-0000-000000000000")!,
-          attendees: [
-            Attendee(id: Attendee.ID(uuidString: "00000000-0000-0000-0000-000000000001")!)
-          ],
-          theme: .lavender,
-          title: "Engineering"
-        )
+    #expect(model.destination == nil)
+    expectNoDifference(
+      model.syncUp,
+      SyncUp(
+        id: SyncUp.ID(uuidString: "00000000-0000-0000-0000-000000000000")!,
+        attendees: [
+          Attendee(id: Attendee.ID(uuidString: "00000000-0000-0000-0000-000000000001")!)
+        ],
+        theme: .lavender,
+        title: "Engineering"
       )
+    )
+  }
+
+  @Test
+  func delete() async {
+    @Shared(.syncUps) var syncUps = [SyncUp.mock]
+
+    let settingsOpened = LockIsolated(false)
+    let model = withDependencies {
+      $0.openSettings = { settingsOpened.setValue(true) }
+    } operation: {
+      SyncUpDetailModel(syncUp: $syncUps[0])
     }
+
+    model.deleteButtonTapped()
+
+    #expect(model.destination?.alert == .deleteSyncUp)
+
+    await model.alertButtonTapped(.confirmDeletion)
+
+    #expect(syncUps == [])
   }
 }

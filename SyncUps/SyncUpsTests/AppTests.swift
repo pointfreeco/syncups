@@ -44,8 +44,8 @@ struct AppTests {
     } operation: {
       AppModel(
         path: [
-          .detail(SyncUpDetailModel(syncUp: syncUp)),
-          .record(RecordMeetingModel(syncUp: syncUp)),
+          .detail(SyncUpDetailModel(syncUp: $syncUps[0])),
+          .record(RecordMeetingModel(syncUp: $syncUps[0])),
         ],
         syncUpsList: SyncUpsListModel()
       )
@@ -88,7 +88,7 @@ struct AppTests {
 
     await detailModel.alertButtonTapped(.confirmDeletion)
 
-    expectNoDifference(model.path, [])
+    #expect(detailModel.isDismissed == true)
     expectNoDifference(model.syncUpsList.syncUps, [])
   }
 
