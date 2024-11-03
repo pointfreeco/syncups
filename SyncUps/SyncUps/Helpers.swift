@@ -1,3 +1,4 @@
+import Sharing
 import SwiftUI
 
 // NB: This is only used for previews.
@@ -40,6 +41,6 @@ struct Preview<Content: View>: View {
       ullamco laboris nisi ut aliquip ex ea commodo consequat.
       """
   ) {
-    SyncUpDetailView(model: SyncUpDetailModel(syncUp: .mock))
+    SyncUpDetailView(model: SyncUpDetailModel(syncUp: Shared(.mock)))
   }
 }

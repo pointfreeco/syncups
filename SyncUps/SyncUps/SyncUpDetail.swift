@@ -2,6 +2,7 @@ import Clocks
 import CustomDump
 import Dependencies
 import IssueReporting
+import Sharing
 import SwiftUI
 import SwiftUINavigation
 
@@ -10,11 +11,8 @@ import SwiftUINavigation
 final class SyncUpDetailModel {
   var destination: Destination?
   var isDismissed = false
-  var syncUp: SyncUp {
-    didSet {
-      onSyncUpUpdated(syncUp)
-    }
-  }
+  @ObservationIgnored
+  @Shared var syncUp: SyncUp
 
   @ObservationIgnored
   @Dependency(\.continuousClock) var clock
@@ -27,10 +25,8 @@ final class SyncUpDetailModel {
   @ObservationIgnored
   @Dependency(\.uuid) var uuid
 
-  var onConfirmDeletion: () -> Void = unimplemented("onConfirmDeletion")
   var onMeetingTapped: (Meeting) -> Void = unimplemented("onMeetingTapped")
   var onMeetingStarted: (SyncUp) -> Void = unimplemented("onMeetingStarted")
-  var onSyncUpUpdated: (SyncUp) -> Void = unimplemented("onSyncUpUpdated")
 
   @CasePathable
   @dynamicMemberLookup
@@ -46,14 +42,14 @@ final class SyncUpDetailModel {
 
   init(
     destination: Destination? = nil,
-    syncUp: SyncUp
+    syncUp: Shared<SyncUp>
   ) {
     self.destination = destination
-    self.syncUp = syncUp
+    self._syncUp = syncUp
   }
 
   func deleteMeetings(atOffsets indices: IndexSet) {
-    syncUp.meetings.remove(atOffsets: indices)
+    $syncUp.withLock { $0.meetings.remove(atOffsets: indices) }
   }
 
   func meetingTapped(_ meeting: Meeting) {
@@ -67,7 +63,8 @@ final class SyncUpDetailModel {
   func alertButtonTapped(_ action: AlertAction?) async {
     switch action {
     case .confirmDeletion?:
-      onConfirmDeletion()
+      @Shared(.syncUps) var syncUps
+      _ = $syncUps.withLock { $0.remove(id: syncUp.id) }
       isDismissed = true
 
     case .continueWithoutRecording?:
@@ -97,7 +94,7 @@ final class SyncUpDetailModel {
     guard case let .edit(model) = destination
     else { return }
 
-    syncUp = model.syncUp
+    $syncUp.withLock { $0 = model.syncUp }
     destination = nil
   }
 
@@ -121,6 +118,7 @@ final class SyncUpDetailModel {
 extension SyncUpDetailModel: HashableObject {}
 
 struct SyncUpDetailView: View {
+  @Environment(\.dismiss) var dismiss
   @State var model: SyncUpDetailModel
 
   var body: some View {
@@ -216,6 +214,11 @@ struct SyncUpDetailView: View {
           }
       }
     }
+    .onChange(of: model.isDismissed) {
+      if model.isDismissed {
+        dismiss()
+      }
+    }
   }
 }
 
@@ -309,7 +312,9 @@ struct SyncUpDetail_Previews: PreviewProvider {
         """
     ) {
       NavigationStack {
-        SyncUpDetailView(model: SyncUpDetailModel(syncUp: .mock))
+        SyncUpDetailView(
+          model: SyncUpDetailModel(syncUp: Shared(.mock))
+        )
       }
     }
     .previewDisplayName("Happy path")
@@ -327,7 +332,9 @@ struct SyncUpDetail_Previews: PreviewProvider {
           model: withDependencies {
             $0.speechClient = .fail(after: .seconds(2))
           } operation: {
-            SyncUpDetailModel(syncUp: .mock)
+            SyncUpDetailModel(
+              syncUp: Shared(.mock)
+            )
           }
         )
       }
@@ -346,7 +353,9 @@ struct SyncUpDetail_Previews: PreviewProvider {
           model: withDependencies {
             $0.speechClient.authorizationStatus = { .denied }
           } operation: {
-            SyncUpDetailModel(syncUp: .mock)
+            SyncUpDetailModel(
+              syncUp: Shared(.mock)
+            )
           }
         )
       }
@@ -365,7 +374,9 @@ struct SyncUpDetail_Previews: PreviewProvider {
           model: withDependencies {
             $0.speechClient.authorizationStatus = { .restricted }
           } operation: {
-            SyncUpDetailModel(syncUp: .mock)
+            SyncUpDetailModel(
+              syncUp: Shared(.mock)
+            )
           }
         )
       }

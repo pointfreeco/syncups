@@ -40,9 +40,12 @@ class AppModel {
 
   private func bind() {
     syncUpsList.onSyncUpTapped = { [weak self] syncUp in
-      guard let self else { return }
+      guard
+        let self,
+        let sharedSyncUp = Shared(syncUpsList.$syncUps[id: syncUp.id])
+      else { return }
       withDependencies(from: self) {
-        self.path.append(.detail(SyncUpDetailModel(syncUp: syncUp)))
+        self.path.append(.detail(SyncUpDetailModel(syncUp: sharedSyncUp)))
       }
     }
 
@@ -51,64 +54,31 @@ class AppModel {
       case let .detail(detailModel):
         bindDetail(model: detailModel)
 
-      case .meeting:
+      case .meeting, .record:
         break
-
-      case let .record(recordModel):
-        bindRecord(model: recordModel)
       }
     }
   }
 
   private func bindDetail(model: SyncUpDetailModel) {
     model.onMeetingStarted = { [weak self] syncUp in
-      guard let self else { return }
+      guard
+        let self,
+        let sharedSyncUp = Shared(syncUpsList.$syncUps[id: syncUp.id])
+      else { return }
+
       withDependencies(from: self) {
         self.path.append(
           .record(
-            RecordMeetingModel(syncUp: syncUp)
+            RecordMeetingModel(syncUp: sharedSyncUp)
           )
         )
       }
     }
 
-    model.onConfirmDeletion = { [weak model, weak self] in
-      guard let model, let self else { return }
-      _ = syncUpsList.$syncUps.withLock { $0.remove(id: model.syncUp.id) }
-      path.removeLast()
-    }
-
     model.onMeetingTapped = { [weak model, weak self] meeting in
       guard let model, let self else { return }
       path.append(.meeting(meeting, syncUp: model.syncUp))
-    }
-
-    model.onSyncUpUpdated = { [weak self] syncUp in
-      guard let self else { return }
-      syncUpsList.$syncUps.withLock { $0[id: syncUp.id] = syncUp }
-    }
-  }
-
-  private func bindRecord(model: RecordMeetingModel) {
-    model.onMeetingFinished = { [weak self] transcript in
-      guard let self else { return }
-
-      guard
-        case let .some(.detail(detailModel)) = path.dropLast().last
-      else {
-        return
-      }
-
-      let meeting = Meeting(
-        id: Meeting.ID(self.uuid()),
-        date: self.now,
-        transcript: transcript
-      )
-
-      let didCancel = (try? await clock.sleep(for: .milliseconds(400))) == nil
-      _ = withAnimation(didCancel ? nil : .default) {
-        detailModel.syncUp.meetings.insert(meeting, at: 0)
-      }
     }
   }
 }
@@ -163,8 +133,8 @@ struct AppView: View {
     AppView(
       model: AppModel(
         path: [
-          .detail(SyncUpDetailModel(syncUp: .mock)),
-          .record(RecordMeetingModel(syncUp: .mock)),
+          .detail(SyncUpDetailModel(syncUp: Shared(.mock))),
+          .record(RecordMeetingModel(syncUp: Shared(.mock))),
         ],
         syncUpsList: SyncUpsListModel()
       )

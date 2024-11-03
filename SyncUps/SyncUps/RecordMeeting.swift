@@ -1,6 +1,7 @@
 import Clocks
 import Dependencies
 import IssueReporting
+import Sharing
 import Speech
 import SwiftUI
 import SwiftUINavigation
@@ -12,17 +13,20 @@ final class RecordMeetingModel {
   var isDismissed = false
   var secondsElapsed = 0
   var speakerIndex = 0
-  let syncUp: SyncUp
+  @ObservationIgnored
+  @Shared var syncUp: SyncUp
   private var transcript = ""
 
   @ObservationIgnored
   @Dependency(\.continuousClock) var clock
   @ObservationIgnored
+  @Dependency(\.date.now) var now
+  @ObservationIgnored
   @Dependency(\.soundEffectClient) var soundEffectClient
   @ObservationIgnored
   @Dependency(\.speechClient) var speechClient
-
-  var onMeetingFinished: (_ transcript: String) async -> Void = unimplemented("onMeetingFinished")
+  @ObservationIgnored
+  @Dependency(\.uuid) var uuid
 
   @CasePathable
   @dynamicMemberLookup
@@ -37,10 +41,10 @@ final class RecordMeetingModel {
 
   init(
     destination: Destination? = nil,
-    syncUp: SyncUp
+    syncUp: Shared<SyncUp>
   ) {
     self.destination = destination
-    self.syncUp = syncUp
+    self._syncUp = syncUp
   }
 
   var durationRemaining: Duration {
@@ -137,7 +141,17 @@ final class RecordMeetingModel {
 
   private func finishMeeting() async {
     isDismissed = true
-    await onMeetingFinished(transcript)
+
+    let meeting = Meeting(
+      id: Meeting.ID(self.uuid()),
+      date: self.now,
+      transcript: transcript
+    )
+
+    try? await Task.sleep(for: .milliseconds(400))
+    _ = withAnimation {
+      $syncUp.withLock { $0.meetings.insert(meeting, at: 0) }
+    }
   }
 }
 
@@ -379,7 +393,7 @@ struct RecordMeeting_Previews: PreviewProvider {
   static var previews: some View {
     NavigationStack {
       RecordMeetingView(
-        model: RecordMeetingModel(syncUp: .mock)
+        model: RecordMeetingModel(syncUp: Shared(.mock))
       )
     }
     .previewDisplayName("Happy path")
@@ -395,7 +409,7 @@ struct RecordMeeting_Previews: PreviewProvider {
           model: withDependencies {
             $0.speechClient = .fail(after: .seconds(2))
           } operation: {
-            RecordMeetingModel(syncUp: .mock)
+            RecordMeetingModel(syncUp: Shared(.mock))
           }
         )
       }
