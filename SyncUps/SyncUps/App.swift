@@ -28,7 +28,6 @@ struct AppView: View {
             SyncUpDetailView(id: syncUpID)
           case let .meeting(id: meetingID, syncUpID: syncUpID):
             MeetingView(id: meetingID, syncUpID: syncUpID)
-            EmptyView()
           case let .record(id: syncUpID):
             RecordMeetingView(id: syncUpID)
           }
