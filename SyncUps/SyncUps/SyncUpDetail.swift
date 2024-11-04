@@ -66,7 +66,6 @@ final class SyncUpDetailModel {
 
     case .continueWithoutRecording?:
       $path.withLock { $0.append(.record(id: syncUp.id)) }
-      //onMeetingStarted(syncUp)
 
     case .openSettings?:
       await openSettings()

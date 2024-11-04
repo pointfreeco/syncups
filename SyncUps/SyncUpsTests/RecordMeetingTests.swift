@@ -10,9 +10,11 @@ import Testing
 @MainActor
 @Suite
 struct RecordMeetingTests {
+  let clock = TestClock()
+  @Shared(.path) var path
+
   @Test
   func timer() async throws {
-    let clock = TestClock()
     let soundEffectPlayCount = LockIsolated(0)
 
     let model = withDependencies {
@@ -118,7 +120,8 @@ struct RecordMeetingTests {
 
   @Test
   func endMeetingSave() async throws {
-    let clock = TestClock()
+    let syncUp = SyncUp.mock
+    $path.withLock { $0 = [.detail(id: syncUp.id), .record(id: syncUp.id)] }
 
     let model = withDependencies {
       $0.continuousClock = clock
@@ -127,7 +130,7 @@ struct RecordMeetingTests {
       $0.speechClient.authorizationStatus = { .denied }
       $0.uuid = .incrementing
     } operation: {
-      RecordMeetingModel(syncUp: Shared(SyncUp.mock))
+      RecordMeetingModel(syncUp: Shared(syncUp))
     }
 
     let task = Task {
@@ -145,7 +148,13 @@ struct RecordMeetingTests {
     #expect(model.speakerIndex == 0)
     #expect(model.durationRemaining == .seconds(60))
 
-    await model.alertButtonTapped(.confirmSave)
+    let saveTask = Task {
+      await model.alertButtonTapped(.confirmSave)
+    }
+    try await Task.sleep(for: .seconds(0.1))
+    await clock.advance(by: .seconds(0.4))
+    await saveTask.value
+    #expect(path == [.detail(id: syncUp.id)])
 
     task.cancel()
     await task.value
@@ -153,14 +162,15 @@ struct RecordMeetingTests {
 
   @Test
   func endMeetingDiscard() async throws {
-    let clock = TestClock()
+    let syncUp = SyncUp.mock
+    $path.withLock { $0 = [.detail(id: syncUp.id), .record(id: syncUp.id)] }
 
     let model = withDependencies {
       $0.continuousClock = clock
       $0.soundEffectClient = .noop
       $0.speechClient.authorizationStatus = { .denied }
     } operation: {
-      RecordMeetingModel(syncUp: Shared(SyncUp.mock))
+      RecordMeetingModel(syncUp: Shared(syncUp))
     }
 
     let task = Task {
@@ -177,12 +187,11 @@ struct RecordMeetingTests {
 
     task.cancel()
     await task.value
-    #expect(model.isDismissed == true)
+    #expect(path == [.detail(id: syncUp.id)])
   }
 
   @Test
   func nextSpeaker() async throws {
-    let clock = TestClock()
     let soundEffectPlayCount = LockIsolated(0)
 
     let model = withDependencies {
@@ -299,7 +308,12 @@ struct RecordMeetingTests {
 
   @Test
   func speechRecognitionFailure_Discard() async throws {
-    let clock = TestClock()
+    let syncUp = SyncUp(
+      id: SyncUp.ID(),
+      attendees: [Attendee(id: Attendee.ID())],
+      duration: .seconds(3)
+    )
+    $path.withLock { $0 = [.detail(id: syncUp.id), .record(id: syncUp.id)] }
 
     let model = withDependencies {
       $0.continuousClock = clock
@@ -310,15 +324,7 @@ struct RecordMeetingTests {
         return AsyncThrowingStream.finished(throwing: SpeechRecognitionFailure())
       }
     } operation: {
-      RecordMeetingModel(
-        syncUp: Shared(
-          SyncUp(
-            id: SyncUp.ID(),
-            attendees: [Attendee(id: Attendee.ID())],
-            duration: .seconds(3)
-          )
-        )
-      )
+      RecordMeetingModel(syncUp: Shared(syncUp))
     }
 
     Task {
@@ -337,6 +343,6 @@ struct RecordMeetingTests {
     await model.alertButtonTapped(.confirmDiscard)
     model.destination = nil  // NB: Simulate SwiftUI closing alert.
 
-    #expect(model.isDismissed == true)
+    #expect(path == [.detail(id: syncUp.id)])
   }
 }

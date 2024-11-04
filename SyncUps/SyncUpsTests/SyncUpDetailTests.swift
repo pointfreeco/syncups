@@ -9,6 +9,8 @@ import Testing
 @MainActor
 @Suite
 struct SyncUpDetailTests {
+  @Shared(.path) var path
+
   @Test
   func speechRestricted() async throws {
     let model = withDependencies {
@@ -58,37 +60,31 @@ struct SyncUpDetailTests {
 
   @Test
   func continueWithoutRecording() async throws {
+    let syncUp = SyncUp.mock
+
     let model = SyncUpDetailModel(
       destination: .alert(.speechRecognitionDenied),
-      syncUp: Shared(.mock)
+      syncUp: Shared(syncUp)
     )
 
-    await confirmation { confirmation in
-      model.onMeetingStarted = { syncUp in
-        #expect(syncUp == .mock)
-        confirmation()
-      }
+    await model.alertButtonTapped(.continueWithoutRecording)
 
-      await model.alertButtonTapped(.continueWithoutRecording)
-    }
+    #expect(path == [.record(id: syncUp.id)])
   }
 
   @Test
   func speechAuthorized() async throws {
+    let syncUp = SyncUp.mock
+
     let model = withDependencies {
       $0.speechClient.authorizationStatus = { .authorized }
     } operation: {
-      SyncUpDetailModel(syncUp: Shared(.mock))
+      SyncUpDetailModel(syncUp: Shared(syncUp))
     }
 
-    await confirmation { confirmation in
-      model.onMeetingStarted = { syncUp in
-        #expect(syncUp == .mock)
-        confirmation()
-      }
+    model.startMeetingButtonTapped()
 
-      model.startMeetingButtonTapped()
-    }
+    #expect(path == [.record(id: syncUp.id)])
   }
 
   @Test
@@ -131,10 +127,13 @@ struct SyncUpDetailTests {
 
   @Test
   func delete() async {
-    @Shared(.syncUps) var syncUps = [SyncUp.mock]
+    let syncUp = SyncUp.mock
+    @Shared(.syncUps) var syncUps = [syncUp]
+    $path.withLock { $0 = [.detail(id: syncUp.id)]}
 
     let settingsOpened = LockIsolated(false)
     let model = withDependencies {
+      $0.continuousClock = ContinuousClock()
       $0.openSettings = { settingsOpened.setValue(true) }
     } operation: {
       SyncUpDetailModel(syncUp: $syncUps[0])
@@ -147,5 +146,6 @@ struct SyncUpDetailTests {
     await model.alertButtonTapped(.confirmDeletion)
 
     #expect(syncUps == [])
+    #expect(path == [])
   }
 }

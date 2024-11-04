@@ -59,7 +59,7 @@ final class SyncUpsListUITests: XCTestCase {
     XCTAssertEqual(self.app.staticTexts["Delete?"].exists, true)
 
     self.app.buttons["Yes"].tap()
-    try await Task.sleep(for: .seconds(0.3))
+    try await Task.sleep(for: .seconds(0.5))
     XCTAssertEqual(self.app.staticTexts["Design"].exists, false)
     XCTAssertEqual(self.app.staticTexts["Daily Sync-ups"].exists, true)
   }
