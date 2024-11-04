@@ -24,12 +24,8 @@ extension PersistenceReaderKey where Self == FileStorageKey<[AppPath]>.Default {
           try JSONEncoder().encode(
             path.filter {
               switch $0 {
-              case .detail:
-                true
-              case .meeting:
-                true
-              case .record:
-                false
+              case .detail, .meeting: true
+              case .record: false
               }
             }
           )
@@ -72,7 +68,6 @@ struct AppView: View {
 
   AppView()
 }
-
 
 #Preview("Deep link record flow") {
   let syncUp = SyncUp.mock
