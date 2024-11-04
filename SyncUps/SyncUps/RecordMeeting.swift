@@ -397,31 +397,30 @@ struct MeetingFooterView: View {
   }
 }
 
-//struct RecordMeeting_Previews: PreviewProvider {
-//  static var previews: some View {
-//    NavigationStack {
-//      RecordMeetingView(
-//        model: RecordMeetingModel(syncUp: Shared(.mock))
-//      )
-//    }
-//    .previewDisplayName("Happy path")
-//
-//    Preview(
-//      message: """
-//        This preview demonstrates how the feature behaves when the speech recognizer emits a \
-//        failure after 2 seconds of transcribing.
-//        """
-//    ) {
-//      NavigationStack {
-//        RecordMeetingView(
-//          model: withDependencies {
-//            $0.speechClient = .fail(after: .seconds(2))
-//          } operation: {
-//            RecordMeetingModel(syncUp: Shared(.mock))
-//          }
-//        )
-//      }
-//    }
-//    .previewDisplayName("Speech failure after 2 secs")
-//  }
-//}
+#Preview("Happy path") {
+  let syncUp = SyncUp.mock
+  @Shared(.syncUps) var syncUps = [syncUp]
+
+  NavigationStack {
+    RecordMeetingView(id: syncUp.id)
+  }
+}
+
+#Preview("Speech failure after 2 secs") {
+  let syncUp = SyncUp.mock
+  @Shared(.syncUps) var syncUps = [syncUp]
+  let _ = prepareDependencies {
+    $0.speechClient = .fail(after: .seconds(2))
+  }
+
+  Preview(
+    message: """
+        This preview demonstrates how the feature behaves when the speech recognizer emits a \
+        failure after 2 seconds of transcribing.
+        """
+  ) {
+    NavigationStack {
+      RecordMeetingView(id: syncUp.id)
+    }
+  }
+}
