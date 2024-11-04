@@ -10,7 +10,6 @@
 		2A368893298ADD2500E8C33A /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A368892298ADD2500E8C33A /* App.swift */; };
 		CA1C303F2C358FEB001EE466 /* CustomDump in Frameworks */ = {isa = PBXBuildFile; productRef = CA1C303E2C358FEB001EE466 /* CustomDump */; };
 		CA1D22EA2991BC7000B529DE /* AppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1D22E92991BC7000B529DE /* AppTests.swift */; };
-		CA315CFD2CD5602D002467C9 /* Sharing in Frameworks */ = {isa = PBXBuildFile; productRef = CA315CFC2CD5602D002467C9 /* Sharing */; };
 		CA350C752984506E00434F8A /* SyncUpsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350C742984506E00434F8A /* SyncUpsApp.swift */; };
 		CA350CAF298450BF00434F8A /* SyncUpDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350CA1298450BF00434F8A /* SyncUpDetail.swift */; };
 		CA350CB0298450BF00434F8A /* RecordMeeting.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350CA2298450BF00434F8A /* RecordMeeting.swift */; };
@@ -29,12 +28,14 @@
 		CA350CCF2984518A00434F8A /* SyncUpsListUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350CCE2984518A00434F8A /* SyncUpsListUITests.swift */; };
 		CA350CD2298452F300434F8A /* ding.wav in Resources */ = {isa = PBXBuildFile; fileRef = CA350CD1298452F300434F8A /* ding.wav */; };
 		CA8586B82C61210E00A53451 /* SwiftUINavigation in Frameworks */ = {isa = PBXBuildFile; productRef = CA8586B72C61210E00A53451 /* SwiftUINavigation */; };
+		CA99A59C2CD9172000E6F7B0 /* Sharing in Frameworks */ = {isa = PBXBuildFile; productRef = CA99A59B2CD9172000E6F7B0 /* Sharing */; };
 		CAAF4DC92C3586AD00774888 /* IssueReporting in Frameworks */ = {isa = PBXBuildFile; productRef = CAAF4DC82C3586AD00774888 /* IssueReporting */; };
 		CAAF4DCC2C3586C900774888 /* IdentifiedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = CAAF4DCB2C3586C900774888 /* IdentifiedCollections */; };
 		CAAF4DCF2C3586E200774888 /* Tagged in Frameworks */ = {isa = PBXBuildFile; productRef = CAAF4DCE2C3586E200774888 /* Tagged */; };
 		CAAF4DD42C35899500774888 /* Dependencies in Frameworks */ = {isa = PBXBuildFile; productRef = CAAF4DD32C35899500774888 /* Dependencies */; };
 		CAAF4DD72C3589A700774888 /* ConcurrencyExtras in Frameworks */ = {isa = PBXBuildFile; productRef = CAAF4DD62C3589A700774888 /* ConcurrencyExtras */; };
 		CAAF4DD92C3589D400774888 /* DependenciesMacros in Frameworks */ = {isa = PBXBuildFile; productRef = CAAF4DD82C3589D400774888 /* DependenciesMacros */; };
+		CAF8AAB12CD91A95007192A6 /* Sharing in Frameworks */ = {isa = PBXBuildFile; productRef = CAF8AAB02CD91A95007192A6 /* Sharing */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -84,9 +85,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CA315CFD2CD5602D002467C9 /* Sharing in Frameworks */,
+				CA99A59C2CD9172000E6F7B0 /* Sharing in Frameworks */,
 				CAAF4DD72C3589A700774888 /* ConcurrencyExtras in Frameworks */,
 				CAAF4DCF2C3586E200774888 /* Tagged in Frameworks */,
+				CAF8AAB12CD91A95007192A6 /* Sharing in Frameworks */,
 				CAAF4DD92C3589D400774888 /* DependenciesMacros in Frameworks */,
 				CA1C303F2C358FEB001EE466 /* CustomDump in Frameworks */,
 				CA8586B82C61210E00A53451 /* SwiftUINavigation in Frameworks */,
@@ -222,7 +224,8 @@
 				CAAF4DD82C3589D400774888 /* DependenciesMacros */,
 				CA1C303E2C358FEB001EE466 /* CustomDump */,
 				CA8586B72C61210E00A53451 /* SwiftUINavigation */,
-				CA315CFC2CD5602D002467C9 /* Sharing */,
+				CA99A59B2CD9172000E6F7B0 /* Sharing */,
+				CAF8AAB02CD91A95007192A6 /* Sharing */,
 			);
 			productName = SyncUps;
 			productReference = CA350C712984506E00434F8A /* SyncUps.app */;
@@ -309,7 +312,7 @@
 				CAAF4DD52C3589A700774888 /* XCRemoteSwiftPackageReference "swift-concurrency-extras" */,
 				CA1C303D2C358FEB001EE466 /* XCRemoteSwiftPackageReference "swift-custom-dump" */,
 				CA8586B62C61210E00A53451 /* XCRemoteSwiftPackageReference "swift-navigation" */,
-				CA315CDD2CD55FD8002467C9 /* XCRemoteSwiftPackageReference "swift-sharing" */,
+				CAF8AAAF2CD91A95007192A6 /* XCRemoteSwiftPackageReference "swift-sharing" */,
 			);
 			productRefGroup = CA350C722984506E00434F8A /* Products */;
 			projectDirPath = "";
@@ -717,14 +720,6 @@
 				minimumVersion = 1.0.0;
 			};
 		};
-		CA315CDD2CD55FD8002467C9 /* XCRemoteSwiftPackageReference "swift-sharing" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "http://github.com/pointfreeco/swift-sharing";
-			requirement = {
-				branch = main;
-				kind = branch;
-			};
-		};
 		CA8586B62C61210E00A53451 /* XCRemoteSwiftPackageReference "swift-navigation" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/pointfreeco/swift-navigation";
@@ -769,8 +764,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/pointfreeco/swift-dependencies";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.0;
+				branch = "prepare-dependencies";
+				kind = branch;
 			};
 		};
 		CAAF4DD52C3589A700774888 /* XCRemoteSwiftPackageReference "swift-concurrency-extras" */ = {
@@ -781,6 +776,14 @@
 				minimumVersion = 1.1.0;
 			};
 		};
+		CAF8AAAF2CD91A95007192A6 /* XCRemoteSwiftPackageReference "swift-sharing" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "http://github.com/pointfreeco/swift-sharing/";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -789,15 +792,14 @@
 			package = CA1C303D2C358FEB001EE466 /* XCRemoteSwiftPackageReference "swift-custom-dump" */;
 			productName = CustomDump;
 		};
-		CA315CFC2CD5602D002467C9 /* Sharing */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = CA315CDD2CD55FD8002467C9 /* XCRemoteSwiftPackageReference "swift-sharing" */;
-			productName = Sharing;
-		};
 		CA8586B72C61210E00A53451 /* SwiftUINavigation */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = CA8586B62C61210E00A53451 /* XCRemoteSwiftPackageReference "swift-navigation" */;
 			productName = SwiftUINavigation;
+		};
+		CA99A59B2CD9172000E6F7B0 /* Sharing */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Sharing;
 		};
 		CAAF4DC82C3586AD00774888 /* IssueReporting */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -828,6 +830,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = CAAF4DD22C35899500774888 /* XCRemoteSwiftPackageReference "swift-dependencies" */;
 			productName = DependenciesMacros;
+		};
+		CAF8AAB02CD91A95007192A6 /* Sharing */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CAF8AAAF2CD91A95007192A6 /* XCRemoteSwiftPackageReference "swift-sharing" */;
+			productName = Sharing;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

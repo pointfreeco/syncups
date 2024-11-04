@@ -10,9 +10,10 @@ import SwiftUINavigation
 @Observable
 final class RecordMeetingModel {
   var destination: Destination?
-  var isDismissed = false
   var secondsElapsed = 0
   var speakerIndex = 0
+  @ObservationIgnored
+  @Shared(.path) var path
   @ObservationIgnored
   @Shared var syncUp: SyncUp
   private var transcript = ""
@@ -81,7 +82,7 @@ final class RecordMeetingModel {
     case .confirmSave?:
       await finishMeeting()
     case .confirmDiscard?:
-      isDismissed = true
+      _ = $path.withLock { $0.removeLast() }
     case nil:
       break
     }
@@ -140,7 +141,7 @@ final class RecordMeetingModel {
   }
 
   private func finishMeeting() async {
-    isDismissed = true
+    _ = $path.withLock { $0.removeLast() }
 
     let meeting = Meeting(
       id: Meeting.ID(self.uuid()),
@@ -148,7 +149,7 @@ final class RecordMeetingModel {
       transcript: transcript
     )
 
-    try? await Task.sleep(for: .milliseconds(400))
+    try? await clock.sleep(for: .seconds(0.4))
     _ = withAnimation {
       $syncUp.withLock { $0.meetings.insert(meeting, at: 0) }
     }
@@ -198,7 +199,11 @@ extension AlertState where Action == RecordMeetingModel.AlertAction {
 
 struct RecordMeetingView: View {
   @State var model: RecordMeetingModel
-  @Environment(\.dismiss) var dismiss
+
+  init(id: SyncUp.ID) {
+    @Shared(.syncUps) var syncUps
+    _model = State(wrappedValue: RecordMeetingModel(syncUp: Shared($syncUps[id: id])!))
+  }
 
   var body: some View {
     ZStack {
@@ -237,7 +242,6 @@ struct RecordMeetingView: View {
       await self.model.alertButtonTapped(action)
     }
     .task { await self.model.task() }
-    .onChange(of: self.model.isDismissed) { _, _ in self.dismiss() }
   }
 }
 
@@ -389,31 +393,31 @@ struct MeetingFooterView: View {
   }
 }
 
-struct RecordMeeting_Previews: PreviewProvider {
-  static var previews: some View {
-    NavigationStack {
-      RecordMeetingView(
-        model: RecordMeetingModel(syncUp: Shared(.mock))
-      )
-    }
-    .previewDisplayName("Happy path")
-
-    Preview(
-      message: """
-        This preview demonstrates how the feature behaves when the speech recognizer emits a \
-        failure after 2 seconds of transcribing.
-        """
-    ) {
-      NavigationStack {
-        RecordMeetingView(
-          model: withDependencies {
-            $0.speechClient = .fail(after: .seconds(2))
-          } operation: {
-            RecordMeetingModel(syncUp: Shared(.mock))
-          }
-        )
-      }
-    }
-    .previewDisplayName("Speech failure after 2 secs")
-  }
-}
+//struct RecordMeeting_Previews: PreviewProvider {
+//  static var previews: some View {
+//    NavigationStack {
+//      RecordMeetingView(
+//        model: RecordMeetingModel(syncUp: Shared(.mock))
+//      )
+//    }
+//    .previewDisplayName("Happy path")
+//
+//    Preview(
+//      message: """
+//        This preview demonstrates how the feature behaves when the speech recognizer emits a \
+//        failure after 2 seconds of transcribing.
+//        """
+//    ) {
+//      NavigationStack {
+//        RecordMeetingView(
+//          model: withDependencies {
+//            $0.speechClient = .fail(after: .seconds(2))
+//          } operation: {
+//            RecordMeetingModel(syncUp: Shared(.mock))
+//          }
+//        )
+//      }
+//    }
+//    .previewDisplayName("Speech failure after 2 secs")
+//  }
+//}

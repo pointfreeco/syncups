@@ -17,8 +17,6 @@ final class SyncUpsListModel {
   @ObservationIgnored
   @Dependency(\.uuid) var uuid
 
-  var onSyncUpTapped: (SyncUp) -> Void = unimplemented("onSyncUpTapped")
-
   @CasePathable
   @dynamicMemberLookup
   enum Destination {
@@ -58,21 +56,15 @@ final class SyncUpsListModel {
     }
     _ = $syncUps.withLock { $0.append(syncUp) }
   }
-
-  func syncUpTapped(syncUp: SyncUp) {
-    onSyncUpTapped(syncUp)
-  }
 }
 
 struct SyncUpsList: View {
-  @Bindable var model: SyncUpsListModel
+  @State var model = SyncUpsListModel()
 
   var body: some View {
     List {
       ForEach(self.model.syncUps) { syncUp in
-        Button {
-          self.model.syncUpTapped(syncUp: syncUp)
-        } label: {
+        NavigationLink(value: AppPath.detail(id: syncUp.id)) {
           CardView(syncUp: syncUp)
         }
         .listRowBackground(syncUp.theme.mainColor)
