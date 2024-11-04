@@ -60,41 +60,43 @@ struct AppView: View {
   }
 }
 
-//#Preview("Happy path") {
-//  @Shared(.syncUps) var syncUps: IdentifiedArray = [
-//    SyncUp.mock,
-//    .engineeringMock,
-//    .designMock,
-//  ]
-//
-//  AppView(
-//    model: AppModel(syncUpsList: SyncUpsListModel())
-//  )
-//}
-//
-//#Preview("Deep link record flow") {
-//  @Shared(.syncUps) var syncUps: IdentifiedArray = [
-//    SyncUp.mock,
-//    .engineeringMock,
-//    .designMock,
-//  ]
-//
-//  Preview(
-//    message: """
-//      The preview demonstrates how you can start the application navigated to a very specific \
-//      screen just by constructing a piece of state. In particular we will start the app drilled \
-//      down to the detail screen of a sync-up, and then further drilled down to the record screen \
-//      for a new meeting.
-//      """
-//  ) {
-//    AppView(
-//      model: AppModel(
-//        path: [
-//          .detail(SyncUpDetailModel(syncUp: Shared(.mock))),
-//          .record(RecordMeetingModel(syncUp: Shared(.mock))),
-//        ],
-//        syncUpsList: SyncUpsListModel()
-//      )
-//    )
-//  }
-//}
+#Preview("Happy path") {
+  @Shared(.syncUps) var syncUps
+  let _ = $syncUps.withLock {
+    $0 = [
+      SyncUp.mock,
+      .engineeringMock,
+      .designMock,
+    ]
+  }
+
+  AppView()
+}
+
+
+#Preview("Deep link record flow") {
+  let syncUp = SyncUp.mock
+  @Shared(.syncUps) var syncUps
+  let _ = $syncUps.withLock {
+    $0 = [
+      SyncUp.mock,
+      .engineeringMock,
+      .designMock,
+    ]
+  }
+  @Shared(.path) var path = [
+    .detail(id: syncUp.id),
+    .record(id: syncUp.id)
+  ]
+
+  Preview(
+    message: """
+      The preview demonstrates how you can start the application navigated to a very specific \
+      screen just by constructing a piece of state. In particular we will start the app drilled \
+      down to the detail screen of a sync-up, and then further drilled down to the record screen \
+      for a new meeting.
+      """
+  ) {
+    AppView()
+  }
+}

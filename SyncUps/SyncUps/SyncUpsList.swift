@@ -139,46 +139,44 @@ extension PersistenceReaderKey where Self == FileStorageKey<IdentifiedArrayOf<Sy
   }
 }
 
-struct SyncUpsList_Previews: PreviewProvider {
-  static var previews: some View {
-    Preview(
-      message: """
-        This preview demonstrates how to start the app in a state with a few sync-ups \
-        pre-populated. Since the initial sync-ups are loaded from disk we cannot simply pass some \
-        data to the SyncUpsList model. But, we can override the DataManager dependency so that \
-        when its load endpoint is called it will load whatever data we want.
-        """
-    ) {
-      @Shared(.syncUps) var syncUps: IdentifiedArray = [
-        SyncUp.mock,
-        .engineeringMock,
-        .designMock,
-      ]
-      SyncUpsList(model: SyncUpsListModel())
-    }
-    .previewDisplayName("Mocking initial sync-ups")
+#Preview("Mocking initial sync-ups") {
+  Preview(
+    message: """
+      This preview demonstrates how to start the app in a state with a few sync-ups \
+      pre-populated. Since the initial sync-ups are loaded from disk we cannot simply pass some \
+      data to the SyncUpsList model. But, we can override the DataManager dependency so that \
+      when its load endpoint is called it will load whatever data we want.
+      """
+  ) {
+    @Shared(.syncUps) var syncUps: IdentifiedArray = [
+      SyncUp.mock,
+      .engineeringMock,
+      .designMock,
+    ]
+    SyncUpsList(model: SyncUpsListModel())
+  }
+}
 
-    Preview(
-      message: """
-        The preview demonstrates how you can start the application navigated to a very specific \
-        screen just by constructing a piece of state. In particular we will start the app with the \
-        "Add sync-up" screen opened and with the last attendee text field focused.
-        """
-    ) {
-      var syncUp = SyncUp.mock
-      let lastAttendee = Attendee(id: Attendee.ID())
-      let _ = syncUp.attendees.append(lastAttendee)
-      SyncUpsList(
-        model: SyncUpsListModel(
-          destination: .add(
-            SyncUpFormModel(
-              focus: .attendee(lastAttendee.id),
-              syncUp: syncUp
-            )
+#Preview("Deep link add flow") {
+  Preview(
+    message: """
+      The preview demonstrates how you can start the application navigated to a very specific \
+      screen just by constructing a piece of state. In particular we will start the app with the \
+      "Add sync-up" screen opened and with the last attendee text field focused.
+      """
+  ) {
+    var syncUp = SyncUp.mock
+    let lastAttendee = Attendee(id: Attendee.ID())
+    let _ = syncUp.attendees.append(lastAttendee)
+    SyncUpsList(
+      model: SyncUpsListModel(
+        destination: .add(
+          SyncUpFormModel(
+            focus: .attendee(lastAttendee.id),
+            syncUp: syncUp
           )
         )
       )
-    }
-    .previewDisplayName("Deep link add flow")
+    )
   }
 }

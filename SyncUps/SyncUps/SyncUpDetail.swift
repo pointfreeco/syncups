@@ -1,6 +1,7 @@
 import Clocks
 import CustomDump
 import Dependencies
+import IdentifiedCollections
 import IssueReporting
 import Sharing
 import SwiftUI
@@ -278,10 +279,16 @@ struct MeetingView: View {
   let meeting: Meeting
   let syncUp: SyncUp
 
-  init(id: Meeting.ID, syncUpID: SyncUp.ID) {
+  init?(id: Meeting.ID, syncUpID: SyncUp.ID) {
     @Shared(.syncUps) var syncUps
-    syncUp = syncUps[id: syncUpID]!
-    meeting = syncUp.meetings[id: id]!
+    guard
+      let syncUp = syncUps[id: syncUpID],
+      let meeting = syncUp.meetings[id: id]
+    else {
+      return nil
+    }
+    self.syncUp = syncUp
+    self.meeting = meeting
   }
 
   var body: some View {
@@ -305,86 +312,64 @@ struct MeetingView: View {
   }
 }
 
-//struct SyncUpDetail_Previews: PreviewProvider {
-//  static var previews: some View {
-//    Preview(
-//      message: """
-//        This preview demonstrates the "happy path" of the application where everything works \
-//        perfectly. You can start a meeting, wait a few moments, end the meeting, and you will \
-//        see that a new transcription was added to the past meetings. The transcript will consist \
-//        of some "lorem ipsum" text because a mock speech recongizer is used for Xcode previews.
-//        """
-//    ) {
-//      NavigationStack {
-//        SyncUpDetailView(
-//          model: SyncUpDetailModel(syncUp: Shared(.mock))
-//        )
-//      }
-//    }
-//    .previewDisplayName("Happy path")
-//
-//    Preview(
-//      message: """
-//        This preview demonstrates an "unhappy path" of the application where the speech \
-//        recognizer mysteriously fails after 2 seconds of recording. This gives us an opportunity \
-//        to see how the application deals with this rare occurrence. To see the behavior, run the \
-//        preview, tap the "Start Meeting" button and wait 2 seconds.
-//        """
-//    ) {
-//      NavigationStack {
-//        SyncUpDetailView(
-//          model: withDependencies {
-//            $0.speechClient = .fail(after: .seconds(2))
-//          } operation: {
-//            SyncUpDetailModel(
-//              syncUp: Shared(.mock)
-//            )
-//          }
-//        )
-//      }
-//    }
-//    .previewDisplayName("Speech recognition failed")
-//
-//    Preview(
-//      message: """
-//        This preview demonstrates how the feature behaves when access to speech recognition has \
-//        been previously denied by the user. Tap the "Start Meeting" button to see how we handle \
-//        that situation.
-//        """
-//    ) {
-//      NavigationStack {
-//        SyncUpDetailView(
-//          model: withDependencies {
-//            $0.speechClient.authorizationStatus = { .denied }
-//          } operation: {
-//            SyncUpDetailModel(
-//              syncUp: Shared(.mock)
-//            )
-//          }
-//        )
-//      }
-//    }
-//    .previewDisplayName("Speech recognition denied")
-//
-//    Preview(
-//      message: """
-//        This preview demonstrates how the feature behaves when the device restricts access to \
-//        speech recognition APIs. Tap the "Start Meeting" button to see how we handle that \
-//        situation.
-//        """
-//    ) {
-//      NavigationStack {
-//        SyncUpDetailView(
-//          model: withDependencies {
-//            $0.speechClient.authorizationStatus = { .restricted }
-//          } operation: {
-//            SyncUpDetailModel(
-//              syncUp: Shared(.mock)
-//            )
-//          }
-//        )
-//      }
-//    }
-//    .previewDisplayName("Speech recognition restricted")
-//  }
-//}
+#Preview("Happy path") {
+  let syncUp = SyncUp.mock
+  @Shared(.syncUps) var syncUps = [syncUp]
+
+  Preview(
+    message: """
+      This preview demonstrates the "happy path" of the application where everything works \
+      perfectly. You can start a meeting, wait a few moments, end the meeting, and you will \
+      see that a new transcription was added to the past meetings. The transcript will consist \
+      of some "lorem ipsum" text because a mock speech recongizer is used for Xcode previews.
+      """
+  ) {
+    NavigationStack {
+      SyncUpDetailView(id: syncUp.id)
+    }
+  }
+}
+
+#Preview(
+  "Speech recognition denied",
+  traits: .dependencies {
+    $0.speechClient.authorizationStatus = { .denied }
+  }
+) {
+  let syncUp = SyncUp.mock
+  @Shared(.syncUps) var syncUps = [syncUp]
+
+  Preview(
+    message: """
+      This preview demonstrates how the feature behaves when access to speech recognition has \
+      been previously denied by the user. Tap the "Start Meeting" button to see how we handle \
+      that situation.
+      """
+  ) {
+    NavigationStack {
+      SyncUpDetailView(id: syncUp.id)
+    }
+  }
+}
+
+#Preview(
+  "Speech recognition restricted",
+  traits: .dependencies {
+    $0.speechClient.authorizationStatus = { .restricted }
+  }
+) {
+  let syncUp = SyncUp.mock
+  @Shared(.syncUps) var syncUps = [syncUp]
+
+  Preview(
+    message: """
+      This preview demonstrates how the feature behaves when the device restricts access to \
+      speech recognition APIs. Tap the "Start Meeting" button to see how we handle that \
+      situation.
+      """
+  ) {
+    NavigationStack {
+      SyncUpDetailView(id: syncUp.id)
+    }
+  }
+}

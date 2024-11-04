@@ -200,9 +200,13 @@ extension AlertState where Action == RecordMeetingModel.AlertAction {
 struct RecordMeetingView: View {
   @State var model: RecordMeetingModel
 
-  init(id: SyncUp.ID) {
+  init?(id: SyncUp.ID) {
     @Shared(.syncUps) var syncUps
-    _model = State(wrappedValue: RecordMeetingModel(syncUp: Shared($syncUps[id: id])!))
+    guard let syncUp = Shared($syncUps[id: id])
+    else {
+      return nil
+    }
+    _model = State(wrappedValue: RecordMeetingModel(syncUp: syncUp))
   }
 
   var body: some View {
