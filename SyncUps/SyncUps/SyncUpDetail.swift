@@ -11,21 +11,14 @@ import SwiftUINavigation
 @Observable
 final class SyncUpDetailModel {
   var destination: Destination?
-  @ObservationIgnored
-  @Shared var syncUp: SyncUp
-  @ObservationIgnored
-  @Shared(.path) var path
+  @ObservationIgnored @Shared var syncUp: SyncUp
+  @ObservationIgnored @Shared(.path) var path
 
-  @ObservationIgnored
-  @Dependency(\.continuousClock) var clock
-  @ObservationIgnored
-  @Dependency(\.date.now) var now
-  @ObservationIgnored
-  @Dependency(\.openSettings) var openSettings
-  @ObservationIgnored
-  @Dependency(\.speechClient.authorizationStatus) var authorizationStatus
-  @ObservationIgnored
-  @Dependency(\.uuid) var uuid
+  @ObservationIgnored @Dependency(\.continuousClock) var clock
+  @ObservationIgnored @Dependency(\.date.now) var now
+  @ObservationIgnored @Dependency(\.openSettings) var openSettings
+  @ObservationIgnored @Dependency(\.speechClient.authorizationStatus) var authorizationStatus
+  @ObservationIgnored @Dependency(\.uuid) var uuid
 
   @CasePathable
   @dynamicMemberLookup
@@ -66,7 +59,9 @@ final class SyncUpDetailModel {
       }
 
     case .continueWithoutRecording?:
-      $path.withLock { $0.append(.record(id: syncUp.id)) }
+      $path.withLock {
+        $0.append(.record(id: syncUp.id))
+      }
 
     case .openSettings?:
       await openSettings()

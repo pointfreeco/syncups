@@ -27,7 +27,7 @@ struct RecordMeetingTests {
     } operation: {
       RecordMeetingModel(
         syncUp: Shared(
-          SyncUp(
+          value: SyncUp(
             id: SyncUp.ID(),
             attendees: [
               Attendee(id: Attendee.ID()),
@@ -95,7 +95,7 @@ struct RecordMeetingTests {
     } operation: {
       RecordMeetingModel(
         syncUp: Shared(
-          SyncUp(
+          value: SyncUp(
             id: SyncUp.ID(),
             attendees: [Attendee(id: Attendee.ID())],
             duration: .seconds(3)
@@ -130,7 +130,7 @@ struct RecordMeetingTests {
       $0.speechClient.authorizationStatus = { .denied }
       $0.uuid = .incrementing
     } operation: {
-      RecordMeetingModel(syncUp: Shared(syncUp))
+      RecordMeetingModel(syncUp: Shared(value: syncUp))
     }
 
     let task = Task {
@@ -139,7 +139,7 @@ struct RecordMeetingTests {
 
     model.endMeetingButtonTapped()
 
-    let alert = try #require(model.destination?.alert)
+    let alert = try #require(model.alert)
 
     expectNoDifference(alert, .endMeeting(isDiscardable: true))
 
@@ -170,7 +170,7 @@ struct RecordMeetingTests {
       $0.soundEffectClient = .noop
       $0.speechClient.authorizationStatus = { .denied }
     } operation: {
-      RecordMeetingModel(syncUp: Shared(syncUp))
+      RecordMeetingModel(syncUp: Shared(value: syncUp))
     }
 
     let task = Task {
@@ -179,7 +179,7 @@ struct RecordMeetingTests {
 
     model.endMeetingButtonTapped()
 
-    let alert = try #require(model.destination?.alert)
+    let alert = try #require(model.alert)
 
     expectNoDifference(alert, .endMeeting(isDiscardable: true))
 
@@ -205,7 +205,7 @@ struct RecordMeetingTests {
     } operation: {
       RecordMeetingModel(
         syncUp: Shared(
-          SyncUp(
+          value: SyncUp(
             id: SyncUp.ID(),
             attendees: [
               Attendee(id: Attendee.ID()),
@@ -236,7 +236,7 @@ struct RecordMeetingTests {
 
     model.nextButtonTapped()
 
-    let alert = try #require(model.destination?.alert)
+    let alert = try #require(model.alert)
 
     expectNoDifference(alert, .endMeeting(isDiscardable: false))
 
@@ -277,7 +277,7 @@ struct RecordMeetingTests {
     } operation: {
       RecordMeetingModel(
         syncUp: Shared(
-          SyncUp(
+          value: SyncUp(
             id: SyncUp.ID(),
             attendees: [Attendee(id: Attendee.ID())],
             duration: .seconds(3)
@@ -296,10 +296,10 @@ struct RecordMeetingTests {
     //     https://forums.swift.org/t/reliably-testing-code-that-adopts-swift-concurrency/57304
     try await Task.sleep(for: .milliseconds(100))
 
-    let alert = try #require(model.destination?.alert)
+    let alert = try #require(model.alert)
     #expect(alert == .speechRecognizerFailed)
 
-    model.destination = nil  // NB: Simulate SwiftUI closing alert.
+    model.alert = nil  // NB: Simulate SwiftUI closing alert.
 
     await task.value
 
@@ -324,7 +324,7 @@ struct RecordMeetingTests {
         return AsyncThrowingStream.finished(throwing: SpeechRecognitionFailure())
       }
     } operation: {
-      RecordMeetingModel(syncUp: Shared(syncUp))
+      RecordMeetingModel(syncUp: Shared(value: syncUp))
     }
 
     Task {
@@ -337,11 +337,11 @@ struct RecordMeetingTests {
     //     https://forums.swift.org/t/reliably-testing-code-that-adopts-swift-concurrency/57304
     try await Task.sleep(for: .milliseconds(100))
 
-    let alert = try #require(model.destination?.alert)
+    let alert = try #require(model.alert)
     #expect(alert == .speechRecognizerFailed)
 
     await model.alertButtonTapped(.confirmDiscard)
-    model.destination = nil  // NB: Simulate SwiftUI closing alert.
+    model.alert = nil  // NB: Simulate SwiftUI closing alert.
 
     #expect(path == [.detail(id: syncUp.id)])
   }

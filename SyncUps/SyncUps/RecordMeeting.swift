@@ -9,31 +9,18 @@ import SwiftUINavigation
 @MainActor
 @Observable
 final class RecordMeetingModel {
-  var destination: Destination?
+  var alert: AlertState<AlertAction>?
   var secondsElapsed = 0
   var speakerIndex = 0
-  @ObservationIgnored
-  @Shared(.path) var path
-  @ObservationIgnored
-  @Shared var syncUp: SyncUp
+  @ObservationIgnored @Shared(.path) var path
+  @ObservationIgnored @Shared var syncUp: SyncUp
   private var transcript = ""
 
-  @ObservationIgnored
-  @Dependency(\.continuousClock) var clock
-  @ObservationIgnored
-  @Dependency(\.date.now) var now
-  @ObservationIgnored
-  @Dependency(\.soundEffectClient) var soundEffectClient
-  @ObservationIgnored
-  @Dependency(\.speechClient) var speechClient
-  @ObservationIgnored
-  @Dependency(\.uuid) var uuid
-
-  @CasePathable
-  @dynamicMemberLookup
-  enum Destination {
-    case alert(AlertState<AlertAction>)
-  }
+  @ObservationIgnored @Dependency(\.continuousClock) var clock
+  @ObservationIgnored @Dependency(\.date.now) var now
+  @ObservationIgnored @Dependency(\.soundEffectClient) var soundEffectClient
+  @ObservationIgnored @Dependency(\.speechClient) var speechClient
+  @ObservationIgnored @Dependency(\.uuid) var uuid
 
   enum AlertAction {
     case confirmSave
@@ -41,10 +28,8 @@ final class RecordMeetingModel {
   }
 
   init(
-    destination: Destination? = nil,
     syncUp: Shared<SyncUp>
   ) {
-    self.destination = destination
     self._syncUp = syncUp
   }
 
@@ -53,18 +38,13 @@ final class RecordMeetingModel {
   }
 
   var isAlertOpen: Bool {
-    switch destination {
-    case .alert:
-      return true
-    case .none:
-      return false
-    }
+    alert != nil
   }
 
   func nextButtonTapped() {
     guard speakerIndex < syncUp.attendees.count - 1
     else {
-      destination = .alert(.endMeeting(isDiscardable: false))
+      alert = .endMeeting(isDiscardable: false)
       return
     }
 
@@ -74,7 +54,7 @@ final class RecordMeetingModel {
   }
 
   func endMeetingButtonTapped() {
-    destination = .alert(.endMeeting(isDiscardable: true))
+    alert = .endMeeting(isDiscardable: true)
   }
 
   func alertButtonTapped(_ action: AlertAction?) async {
@@ -120,7 +100,7 @@ final class RecordMeetingModel {
       if !transcript.isEmpty {
         transcript += " ❌"
       }
-      destination = .alert(.speechRecognizerFailed)
+      alert = .speechRecognizerFailed
     }
   }
 
@@ -143,15 +123,18 @@ final class RecordMeetingModel {
   private func finishMeeting() async {
     _ = $path.withLock { $0.removeLast() }
 
-    let meeting = Meeting(
-      id: Meeting.ID(self.uuid()),
-      date: self.now,
-      transcript: transcript
-    )
-
     try? await clock.sleep(for: .seconds(0.4))
     _ = withAnimation {
-      $syncUp.withLock { $0.meetings.insert(meeting, at: 0) }
+      $syncUp.withLock {
+        $0.meetings.insert(
+          Meeting(
+            id: Meeting.ID(self.uuid()),
+            date: self.now,
+            transcript: transcript
+          ),
+          at: 0
+        )
+      }
     }
   }
 }
@@ -203,9 +186,7 @@ struct RecordMeetingView: View {
   init?(id: SyncUp.ID) {
     @Shared(.syncUps) var syncUps
     guard let syncUp = Shared($syncUps[id: id])
-    else {
-      return nil
-    }
+    else { return nil }
     _model = State(wrappedValue: RecordMeetingModel(syncUp: syncUp))
   }
 
@@ -242,7 +223,7 @@ struct RecordMeetingView: View {
       }
     }
     .navigationBarBackButtonHidden(true)
-    .alert(self.$model.destination.alert) { action in
+    .alert(self.$model.alert) { action in
       await self.model.alertButtonTapped(action)
     }
     .task { await self.model.task() }

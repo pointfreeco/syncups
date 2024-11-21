@@ -26,6 +26,8 @@
 		CA350CCD2984518200434F8A /* SyncUpDetailTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350CC92984518200434F8A /* SyncUpDetailTests.swift */; };
 		CA350CCF2984518A00434F8A /* SyncUpsListUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350CCE2984518A00434F8A /* SyncUpsListUITests.swift */; };
 		CA350CD2298452F300434F8A /* ding.wav in Resources */ = {isa = PBXBuildFile; fileRef = CA350CD1298452F300434F8A /* ding.wav */; };
+		CA763F4E2CEF88FC00C1CE55 /* AppPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA763F4D2CEF88FC00C1CE55 /* AppPath.swift */; };
+		CA763F5C2CEF9B6700C1CE55 /* DependenciesTestSupport in Frameworks */ = {isa = PBXBuildFile; productRef = CA763F5B2CEF9B6700C1CE55 /* DependenciesTestSupport */; };
 		CA8586B82C61210E00A53451 /* SwiftUINavigation in Frameworks */ = {isa = PBXBuildFile; productRef = CA8586B72C61210E00A53451 /* SwiftUINavigation */; };
 		CA99A59C2CD9172000E6F7B0 /* Sharing in Frameworks */ = {isa = PBXBuildFile; productRef = CA99A59B2CD9172000E6F7B0 /* Sharing */; };
 		CAAF4DC92C3586AD00774888 /* IssueReporting in Frameworks */ = {isa = PBXBuildFile; productRef = CAAF4DC82C3586AD00774888 /* IssueReporting */; };
@@ -76,6 +78,7 @@
 		CA350CC92984518200434F8A /* SyncUpDetailTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncUpDetailTests.swift; sourceTree = "<group>"; };
 		CA350CCE2984518A00434F8A /* SyncUpsListUITests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncUpsListUITests.swift; sourceTree = "<group>"; };
 		CA350CD1298452F300434F8A /* ding.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = ding.wav; sourceTree = "<group>"; };
+		CA763F4D2CEF88FC00C1CE55 /* AppPath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppPath.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -100,6 +103,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CA763F5C2CEF9B6700C1CE55 /* DependenciesTestSupport in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -138,6 +142,7 @@
 			isa = PBXGroup;
 			children = (
 				2A368892298ADD2500E8C33A /* App.swift */,
+				CA763F4D2CEF88FC00C1CE55 /* AppPath.swift */,
 				CA350CAB298450BF00434F8A /* Helpers.swift */,
 				CA350CAA298450BF00434F8A /* Models.swift */,
 				CA350CA2298450BF00434F8A /* RecordMeeting.swift */,
@@ -243,6 +248,7 @@
 			);
 			name = SyncUpsTests;
 			packageProductDependencies = (
+				CA763F5B2CEF9B6700C1CE55 /* DependenciesTestSupport */,
 			);
 			productName = SyncUpsTests;
 			productReference = CA350C812984506F00434F8A /* SyncUpsTests.xctest */;
@@ -304,7 +310,6 @@
 				CAAF4DC72C3586AD00774888 /* XCRemoteSwiftPackageReference "xctest-dynamic-overlay" */,
 				CAAF4DCA2C3586C900774888 /* XCRemoteSwiftPackageReference "swift-identified-collections" */,
 				CAAF4DCD2C3586E200774888 /* XCRemoteSwiftPackageReference "swift-tagged" */,
-				CAAF4DD12C35874200774888 /* XCRemoteSwiftPackageReference "swift-syntax" */,
 				CAAF4DD22C35899500774888 /* XCRemoteSwiftPackageReference "swift-dependencies" */,
 				CAAF4DD52C3589A700774888 /* XCRemoteSwiftPackageReference "swift-concurrency-extras" */,
 				CA1C303D2C358FEB001EE466 /* XCRemoteSwiftPackageReference "swift-custom-dump" */,
@@ -363,6 +368,7 @@
 				CA350CB1298450BF00434F8A /* SyncUpForm.swift in Sources */,
 				2A368893298ADD2500E8C33A /* App.swift in Sources */,
 				CA350CB0298450BF00434F8A /* RecordMeeting.swift in Sources */,
+				CA763F4E2CEF88FC00C1CE55 /* AppPath.swift in Sources */,
 				CA350CAF298450BF00434F8A /* SyncUpDetail.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -748,20 +754,12 @@
 				minimumVersion = 0.10.0;
 			};
 		};
-		CAAF4DD12C35874200774888 /* XCRemoteSwiftPackageReference "swift-syntax" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/swiftlang/swift-syntax";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 510.0.2;
-			};
-		};
 		CAAF4DD22C35899500774888 /* XCRemoteSwiftPackageReference "swift-dependencies" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/pointfreeco/swift-dependencies";
 			requirement = {
-				branch = "prepare-dependencies";
-				kind = branch;
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
 			};
 		};
 		CAAF4DD52C3589A700774888 /* XCRemoteSwiftPackageReference "swift-concurrency-extras" */ = {
@@ -787,6 +785,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = CA1C303D2C358FEB001EE466 /* XCRemoteSwiftPackageReference "swift-custom-dump" */;
 			productName = CustomDump;
+		};
+		CA763F5B2CEF9B6700C1CE55 /* DependenciesTestSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CAAF4DD22C35899500774888 /* XCRemoteSwiftPackageReference "swift-dependencies" */;
+			productName = DependenciesTestSupport;
 		};
 		CA8586B72C61210E00A53451 /* SwiftUINavigation */ = {
 			isa = XCSwiftPackageProductDependency;

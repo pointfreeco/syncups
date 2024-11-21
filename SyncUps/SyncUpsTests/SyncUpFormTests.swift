@@ -5,21 +5,17 @@ import Testing
 @testable import SyncUps
 
 @MainActor
-@Suite
+@Suite(.dependency(\.uuid, .incrementing))
 struct SyncUpFormTests {
   @Test
   func addAttendee() async {
-    let model = withDependencies {
-      $0.uuid = .incrementing
-    } operation: {
-      SyncUpFormModel(
-        syncUp: SyncUp(
-          id: SyncUp.ID(),
-          attendees: [],
-          title: "Engineering"
-        )
+    let model = SyncUpFormModel(
+      syncUp: SyncUp(
+        id: SyncUp.ID(),
+        attendees: [],
+        title: "Engineering"
       )
-    }
+    )
 
     expectNoDifference(
       model.syncUp.attendees,
@@ -41,17 +37,13 @@ struct SyncUpFormTests {
 
   @Test
   func focusAddAttendee() async {
-    let model = withDependencies {
-      $0.uuid = .incrementing
-    } operation: {
-      SyncUpFormModel(
-        syncUp: SyncUp(
-          id: SyncUp.ID(),
-          attendees: [],
-          title: "Engineering"
-        )
+    let model = SyncUpFormModel(
+      syncUp: SyncUp(
+        id: SyncUp.ID(),
+        attendees: [],
+        title: "Engineering"
       )
-    }
+    )
 
     #expect(model.focus == .title)
 
@@ -64,24 +56,19 @@ struct SyncUpFormTests {
 
   @Test
   func focusRemoveAttendee() async {
-    let model = withDependencies {
-      $0.uuid = .incrementing
-    } operation: {
-      @Dependency(\.uuid) var uuid
-
-      return SyncUpFormModel(
-        syncUp: SyncUp(
-          id: SyncUp.ID(),
-          attendees: [
-            Attendee(id: Attendee.ID(uuid())),
-            Attendee(id: Attendee.ID(uuid())),
-            Attendee(id: Attendee.ID(uuid())),
-            Attendee(id: Attendee.ID(uuid())),
-          ],
-          title: "Engineering"
-        )
+    @Dependency(\.uuid) var uuid
+    let model = SyncUpFormModel(
+      syncUp: SyncUp(
+        id: SyncUp.ID(),
+        attendees: [
+          Attendee(id: Attendee.ID(uuid())),
+          Attendee(id: Attendee.ID(uuid())),
+          Attendee(id: Attendee.ID(uuid())),
+          Attendee(id: Attendee.ID(uuid())),
+        ],
+        title: "Engineering"
       )
-    }
+    )
 
     model.deleteAttendees(atOffsets: [0])
 

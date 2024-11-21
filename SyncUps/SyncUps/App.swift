@@ -4,38 +4,6 @@ import IdentifiedCollections
 import Sharing
 import SwiftUI
 
-@CasePathable
-enum AppPath: Codable, Hashable {
-  case detail(id: SyncUp.ID)
-  case meeting(id: Meeting.ID, syncUpID: SyncUp.ID)
-  case record(id: SyncUp.ID)
-}
-
-extension PersistenceReaderKey where Self == FileStorageKey<[AppPath]>.Default {
-  static var path: Self {
-    Self[
-      .fileStorage(
-        .documentsDirectory.appending(path: "path.json"),
-        decode: { data in
-          try JSONDecoder().decode([AppPath].self, from: data)
-        },
-        // TODO: write unit tests for encode logic
-        encode: { path in
-          try JSONEncoder().encode(
-            path.filter {
-              switch $0 {
-              case .detail, .meeting: true
-              case .record: false
-              }
-            }
-          )
-        }
-      ),
-      default: []
-    ]
-  }
-}
-
 struct AppView: View {
   @Shared(.path) var path
 
@@ -65,7 +33,6 @@ struct AppView: View {
       .designMock,
     ]
   }
-
   AppView()
 }
 
@@ -74,14 +41,14 @@ struct AppView: View {
   @Shared(.syncUps) var syncUps
   let _ = $syncUps.withLock {
     $0 = [
-      SyncUp.mock,
+      syncUp,
       .engineeringMock,
       .designMock,
     ]
   }
   @Shared(.path) var path = [
     .detail(id: syncUp.id),
-    .record(id: syncUp.id)
+    .record(id: syncUp.id),
   ]
 
   Preview(

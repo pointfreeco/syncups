@@ -1,6 +1,7 @@
 import CasePaths
 import CustomDump
 import Dependencies
+import DependenciesTestSupport
 import Foundation
 import IdentifiedCollections
 import Testing
@@ -10,18 +11,16 @@ import Testing
 @MainActor
 @Suite
 struct SyncUpsListTests {
-  @Test
+  @Test(
+    .dependency(\.continuousClock, ImmediateClock()),
+    .dependency(\.uuid, .incrementing)
+  )
   func add() async throws {
-    let model = withDependencies {
-      $0.continuousClock = ImmediateClock()
-      $0.uuid = .incrementing
-    } operation: {
-      SyncUpsListModel()
-    }
+    let model = SyncUpsListModel()
 
     model.addSyncUpButtonTapped()
 
-    let addModel = try #require(model.destination?.add)
+    let addModel = try #require(model.addSyncUp)
 
     addModel.syncUp.title = "Engineering"
     addModel.syncUp.attendees[0].name = "Blob"
@@ -29,7 +28,7 @@ struct SyncUpsListTests {
     addModel.syncUp.attendees[1].name = "Blob Jr."
     model.confirmAddSyncUpButtonTapped()
 
-    #expect(model.destination == nil)
+    #expect(model.addSyncUp == nil)
 
     expectNoDifference(
       model.syncUps,
@@ -52,31 +51,27 @@ struct SyncUpsListTests {
     )
   }
 
-  @Test
+  @Test(
+    .dependency(\.continuousClock, ImmediateClock()),
+    .dependency(\.uuid, .incrementing)
+  )
   func addValidatedAttendees() async throws {
-    let model = withDependencies {
-      $0.continuousClock = ImmediateClock()
-      $0.uuid = .incrementing
-    } operation: {
-      SyncUpsListModel(
-        destination: .add(
-          SyncUpFormModel(
-            syncUp: SyncUp(
-              id: SyncUp.ID(uuidString: "deadbeef-dead-beef-dead-beefdeadbeef")!,
-              attendees: [
-                Attendee(id: Attendee.ID(), name: ""),
-                Attendee(id: Attendee.ID(), name: "    "),
-              ],
-              title: "Design"
-            )
-          )
+    let model = SyncUpsListModel(
+      addSyncUp: SyncUpFormModel(
+        syncUp: SyncUp(
+          id: SyncUp.ID(uuidString: "deadbeef-dead-beef-dead-beefdeadbeef")!,
+          attendees: [
+            Attendee(id: Attendee.ID(), name: ""),
+            Attendee(id: Attendee.ID(), name: "    "),
+          ],
+          title: "Design"
         )
       )
-    }
+    )
 
     model.confirmAddSyncUpButtonTapped()
 
-    #expect(model.destination == nil)
+    #expect(model.addSyncUp == nil)
     expectNoDifference(
       model.syncUps,
       [

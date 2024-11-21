@@ -8,43 +8,32 @@ import SwiftUINavigation
 @MainActor
 @Observable
 final class SyncUpsListModel {
-  var destination: Destination?
-  @ObservationIgnored
-  @Shared(.syncUps) var syncUps
+  var addSyncUp: SyncUpFormModel?
+  @ObservationIgnored @Shared(.syncUps) var syncUps
 
-  @ObservationIgnored
-  @Dependency(\.continuousClock) var clock
-  @ObservationIgnored
-  @Dependency(\.uuid) var uuid
-
-  @CasePathable
-  @dynamicMemberLookup
-  enum Destination {
-    case add(SyncUpFormModel)
-  }
+  @ObservationIgnored @Dependency(\.continuousClock) var clock
+  @ObservationIgnored @Dependency(\.uuid) var uuid
 
   init(
-    destination: Destination? = nil
+    addSyncUp: SyncUpFormModel? = nil
   ) {
-    self.destination = destination
+    self.addSyncUp = addSyncUp
   }
 
   func addSyncUpButtonTapped() {
-    destination = .add(
-      withDependencies(from: self) {
-        SyncUpFormModel(syncUp: SyncUp(id: SyncUp.ID(self.uuid())))
-      }
-    )
+    addSyncUp = withDependencies(from: self) {
+      SyncUpFormModel(syncUp: SyncUp(id: SyncUp.ID(self.uuid())))
+    }
   }
 
   func dismissAddSyncUpButtonTapped() {
-    destination = nil
+    addSyncUp = nil
   }
 
   func confirmAddSyncUpButtonTapped() {
-    defer { destination = nil }
+    defer { addSyncUp = nil }
 
-    guard case let .add(syncUpFormModel) = destination
+    guard let syncUpFormModel = addSyncUp
     else { return }
     var syncUp = syncUpFormModel.syncUp
 
@@ -78,7 +67,7 @@ struct SyncUpsList: View {
       }
     }
     .navigationTitle("Daily Sync-ups")
-    .sheet(item: self.$model.destination.add) { model in
+    .sheet(item: self.$model.addSyncUp) { model in
       NavigationStack {
         SyncUpFormView(model: model)
           .navigationTitle("New sync-up")
@@ -133,7 +122,7 @@ extension LabelStyle where Self == TrailingIconLabelStyle {
   static var trailingIcon: Self { Self() }
 }
 
-extension PersistenceReaderKey where Self == FileStorageKey<IdentifiedArrayOf<SyncUp>>.Default {
+extension SharedReaderKey where Self == FileStorageKey<IdentifiedArrayOf<SyncUp>>.Default {
   static var syncUps: Self {
     Self[.fileStorage(URL.documentsDirectory.appending(component: "sync-ups.json")), default: []]
   }
@@ -153,7 +142,9 @@ extension PersistenceReaderKey where Self == FileStorageKey<IdentifiedArrayOf<Sy
       .engineeringMock,
       .designMock,
     ]
-    SyncUpsList(model: SyncUpsListModel())
+    NavigationStack {
+      SyncUpsList(model: SyncUpsListModel())
+    }
   }
 }
 
@@ -168,15 +159,15 @@ extension PersistenceReaderKey where Self == FileStorageKey<IdentifiedArrayOf<Sy
     var syncUp = SyncUp.mock
     let lastAttendee = Attendee(id: Attendee.ID())
     let _ = syncUp.attendees.append(lastAttendee)
-    SyncUpsList(
-      model: SyncUpsListModel(
-        destination: .add(
-          SyncUpFormModel(
+    NavigationStack {
+      SyncUpsList(
+        model: SyncUpsListModel(
+          addSyncUp: SyncUpFormModel(
             focus: .attendee(lastAttendee.id),
             syncUp: syncUp
           )
         )
       )
-    )
+    }
   }
 }

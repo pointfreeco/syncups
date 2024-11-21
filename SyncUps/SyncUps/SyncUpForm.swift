@@ -7,8 +7,7 @@ final class SyncUpFormModel: Identifiable {
   var focus: Field?
   var syncUp: SyncUp
 
-  @ObservationIgnored
-  @Dependency(\.uuid) var uuid
+  @ObservationIgnored @Dependency(\.uuid) var uuid
 
   enum Field: Hashable {
     case attendee(Attendee.ID)
@@ -46,7 +45,7 @@ final class SyncUpFormModel: Identifiable {
 
 struct SyncUpFormView: View {
   @FocusState var focus: SyncUpFormModel.Field?
-  @State var model: SyncUpFormModel
+  @Bindable var model: SyncUpFormModel
 
   var body: some View {
     Form {

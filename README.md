@@ -5,7 +5,7 @@ of navigation (_e.g._, sheets, drill-downs, alerts), many side effects (timers, 
 data persistence), and do so in a way that is testable and modular.
 
 This application was built over the course of [many episodes][modern-swiftui-collection] on
-Point-Free, a video series exploring functional programming and the Swift language, hosted by
+Point-Free, a video series exploring advanced programming topics in the Swift language, hosted by
 [Brandon Williams](https://twitter.com/mbrandonw) and [Stephen
 Celis](https://twitter.com/stephencelis).
 
@@ -66,25 +66,28 @@ Our SyncUps application is a rebuild of Apple's Scrumdinger application, but wit
 modern, best practices for SwiftUI development. We faithfully recreate the Scrumdinger, but with
 some key additions:
 
- 1. Identifiers are made type safe using our [Tagged library][tagged-gh]. This prevents us from
-    writing non-sensical code, such as comparing a `SyncUp.ID` to a `Attendee.ID`.
- 2. Instead of using bare arrays in feature logic we use an "identified" array from our
-    [IdentifiedCollections][identified-collections-gh] library. This allows you to read and modify
-    elements of the collection via their ID rather than positional index, which can be error prone
-    and lead to bugs or crashes.
- 3. _All_ navigation is driven off of state, including sheets, drill-downs and alerts. This makes
+ 1. _All_ navigation is driven off of state, including sheets, drill-downs and alerts. This makes
     it possible to deep link into any screen of the app by just constructing a piece of state and
     handing it off to SwiftUI.
- 4. Further, each view represents its navigation destinations as a single enum, which gives us
-    compile time proof that two destinations cannot be active at the same time. This cannot be
-    accomplished with default SwiftUI tools, but can be done with our [SwiftUINavigation
-    library][swiftui-nav-gh].
- 5. All side effects are controlled. This includes access to the file system for persistence, access
+ 1. Further, when a feature can navigate to multiple destinations, an enum is used to model the 
+    destinations, which gives us compile time proof that two destinations cannot be active at the 
+    same time. This cannot be accomplished with default SwiftUI tools, but can be done with our 
+    [SwiftNavigation library][swift-nav-gh].
+ 1. Persistence is handled by our [Sharing][sharing-gh] library, which allows one to hold onto 
+    shared state in an observable model or view, and under the hood any changes to the state will be
+    persisted to external storage, such as the file system.
+ 1. All side effects are controlled. This includes access to the file system for persistence, access
     to time-based asynchrony for timers, access to speech recognition APIs, and even the creation
     of dates and UUIDs. This allows us to run our application in specific execution contexts, which
     is very useful in tests and Xcode previews. We accomplish this using our
     [Dependencies][dependencies-gh] library.
- 6. The project includes a full test suite. Since all of navigation is driven off of state, and
+ 1. Identifiers are made type safe using our [Tagged library][tagged-gh]. This prevents us from
+    writing non-sensical code, such as comparing a `SyncUp.ID` to a `Attendee.ID`.
+ 1. Instead of using bare arrays in feature logic we use an "identified" array from our
+    [IdentifiedCollections][identified-collections-gh] library. This allows you to read and modify
+    elements of the collection via their ID rather than positional index, which can be error prone
+    and lead to bugs or crashes.
+ 1. The project includes a full test suite. Since all of navigation is driven off of state, and
     because we controlled all dependencies, we can write very comprehensive and nuanced tests. For
     example, we can write a unit test that proves that when a sync-up meeting's timer runs out the
     screen pops off the stack and a new transcript is added to the sync-up. Such a test would be
@@ -103,5 +106,6 @@ Here is a list of ports of the app:
 [scrumdinger-dl]: https://docs-assets.developer.apple.com/published/1ea2eec121b90031e354288912a76357/TranscribingSpeechToText.zip
 [tagged-gh]: http://github.com/pointfreeco/swift-tagged
 [identified-collections-gh]: http://github.com/pointfreeco/swift-identified-collections 
-[swiftui-nav-gh]: http://github.com/pointfreeco/swiftui-navigation
+[swift-nav-gh]: http://github.com/pointfreeco/swift-navigation
 [dependencies-gh]: http://github.com/pointfreeco/swift-dependencies 
+[sharing-gh]: https://github.com/pointfreeco/swift-sharing
