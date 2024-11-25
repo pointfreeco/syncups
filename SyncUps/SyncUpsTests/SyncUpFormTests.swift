@@ -7,8 +7,7 @@ import Testing
 @MainActor
 @Suite(.dependency(\.uuid, .incrementing))
 struct SyncUpFormTests {
-  @Test
-  func addAttendee() async {
+  @Test func addAttendee() async {
     let model = SyncUpFormModel(
       syncUp: SyncUp(
         id: SyncUp.ID(),
@@ -35,8 +34,7 @@ struct SyncUpFormTests {
     )
   }
 
-  @Test
-  func focusAddAttendee() async {
+  @Test func focusAddAttendee() async {
     let model = SyncUpFormModel(
       syncUp: SyncUp(
         id: SyncUp.ID(),
@@ -54,8 +52,7 @@ struct SyncUpFormTests {
     )
   }
 
-  @Test
-  func focusRemoveAttendee() async {
+  @Test func focusRemoveAttendee() async {
     @Dependency(\.uuid) var uuid
     let model = SyncUpFormModel(
       syncUp: SyncUp(

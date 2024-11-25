@@ -60,8 +60,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-dependencies",
       "state" : {
-        "revision" : "e2b06090b0b7738fcd8c762131e705d711fc7e8e",
-        "version" : "1.6.0"
+        "branch" : "dependency-trait-fix",
+        "revision" : "9dcf4357cd12ef91a1c9c35a58c4a063150a50dc"
       }
     },
     {
@@ -97,7 +97,7 @@
       "location" : "http://github.com/pointfreeco/swift-sharing/",
       "state" : {
         "branch" : "main",
-        "revision" : "80be2aa6fe7f877127539cb127d35c24f71b94ec"
+        "revision" : "aefeae51b6c246fce58e33f788b2d235e92532c2"
       }
     },
     {

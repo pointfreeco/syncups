@@ -8,14 +8,22 @@ import Testing
 @testable import SyncUps
 
 @MainActor
-@Suite
-struct RecordMeetingTests {
+@Suite struct RecordMeetingTests {
   let clock = TestClock()
   @Shared(.path) var path
 
-  @Test
-  func timer() async throws {
+  @Test func timer() async throws {
     let soundEffectPlayCount = LockIsolated(0)
+    let syncUp = SyncUp(
+      id: SyncUp.ID(),
+      attendees: [
+        Attendee(id: Attendee.ID()),
+        Attendee(id: Attendee.ID()),
+        Attendee(id: Attendee.ID()),
+      ],
+      duration: .seconds(3)
+    )
+    $path.withLock { $0 = [.record(id: syncUp.id)] }
 
     let model = withDependencies {
       $0.continuousClock = clock
@@ -27,15 +35,7 @@ struct RecordMeetingTests {
     } operation: {
       RecordMeetingModel(
         syncUp: Shared(
-          value: SyncUp(
-            id: SyncUp.ID(),
-            attendees: [
-              Attendee(id: Attendee.ID()),
-              Attendee(id: Attendee.ID()),
-              Attendee(id: Attendee.ID()),
-            ],
-            duration: .seconds(3)
-          )
+          value: syncUp
         )
       )
     }
@@ -68,13 +68,20 @@ struct RecordMeetingTests {
     #expect(model.durationRemaining == .seconds(0))
     #expect(soundEffectPlayCount.value == 2)
 
+    await clock.run()
     await task.value
 
     #expect(soundEffectPlayCount.value == 2)
   }
 
-  @Test
-  func recordTranscript() async throws {
+  @Test func recordTranscript() async throws {
+    let syncUp = SyncUp(
+      id: SyncUp.ID(),
+      attendees: [Attendee(id: Attendee.ID())],
+      duration: .seconds(3)
+    )
+    $path.withLock { $0 = [.record(id: syncUp.id)] }
+    
     let model = withDependencies {
       $0.continuousClock = ImmediateClock()
       $0.date.now = Date(timeIntervalSince1970: 1234567890)
@@ -94,13 +101,7 @@ struct RecordMeetingTests {
       $0.uuid = .incrementing
     } operation: {
       RecordMeetingModel(
-        syncUp: Shared(
-          value: SyncUp(
-            id: SyncUp.ID(),
-            attendees: [Attendee(id: Attendee.ID())],
-            duration: .seconds(3)
-          )
-        )
+        syncUp: Shared(value: syncUp)
       )
     }
 
@@ -118,8 +119,7 @@ struct RecordMeetingTests {
     )
   }
 
-  @Test
-  func endMeetingSave() async throws {
+  @Test func endMeetingSave() async throws {
     let syncUp = SyncUp.mock
     $path.withLock { $0 = [.detail(id: syncUp.id), .record(id: syncUp.id)] }
 
@@ -160,8 +160,7 @@ struct RecordMeetingTests {
     await task.value
   }
 
-  @Test
-  func endMeetingDiscard() async throws {
+  @Test func endMeetingDiscard() async throws {
     let syncUp = SyncUp.mock
     $path.withLock { $0 = [.detail(id: syncUp.id), .record(id: syncUp.id)] }
 
@@ -190,30 +189,31 @@ struct RecordMeetingTests {
     #expect(path == [.detail(id: syncUp.id)])
   }
 
-  @Test
-  func nextSpeaker() async throws {
+  @Test func nextSpeaker() async throws {
+    let syncUp = SyncUp(
+      id: SyncUp.ID(),
+      attendees: [
+        Attendee(id: Attendee.ID()),
+        Attendee(id: Attendee.ID()),
+        Attendee(id: Attendee.ID()),
+      ],
+      duration: .seconds(3)
+    )
     let soundEffectPlayCount = LockIsolated(0)
+    $path.withLock { $0 = [.record(id: syncUp.id)] }
+    print(path)
 
     let model = withDependencies {
-      $0.continuousClock = clock
+      $0.continuousClock = ImmediateClock()
       $0.date.now = Date(timeIntervalSince1970: 1234567890)
       $0.soundEffectClient = .noop
       $0.soundEffectClient.play = { soundEffectPlayCount.withValue { $0 += 1 } }
       $0.speechClient.authorizationStatus = { .denied }
       $0.uuid = .incrementing
-
     } operation: {
       RecordMeetingModel(
         syncUp: Shared(
-          value: SyncUp(
-            id: SyncUp.ID(),
-            attendees: [
-              Attendee(id: Attendee.ID()),
-              Attendee(id: Attendee.ID()),
-              Attendee(id: Attendee.ID()),
-            ],
-            duration: .seconds(3)
-          )
+          value: syncUp
         )
       )
     }
@@ -254,8 +254,14 @@ struct RecordMeetingTests {
     await task.value
   }
 
-  @Test
-  func speechRecognitionFailure_Continue() async throws {
+  @Test func speechRecognitionFailure_Continue() async throws {
+    let syncUp = SyncUp(
+      id: SyncUp.ID(),
+      attendees: [Attendee(id: Attendee.ID())],
+      duration: .seconds(3)
+    )
+    $path.withLock { $0 = [.record(id: syncUp.id)] }
+
     let model = withDependencies {
       $0.continuousClock = ImmediateClock()
       $0.date.now = Date(timeIntervalSince1970: 1234567890)
@@ -277,11 +283,7 @@ struct RecordMeetingTests {
     } operation: {
       RecordMeetingModel(
         syncUp: Shared(
-          value: SyncUp(
-            id: SyncUp.ID(),
-            attendees: [Attendee(id: Attendee.ID())],
-            duration: .seconds(3)
-          )
+          value: syncUp
         )
       )
     }
@@ -306,8 +308,7 @@ struct RecordMeetingTests {
     #expect(model.secondsElapsed == 3)
   }
 
-  @Test
-  func speechRecognitionFailure_Discard() async throws {
+  @Test func speechRecognitionFailure_Discard() async throws {
     let syncUp = SyncUp(
       id: SyncUp.ID(),
       attendees: [Attendee(id: Attendee.ID())],

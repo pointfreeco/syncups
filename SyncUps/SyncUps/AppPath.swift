@@ -17,7 +17,6 @@ extension SharedReaderKey where Self == FileStorageKey<[AppPath]>.Default {
         decode: { data in
           try JSONDecoder().decode([AppPath].self, from: data)
         },
-        // TODO: write unit tests for encode logic
         encode: { path in
           try JSONEncoder().encode(
             // NB: Encode only certain paths for state restoration.

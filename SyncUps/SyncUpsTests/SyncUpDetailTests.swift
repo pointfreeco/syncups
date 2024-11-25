@@ -12,8 +12,7 @@ import Testing
 struct SyncUpDetailTests {
   @Shared(.path) var path
 
-  @Test
-  func speechRestricted() async throws {
+  @Test func speechRestricted() async throws {
     let model = withDependencies {
       $0.speechClient.authorizationStatus = { .restricted }
     } operation: {
@@ -27,8 +26,7 @@ struct SyncUpDetailTests {
     expectNoDifference(alert, .speechRecognitionRestricted)
   }
 
-  @Test
-  func speechDenied() async throws {
+  @Test func speechDenied() async throws {
     let model = withDependencies {
       $0.speechClient.authorizationStatus = { .denied }
     } operation: {
@@ -42,8 +40,7 @@ struct SyncUpDetailTests {
     expectNoDifference(alert, .speechRecognitionDenied)
   }
 
-  @Test
-  func openSettings() async {
+  @Test func openSettings() async {
     let settingsOpened = LockIsolated(false)
     let model = withDependencies {
       $0.openSettings = { settingsOpened.setValue(true) }
@@ -59,8 +56,7 @@ struct SyncUpDetailTests {
     #expect(settingsOpened.value == true)
   }
 
-  @Test
-  func continueWithoutRecording() async throws {
+  @Test func continueWithoutRecording() async throws {
     let syncUp = SyncUp.mock
 
     let model = SyncUpDetailModel(
@@ -70,13 +66,10 @@ struct SyncUpDetailTests {
 
     await model.alertButtonTapped(.continueWithoutRecording)
 
-    withKnownIssue("This should pass") {
-      #expect(path == [.record(id: syncUp.id)])
-    }
+    #expect(path == [.record(id: syncUp.id)])
   }
 
-  @Test
-  func speechAuthorized() async throws {
+  @Test func speechAuthorized() async throws {
     let syncUp = SyncUp.mock
 
     let model = withDependencies {
@@ -87,9 +80,7 @@ struct SyncUpDetailTests {
 
     model.startMeetingButtonTapped()
 
-    withKnownIssue("This should pass") {
-      #expect(path == [.record(id: syncUp.id)])
-    }
+    #expect(path == [.record(id: syncUp.id)])
   }
 
   @Test(.dependency(\.uuid, .incrementing))
@@ -125,8 +116,7 @@ struct SyncUpDetailTests {
     )
   }
 
-  @Test
-  func delete() async {
+  @Test func delete() async {
     let syncUp = SyncUp.mock
     @Shared(.syncUps) var syncUps = [syncUp]
     $path.withLock { $0 = [.detail(id: syncUp.id)] }
