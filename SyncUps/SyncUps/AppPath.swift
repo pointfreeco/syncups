@@ -1,12 +1,18 @@
-import CasePaths
 import Foundation
 import Sharing
 
-@CasePathable
 enum AppPath: Codable, Hashable {
   case detail(id: SyncUp.ID)
   case meeting(id: Meeting.ID, syncUpID: SyncUp.ID)
   case record(id: SyncUp.ID)
+
+  // NB: Encode only certain paths for state restoration.
+  var isRestorable: Bool {
+    switch self {
+    case .detail, .meeting: true
+    case .record: false
+    }
+  }
 }
 
 extension SharedReaderKey where Self == FileStorageKey<[AppPath]>.Default {
@@ -18,15 +24,7 @@ extension SharedReaderKey where Self == FileStorageKey<[AppPath]>.Default {
           try JSONDecoder().decode([AppPath].self, from: data)
         },
         encode: { path in
-          try JSONEncoder().encode(
-            // NB: Encode only certain paths for state restoration.
-            path.filter {
-              switch $0 {
-              case .detail, .meeting: true
-              case .record: false
-              }
-            }
-          )
+          try JSONEncoder().encode(path.filter(\.isRestorable))
         }
       ),
       default: []

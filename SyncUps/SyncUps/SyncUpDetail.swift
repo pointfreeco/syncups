@@ -116,9 +116,7 @@ struct SyncUpDetailView: View {
   init?(id: SyncUp.ID) {
     @Shared(.syncUps) var syncUps
     guard let syncUp = Shared($syncUps[id: id])
-    else {
-      return nil
-    }
+    else { return nil }
     _model = State(wrappedValue: SyncUpDetailModel(syncUp: syncUp))
   }
 

@@ -75,7 +75,8 @@ some key additions:
     [SwiftNavigation library][swift-nav-gh].
  1. Persistence is handled by our [Sharing][sharing-gh] library, which allows one to hold onto 
     shared state in an observable model or view, and under the hood any changes to the state will be
-    persisted to external storage, such as the file system.
+    persisted to external storage, such as the file system. Even the global navigation is persisted
+    using the Sharing library.
  1. All side effects are controlled. This includes access to the file system for persistence, access
     to time-based asynchrony for timers, access to speech recognition APIs, and even the creation
     of dates and UUIDs. This allows us to run our application in specific execution contexts, which
