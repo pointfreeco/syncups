@@ -59,9 +59,9 @@ final class RecordMeetingModel {
 
   func alertButtonTapped(_ action: AlertAction?) async {
     switch action {
-    case .confirmSave?:
+    case .confirmSave:
       await finishMeeting()
-    case .confirmDiscard?:
+    case .confirmDiscard:
       _ = $path.withLock { $0.removeLast() }
     case nil:
       break

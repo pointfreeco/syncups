@@ -50,7 +50,7 @@ final class SyncUpDetailModel {
 
   func alertButtonTapped(_ action: AlertAction?) async {
     switch action {
-    case .confirmDeletion?:
+    case .confirmDeletion:
       _ = $path.withLock { $0.removeLast() }
       try? await self.clock.sleep(for: .seconds(0.4))
       @Shared(.syncUps) var syncUps
@@ -58,12 +58,12 @@ final class SyncUpDetailModel {
         _ = $syncUps.withLock { $0.remove(id: self.syncUp.id) }
       }
 
-    case .continueWithoutRecording?:
+    case .continueWithoutRecording:
       $path.withLock {
         $0.append(.record(id: syncUp.id))
       }
 
-    case .openSettings?:
+    case .openSettings:
       await openSettings()
 
     case nil:
