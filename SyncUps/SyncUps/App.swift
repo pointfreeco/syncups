@@ -5,7 +5,7 @@ import SwiftUI
 @MainActor
 @Observable
 class AppModel {
-  var path: [Destination] {
+  var path: [Path] {
     didSet { bind() }
   }
   var syncUpsList: SyncUpsListModel {
@@ -21,14 +21,14 @@ class AppModel {
 
   @CasePathable
   @dynamicMemberLookup
-  enum Destination: Hashable {
+  enum Path: Hashable {
     case detail(SyncUpDetailModel)
     case meeting(Meeting, syncUp: SyncUp)
     case record(RecordMeetingModel)
   }
 
   init(
-    path: [Destination] = [],
+    path: [Path] = [],
     syncUpsList: SyncUpsListModel
   ) {
     self.path = path
@@ -117,7 +117,7 @@ struct AppView: View {
   var body: some View {
     NavigationStack(path: $model.path) {
       SyncUpsList(model: model.syncUpsList)
-        .navigationDestination(for: AppModel.Destination.self) { destination in
+        .navigationDestination(for: AppModel.Path.self) { destination in
           switch destination {
           case let .detail(detailModel):
             SyncUpDetailView(model: detailModel)
