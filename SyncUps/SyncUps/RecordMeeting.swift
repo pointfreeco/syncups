@@ -387,12 +387,12 @@ struct MeetingFooterView: View {
   }
 }
 
-#Preview("Speech failure after 2 secs") {
+#Preview(
+  "Speech failure after 2 secs",
+  traits: .dependency(\.speechClient, .fail(after: .seconds(2)))
+) {
   let syncUp = SyncUp.mock
   @Shared(.syncUps) var syncUps = [syncUp]
-  let _ = prepareDependencies {
-    $0.speechClient = .fail(after: .seconds(2))
-  }
 
   Preview(
     message: """
