@@ -10,9 +10,9 @@ import SwiftUINavigation
 @Observable
 final class RecordMeetingModel {
   var alert: AlertState<AlertAction>?
+  @ObservationIgnored @Shared(.path) var path
   var secondsElapsed = 0
   var speakerIndex = 0
-  @ObservationIgnored @Shared(.path) var path
   @ObservationIgnored @Shared var syncUp: SyncUp
   private var transcript = ""
 
@@ -27,18 +27,12 @@ final class RecordMeetingModel {
     case confirmDiscard
   }
 
-  init(
-    syncUp: Shared<SyncUp>
-  ) {
+  init(syncUp: Shared<SyncUp>) {
     self._syncUp = syncUp
   }
 
   var durationRemaining: Duration {
     syncUp.duration - .seconds(secondsElapsed)
-  }
-
-  var isAlertOpen: Bool {
-    alert != nil
   }
 
   func nextButtonTapped() {
@@ -105,7 +99,7 @@ final class RecordMeetingModel {
   }
 
   private func startTimer() async {
-    for await _ in clock.timer(interval: .seconds(1)) where !isAlertOpen {
+    for await _ in clock.timer(interval: .seconds(1)) where alert == nil {
       secondsElapsed += 1
 
       let secondsPerAttendee = Int(syncUp.durationPerAttendee.components.seconds)
@@ -138,8 +132,6 @@ final class RecordMeetingModel {
     }
   }
 }
-
-extension RecordMeetingModel: HashableObject {}
 
 extension AlertState where Action == RecordMeetingModel.AlertAction {
   static func endMeeting(isDiscardable: Bool) -> Self {
@@ -193,40 +185,40 @@ struct RecordMeetingView: View {
   var body: some View {
     ZStack {
       RoundedRectangle(cornerRadius: 16)
-        .fill(self.model.syncUp.theme.mainColor)
+        .fill(model.syncUp.theme.mainColor)
 
       VStack {
         MeetingHeaderView(
-          secondsElapsed: self.model.secondsElapsed,
-          durationRemaining: self.model.durationRemaining,
-          theme: self.model.syncUp.theme
+          secondsElapsed: model.secondsElapsed,
+          durationRemaining: model.durationRemaining,
+          theme: model.syncUp.theme
         )
         MeetingTimerView(
-          syncUp: self.model.syncUp,
-          speakerIndex: self.model.speakerIndex
+          syncUp: model.syncUp,
+          speakerIndex: model.speakerIndex
         )
         MeetingFooterView(
-          syncUp: self.model.syncUp,
-          nextButtonTapped: { self.model.nextButtonTapped() },
-          speakerIndex: self.model.speakerIndex
+          syncUp: model.syncUp,
+          nextButtonTapped: { model.nextButtonTapped() },
+          speakerIndex: model.speakerIndex
         )
       }
     }
     .padding()
-    .foregroundColor(self.model.syncUp.theme.accentColor)
+    .foregroundColor(model.syncUp.theme.accentColor)
     .navigationBarTitleDisplayMode(.inline)
     .toolbar {
       ToolbarItem(placement: .cancellationAction) {
         Button("End meeting") {
-          self.model.endMeetingButtonTapped()
+          model.endMeetingButtonTapped()
         }
       }
     }
     .navigationBarBackButtonHidden(true)
-    .alert(self.$model.alert) { action in
-      await self.model.alertButtonTapped(action)
+    .alert($model.alert) { action in
+      await model.alertButtonTapped(action)
     }
-    .task { await self.model.task() }
+    .task { await model.task() }
   }
 }
 

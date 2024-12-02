@@ -108,8 +108,6 @@ final class SyncUpDetailModel {
   }
 }
 
-extension SyncUpDetailModel: HashableObject {}
-
 struct SyncUpDetailView: View {
   @State var model: SyncUpDetailModel
 

@@ -772,7 +772,7 @@
 		};
 		CAF8AAAF2CD91A95007192A6 /* XCRemoteSwiftPackageReference "swift-sharing" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "http://github.com/pointfreeco/swift-sharing/";
+			repositoryURL = "http://github.com/pointfreeco/swift-sharing";
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 1.0.0;
