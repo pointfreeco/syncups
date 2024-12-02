@@ -67,9 +67,9 @@ struct SyncUpsList: View {
       }
     }
     .navigationTitle("Daily Sync-ups")
-    .sheet(item: $model.addSyncUp) { model in
+    .sheet(item: $model.addSyncUp) { syncUpFormModel in
       NavigationStack {
-        SyncUpFormView(model: model)
+        SyncUpFormView(model: syncUpFormModel)
           .navigationTitle("New sync-up")
           .toolbar {
             ToolbarItem(placement: .cancellationAction) {
