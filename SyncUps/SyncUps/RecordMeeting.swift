@@ -73,11 +73,11 @@ final class RecordMeetingModel {
     await withTaskGroup(of: Void.self) { group in
       if authorization == .authorized {
         group.addTask {
-          await startSpeechRecognition()
+          await self.startSpeechRecognition()
         }
       }
       group.addTask {
-        await startTimer()
+        await self.startTimer()
       }
     }
   }
