@@ -22,7 +22,7 @@ final class SyncUpsListModel {
 
   func addSyncUpButtonTapped() {
     addSyncUp = withDependencies(from: self) {
-      SyncUpFormModel(syncUp: SyncUp(id: SyncUp.ID(self.uuid())))
+      SyncUpFormModel(syncUp: SyncUp(id: SyncUp.ID(uuid())))
     }
   }
 
@@ -52,7 +52,7 @@ struct SyncUpsList: View {
 
   var body: some View {
     List {
-      ForEach(self.model.syncUps) { syncUp in
+      ForEach(model.syncUps) { syncUp in
         NavigationLink(value: AppPath.detail(id: syncUp.id)) {
           CardView(syncUp: syncUp)
         }
@@ -61,25 +61,25 @@ struct SyncUpsList: View {
     }
     .toolbar {
       Button {
-        self.model.addSyncUpButtonTapped()
+        model.addSyncUpButtonTapped()
       } label: {
         Image(systemName: "plus")
       }
     }
     .navigationTitle("Daily Sync-ups")
-    .sheet(item: self.$model.addSyncUp) { model in
+    .sheet(item: $model.addSyncUp) { model in
       NavigationStack {
         SyncUpFormView(model: model)
           .navigationTitle("New sync-up")
           .toolbar {
             ToolbarItem(placement: .cancellationAction) {
               Button("Dismiss") {
-                self.model.dismissAddSyncUpButtonTapped()
+                model.dismissAddSyncUpButtonTapped()
               }
             }
             ToolbarItem(placement: .confirmationAction) {
               Button("Add") {
-                self.model.confirmAddSyncUpButtonTapped()
+                model.confirmAddSyncUpButtonTapped()
               }
             }
           }
@@ -93,19 +93,19 @@ struct CardView: View {
 
   var body: some View {
     VStack(alignment: .leading) {
-      Text(self.syncUp.title)
+      Text(syncUp.title)
         .font(.headline)
       Spacer()
       HStack {
-        Label("\(self.syncUp.attendees.count)", systemImage: "person.3")
+        Label("\(syncUp.attendees.count)", systemImage: "person.3")
         Spacer()
-        Label(self.syncUp.duration.formatted(.units()), systemImage: "clock")
+        Label(syncUp.duration.formatted(.units()), systemImage: "clock")
           .labelStyle(.trailingIcon)
       }
       .font(.caption)
     }
     .padding()
-    .foregroundColor(self.syncUp.theme.accentColor)
+    .foregroundColor(syncUp.theme.accentColor)
   }
 }
 

@@ -11,8 +11,8 @@ import SwiftUINavigation
 @Observable
 final class SyncUpDetailModel {
   var destination: Destination?
-  @ObservationIgnored @Shared var syncUp: SyncUp
   @ObservationIgnored @Shared(.path) var path
+  @ObservationIgnored @Shared var syncUp: SyncUp
 
   @ObservationIgnored @Dependency(\.continuousClock) var clock
   @ObservationIgnored @Dependency(\.date.now) var now
@@ -52,10 +52,10 @@ final class SyncUpDetailModel {
     switch action {
     case .confirmDeletion:
       _ = $path.withLock { $0.removeLast() }
-      try? await self.clock.sleep(for: .seconds(0.4))
+      try? await clock.sleep(for: .seconds(0.4))
       @Shared(.syncUps) var syncUps
       withAnimation {
-        _ = $syncUps.withLock { $0.remove(id: self.syncUp.id) }
+        _ = $syncUps.withLock { $0.remove(id: syncUp.id) }
       }
 
     case .continueWithoutRecording:
@@ -74,7 +74,7 @@ final class SyncUpDetailModel {
   func editButtonTapped() {
     destination = .edit(
       withDependencies(from: self) {
-        SyncUpFormModel(syncUp: self.syncUp)
+        SyncUpFormModel(syncUp: syncUp)
       }
     )
   }
@@ -289,16 +289,16 @@ struct MeetingView: View {
           .padding(.bottom)
         Text("Attendees")
           .font(.headline)
-        ForEach(self.syncUp.attendees) { attendee in
+        ForEach(syncUp.attendees) { attendee in
           Text(attendee.name)
         }
         Text("Transcript")
           .font(.headline)
           .padding(.top)
-        Text(self.meeting.transcript)
+        Text(meeting.transcript)
       }
     }
-    .navigationTitle(Text(self.meeting.date, style: .date))
+    .navigationTitle(Text(meeting.date, style: .date))
     .padding()
   }
 }

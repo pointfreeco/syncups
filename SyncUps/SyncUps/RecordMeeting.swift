@@ -73,11 +73,11 @@ final class RecordMeetingModel {
     await withTaskGroup(of: Void.self) { group in
       if authorization == .authorized {
         group.addTask {
-          await self.startSpeechRecognition()
+          await startSpeechRecognition()
         }
       }
       group.addTask {
-        await self.startTimer()
+        await startTimer()
       }
     }
   }
@@ -122,8 +122,8 @@ final class RecordMeetingModel {
       $syncUp.withLock {
         $0.meetings.insert(
           Meeting(
-            id: Meeting.ID(self.uuid()),
-            date: self.now,
+            id: Meeting.ID(uuid()),
+            date: now,
             transcript: transcript
           ),
           at: 0

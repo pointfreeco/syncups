@@ -20,8 +20,8 @@ final class SyncUpFormModel: Identifiable {
   ) {
     self.focus = focus
     self.syncUp = syncUp
-    if self.syncUp.attendees.isEmpty {
-      self.syncUp.attendees.append(Attendee(id: Attendee.ID(self.uuid())))
+    if syncUp.attendees.isEmpty {
+      self.syncUp.attendees.append(Attendee(id: Attendee.ID(uuid())))
     }
   }
 
