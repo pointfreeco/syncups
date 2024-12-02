@@ -1,6 +1,7 @@
 import Clocks
 import Dependencies
 import IssueReporting
+import Sharing
 import Speech
 import SwiftUI
 import SwiftUINavigation
@@ -8,58 +9,36 @@ import SwiftUINavigation
 @MainActor
 @Observable
 final class RecordMeetingModel {
-  var destination: Destination?
-  var isDismissed = false
+  var alert: AlertState<AlertAction>?
+  @ObservationIgnored @Shared(.path) var path
   var secondsElapsed = 0
   var speakerIndex = 0
-  let syncUp: SyncUp
+  @ObservationIgnored @Shared var syncUp: SyncUp
   private var transcript = ""
 
-  @ObservationIgnored
-  @Dependency(\.continuousClock) var clock
-  @ObservationIgnored
-  @Dependency(\.soundEffectClient) var soundEffectClient
-  @ObservationIgnored
-  @Dependency(\.speechClient) var speechClient
-
-  var onMeetingFinished: (_ transcript: String) async -> Void = unimplemented("onMeetingFinished")
-
-  @CasePathable
-  @dynamicMemberLookup
-  enum Destination {
-    case alert(AlertState<AlertAction>)
-  }
+  @ObservationIgnored @Dependency(\.continuousClock) var clock
+  @ObservationIgnored @Dependency(\.date.now) var now
+  @ObservationIgnored @Dependency(\.soundEffectClient) var soundEffectClient
+  @ObservationIgnored @Dependency(\.speechClient) var speechClient
+  @ObservationIgnored @Dependency(\.uuid) var uuid
 
   enum AlertAction {
     case confirmSave
     case confirmDiscard
   }
 
-  init(
-    destination: Destination? = nil,
-    syncUp: SyncUp
-  ) {
-    self.destination = destination
-    self.syncUp = syncUp
+  init(syncUp: Shared<SyncUp>) {
+    self._syncUp = syncUp
   }
 
   var durationRemaining: Duration {
     syncUp.duration - .seconds(secondsElapsed)
   }
 
-  var isAlertOpen: Bool {
-    switch destination {
-    case .alert:
-      return true
-    case .none:
-      return false
-    }
-  }
-
   func nextButtonTapped() {
     guard speakerIndex < syncUp.attendees.count - 1
     else {
-      destination = .alert(.endMeeting(isDiscardable: false))
+      alert = .endMeeting(isDiscardable: false)
       return
     }
 
@@ -69,15 +48,15 @@ final class RecordMeetingModel {
   }
 
   func endMeetingButtonTapped() {
-    destination = .alert(.endMeeting(isDiscardable: true))
+    alert = .endMeeting(isDiscardable: true)
   }
 
   func alertButtonTapped(_ action: AlertAction?) async {
     switch action {
-    case .confirmSave?:
+    case .confirmSave:
       await finishMeeting()
-    case .confirmDiscard?:
-      isDismissed = true
+    case .confirmDiscard:
+      _ = $path.withLock { $0.removeLast() }
     case nil:
       break
     }
@@ -115,12 +94,12 @@ final class RecordMeetingModel {
       if !transcript.isEmpty {
         transcript += " ❌"
       }
-      destination = .alert(.speechRecognizerFailed)
+      alert = .speechRecognizerFailed
     }
   }
 
   private func startTimer() async {
-    for await _ in clock.timer(interval: .seconds(1)) where !isAlertOpen {
+    for await _ in clock.timer(interval: .seconds(1)) where alert == nil {
       secondsElapsed += 1
 
       let secondsPerAttendee = Int(syncUp.durationPerAttendee.components.seconds)
@@ -136,12 +115,23 @@ final class RecordMeetingModel {
   }
 
   private func finishMeeting() async {
-    isDismissed = true
-    await onMeetingFinished(transcript)
+    _ = $path.withLock { $0.removeLast() }
+
+    try? await clock.sleep(for: .seconds(0.4))
+    _ = withAnimation {
+      $syncUp.withLock {
+        $0.meetings.insert(
+          Meeting(
+            id: Meeting.ID(uuid()),
+            date: now,
+            transcript: transcript
+          ),
+          at: 0
+        )
+      }
+    }
   }
 }
-
-extension RecordMeetingModel: HashableObject {}
 
 extension AlertState where Action == RecordMeetingModel.AlertAction {
   static func endMeeting(isDiscardable: Bool) -> Self {
@@ -184,46 +174,51 @@ extension AlertState where Action == RecordMeetingModel.AlertAction {
 
 struct RecordMeetingView: View {
   @State var model: RecordMeetingModel
-  @Environment(\.dismiss) var dismiss
+
+  init?(id: SyncUp.ID) {
+    @Shared(.syncUps) var syncUps
+    guard let syncUp = Shared($syncUps[id: id])
+    else { return nil }
+    _model = State(wrappedValue: RecordMeetingModel(syncUp: syncUp))
+  }
 
   var body: some View {
     ZStack {
       RoundedRectangle(cornerRadius: 16)
-        .fill(self.model.syncUp.theme.mainColor)
+        .fill(model.syncUp.theme.mainColor)
 
       VStack {
         MeetingHeaderView(
-          secondsElapsed: self.model.secondsElapsed,
-          durationRemaining: self.model.durationRemaining,
-          theme: self.model.syncUp.theme
+          secondsElapsed: model.secondsElapsed,
+          durationRemaining: model.durationRemaining,
+          theme: model.syncUp.theme
         )
         MeetingTimerView(
-          syncUp: self.model.syncUp,
-          speakerIndex: self.model.speakerIndex
+          syncUp: model.syncUp,
+          speakerIndex: model.speakerIndex
         )
         MeetingFooterView(
-          syncUp: self.model.syncUp,
-          nextButtonTapped: { self.model.nextButtonTapped() },
-          speakerIndex: self.model.speakerIndex
+          syncUp: model.syncUp,
+          nextButtonTapped: { model.nextButtonTapped() },
+          speakerIndex: model.speakerIndex
         )
       }
     }
     .padding()
-    .foregroundColor(self.model.syncUp.theme.accentColor)
+    .foregroundColor(model.syncUp.theme.accentColor)
     .navigationBarTitleDisplayMode(.inline)
     .toolbar {
       ToolbarItem(placement: .cancellationAction) {
         Button("End meeting") {
-          self.model.endMeetingButtonTapped()
+          model.endMeetingButtonTapped()
         }
       }
     }
     .navigationBarBackButtonHidden(true)
-    .alert(self.$model.destination.alert) { action in
-      await self.model.alertButtonTapped(action)
+    .alert($model.alert) { action in
+      await model.alertButtonTapped(action)
     }
-    .task { await self.model.task() }
-    .onChange(of: self.model.isDismissed) { _, _ in self.dismiss() }
+    .task { await model.task() }
   }
 }
 
@@ -375,31 +370,30 @@ struct MeetingFooterView: View {
   }
 }
 
-struct RecordMeeting_Previews: PreviewProvider {
-  static var previews: some View {
-    NavigationStack {
-      RecordMeetingView(
-        model: RecordMeetingModel(syncUp: .mock)
-      )
-    }
-    .previewDisplayName("Happy path")
+#Preview("Happy path") {
+  let syncUp = SyncUp.mock
+  @Shared(.syncUps) var syncUps = [syncUp]
 
-    Preview(
-      message: """
+  NavigationStack {
+    RecordMeetingView(id: syncUp.id)
+  }
+}
+
+#Preview(
+  "Speech failure after 2 secs",
+  traits: .dependency(\.speechClient, .fail(after: .seconds(2)))
+) {
+  let syncUp = SyncUp.mock
+  @Shared(.syncUps) var syncUps = [syncUp]
+
+  Preview(
+    message: """
         This preview demonstrates how the feature behaves when the speech recognizer emits a \
         failure after 2 seconds of transcribing.
         """
-    ) {
-      NavigationStack {
-        RecordMeetingView(
-          model: withDependencies {
-            $0.speechClient = .fail(after: .seconds(2))
-          } operation: {
-            RecordMeetingModel(syncUp: .mock)
-          }
-        )
-      }
+  ) {
+    NavigationStack {
+      RecordMeetingView(id: syncUp.id)
     }
-    .previewDisplayName("Speech failure after 2 secs")
   }
 }

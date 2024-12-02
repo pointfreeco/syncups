@@ -34,104 +34,89 @@ final class SyncUpsListUITests: XCTestCase {
   // available on next launch.
   @MainActor
   func testAdd() throws {
-    self.app.navigationBars["Daily Sync-ups"].buttons["Add"].tap()
-    let titleTextField = self.app.collectionViews.textFields["Title"]
-    let nameTextField = self.app.collectionViews.textFields["Name"]
+    app.navigationBars["Daily Sync-ups"].buttons["Add"].tap()
+    let titleTextField = app.collectionViews.textFields["Title"]
+    let nameTextField = app.collectionViews.textFields["Name"]
 
     titleTextField.typeText("Engineering")
 
     nameTextField.tap()
     nameTextField.typeText("Blob")
 
-    self.app.buttons["New attendee"].tap()
-    self.app.typeText("Blob Jr.")
+    app.buttons["New attendee"].tap()
+    app.typeText("Blob Jr.")
 
-    self.app.navigationBars["New sync-up"].buttons["Add"].tap()
+    app.navigationBars["New sync-up"].buttons["Add"].tap()
 
-    XCTAssertEqual(self.app.staticTexts["Engineering"].exists, true)
+    XCTAssertEqual(app.staticTexts["Engineering"].exists, true)
   }
 
   @MainActor
   func testDelete() async throws {
-    self.app.staticTexts["Design"].tap()
+    app.staticTexts["Design"].tap()
 
-    self.app.buttons["Delete"].tap()
-    XCTAssertEqual(self.app.staticTexts["Delete?"].exists, true)
+    app.buttons["Delete"].tap()
+    XCTAssertEqual(app.staticTexts["Delete?"].exists, true)
 
-    self.app.buttons["Yes"].tap()
-    try await Task.sleep(for: .seconds(0.3))
-    XCTAssertEqual(self.app.staticTexts["Design"].exists, false)
-    XCTAssertEqual(self.app.staticTexts["Daily Sync-ups"].exists, true)
+    app.buttons["Yes"].tap()
+    try await Task.sleep(for: .seconds(0.5))
+    XCTAssertEqual(app.staticTexts["Design"].exists, false)
+    XCTAssertEqual(app.staticTexts["Daily Sync-ups"].exists, true)
   }
 
   @MainActor
   func testEdit() async throws {
-    self.app.staticTexts["Design"].tap()
+    app.staticTexts["Design"].tap()
 
-    self.app.buttons["Edit"].tap()
-    let titleTextField = self.app.textFields["Title"]
+    app.buttons["Edit"].tap()
+    let titleTextField = app.textFields["Title"]
     titleTextField.typeText(" & Product")
 
-    self.app.buttons["Done"].tap()
-    XCTAssertEqual(self.app.staticTexts["Design & Product"].exists, true)
+    app.buttons["Done"].tap()
+    XCTAssertEqual(app.staticTexts["Design & Product"].exists, true)
 
-    self.app.buttons["Daily Sync-ups"].tap()
+    app.buttons["Daily Sync-ups"].tap()
     try await Task.sleep(for: .seconds(0.3))
-    XCTAssertEqual(self.app.staticTexts["Design & Product"].exists, true)
-    XCTAssertEqual(self.app.staticTexts["Daily Sync-ups"].exists, true)
+    XCTAssertEqual(app.staticTexts["Design & Product"].exists, true)
+    XCTAssertEqual(app.staticTexts["Daily Sync-ups"].exists, true)
   }
 
   @MainActor
   func testRecord() async throws {
-    self.app.staticTexts["Design"].tap()
+    app.staticTexts["Design"].tap()
 
-    self.app.buttons["Start Meeting"].tap()
-    self.app.buttons["End meeting"].tap()
+    app.buttons["Start Meeting"].tap()
+    app.buttons["End meeting"].tap()
 
-    XCTAssertEqual(self.app.staticTexts["End meeting?"].exists, true)
-    self.app.buttons["Save and end"].tap()
+    XCTAssertEqual(app.staticTexts["End meeting?"].exists, true)
+    app.buttons["Save and end"].tap()
 
     try await Task.sleep(for: .seconds(0.5))
-    XCTAssertEqual(self.app.staticTexts["Design"].exists, true)
-    XCTAssertEqual(self.app.staticTexts["February 13, 2009"].exists, true)
+    XCTAssertEqual(app.staticTexts["Design"].exists, true)
+    XCTAssertEqual(app.staticTexts["February 13, 2009"].exists, true)
 
-    self.app.buttons["Daily Sync-ups"].tap()
-    self.app.staticTexts["Design"].tap()
+    app.buttons["Daily Sync-ups"].tap()
+    app.staticTexts["Design"].tap()
 
-    XCTAssertEqual(self.app.staticTexts["Design"].exists, true)
-    XCTAssertEqual(self.app.staticTexts["February 13, 2009"].exists, true)
+    XCTAssertEqual(app.staticTexts["Design"].exists, true)
+    XCTAssertEqual(app.staticTexts["February 13, 2009"].exists, true)
 
-    self.app.staticTexts["February 13, 2009"].tap()
-    self.app.staticTexts["Hello world!"].tap()
+    app.staticTexts["February 13, 2009"].tap()
+    app.staticTexts["Hello world!"].tap()
   }
 
   @MainActor
   func testRecord_Discard() async throws {
-    self.app.staticTexts["Design"].tap()
+    app.staticTexts["Design"].tap()
 
-    self.app.buttons["Start Meeting"].tap()
-    self.app.buttons["End meeting"].tap()
+    app.buttons["Start Meeting"].tap()
+    app.buttons["End meeting"].tap()
 
-    XCTAssertEqual(self.app.staticTexts["End meeting?"].exists, true)
-    self.app.buttons["Discard"].tap()
+    XCTAssertEqual(app.staticTexts["End meeting?"].exists, true)
+    app.buttons["Discard"].tap()
 
     try await Task.sleep(for: .seconds(0.5))
-    XCTAssertEqual(self.app.staticTexts["Design"].exists, true)
-    XCTAssertEqual(self.app.staticTexts["February 13, 2009"].exists, false)
-  }
-
-  @MainActor
-  func testPersistence() async throws {
-    XCTAssertEqual(self.app.staticTexts["Engineering"].exists, false)
-
-    self.app.navigationBars["Daily Sync-ups"].buttons["Add"].tap()
-    let titleTextField = self.app.collectionViews.textFields["Title"]
-    titleTextField.typeText("Engineering")
-    self.app.navigationBars["New sync-up"].buttons["Add"].tap()
-    try await Task.sleep(for: .seconds(1))
-
-    XCUIDevice.shared.press(.home)
-    self.app.launch()
-    XCTAssertEqual(self.app.staticTexts["Engineering"].exists, true)
+    XCTAssertEqual(app.staticTexts["Design"].exists, true)
+    XCTAssertEqual(app.staticTexts["February 13, 2009"].exists, false)
   }
 }

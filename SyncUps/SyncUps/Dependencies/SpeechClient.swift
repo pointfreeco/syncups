@@ -143,7 +143,7 @@ private actor Speech {
     request: SFSpeechAudioBufferRecognitionRequest
   ) -> AsyncThrowingStream<SpeechRecognitionResult, Error> {
     AsyncThrowingStream { continuation in
-      self.recognitionContinuation = continuation
+      recognitionContinuation = continuation
       let audioSession = AVAudioSession.sharedInstance()
       do {
         try audioSession.setCategory(.record, mode: .measurement, options: .duckOthers)
@@ -153,9 +153,9 @@ private actor Speech {
         return
       }
 
-      self.audioEngine = AVAudioEngine()
+      audioEngine = AVAudioEngine()
       let speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: "en-US"))!
-      self.recognitionTask = speechRecognizer.recognitionTask(with: request) { result, error in
+      recognitionTask = speechRecognizer.recognitionTask(with: request) { result, error in
         switch (result, error) {
         case let (.some(result), _):
           continuation.yield(SpeechRecognitionResult(result))
@@ -173,17 +173,17 @@ private actor Speech {
         recognitionTask?.finish()
       }
 
-      self.audioEngine?.inputNode.installTap(
+      audioEngine?.inputNode.installTap(
         onBus: 0,
         bufferSize: 1024,
-        format: self.audioEngine?.inputNode.outputFormat(forBus: 0)
+        format: audioEngine?.inputNode.outputFormat(forBus: 0)
       ) { buffer, when in
         request.append(buffer)
       }
 
-      self.audioEngine?.prepare()
+      audioEngine?.prepare()
       do {
-        try self.audioEngine?.start()
+        try audioEngine?.start()
       } catch {
         continuation.finish(throwing: error)
         return

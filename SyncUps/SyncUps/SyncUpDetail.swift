@@ -1,7 +1,9 @@
 import Clocks
 import CustomDump
 import Dependencies
+import IdentifiedCollections
 import IssueReporting
+import Sharing
 import SwiftUI
 import SwiftUINavigation
 
@@ -9,28 +11,14 @@ import SwiftUINavigation
 @Observable
 final class SyncUpDetailModel {
   var destination: Destination?
-  var isDismissed = false
-  var syncUp: SyncUp {
-    didSet {
-      onSyncUpUpdated(syncUp)
-    }
-  }
+  @ObservationIgnored @Shared(.path) var path
+  @ObservationIgnored @Shared var syncUp: SyncUp
 
-  @ObservationIgnored
-  @Dependency(\.continuousClock) var clock
-  @ObservationIgnored
-  @Dependency(\.date.now) var now
-  @ObservationIgnored
-  @Dependency(\.openSettings) var openSettings
-  @ObservationIgnored
-  @Dependency(\.speechClient.authorizationStatus) var authorizationStatus
-  @ObservationIgnored
-  @Dependency(\.uuid) var uuid
-
-  var onConfirmDeletion: () -> Void = unimplemented("onConfirmDeletion")
-  var onMeetingTapped: (Meeting) -> Void = unimplemented("onMeetingTapped")
-  var onMeetingStarted: (SyncUp) -> Void = unimplemented("onMeetingStarted")
-  var onSyncUpUpdated: (SyncUp) -> Void = unimplemented("onSyncUpUpdated")
+  @ObservationIgnored @Dependency(\.continuousClock) var clock
+  @ObservationIgnored @Dependency(\.date.now) var now
+  @ObservationIgnored @Dependency(\.openSettings) var openSettings
+  @ObservationIgnored @Dependency(\.speechClient.authorizationStatus) var authorizationStatus
+  @ObservationIgnored @Dependency(\.uuid) var uuid
 
   @CasePathable
   @dynamicMemberLookup
@@ -46,18 +34,14 @@ final class SyncUpDetailModel {
 
   init(
     destination: Destination? = nil,
-    syncUp: SyncUp
+    syncUp: Shared<SyncUp>
   ) {
     self.destination = destination
-    self.syncUp = syncUp
+    self._syncUp = syncUp
   }
 
   func deleteMeetings(atOffsets indices: IndexSet) {
-    syncUp.meetings.remove(atOffsets: indices)
-  }
-
-  func meetingTapped(_ meeting: Meeting) {
-    onMeetingTapped(meeting)
+    $syncUp.withLock { $0.meetings.remove(atOffsets: indices) }
   }
 
   func deleteButtonTapped() {
@@ -66,14 +50,20 @@ final class SyncUpDetailModel {
 
   func alertButtonTapped(_ action: AlertAction?) async {
     switch action {
-    case .confirmDeletion?:
-      onConfirmDeletion()
-      isDismissed = true
+    case .confirmDeletion:
+      _ = $path.withLock { $0.removeLast() }
+      try? await clock.sleep(for: .seconds(0.4))
+      @Shared(.syncUps) var syncUps
+      withAnimation {
+        _ = $syncUps.withLock { $0.remove(id: syncUp.id) }
+      }
 
-    case .continueWithoutRecording?:
-      onMeetingStarted(syncUp)
+    case .continueWithoutRecording:
+      $path.withLock {
+        $0.append(.record(id: syncUp.id))
+      }
 
-    case .openSettings?:
+    case .openSettings:
       await openSettings()
 
     case nil:
@@ -84,7 +74,7 @@ final class SyncUpDetailModel {
   func editButtonTapped() {
     destination = .edit(
       withDependencies(from: self) {
-        SyncUpFormModel(syncUp: self.syncUp)
+        SyncUpFormModel(syncUp: syncUp)
       }
     )
   }
@@ -97,14 +87,14 @@ final class SyncUpDetailModel {
     guard case let .edit(model) = destination
     else { return }
 
-    syncUp = model.syncUp
+    $syncUp.withLock { $0 = model.syncUp }
     destination = nil
   }
 
   func startMeetingButtonTapped() {
     switch authorizationStatus() {
     case .notDetermined, .authorized:
-      onMeetingStarted(syncUp)
+      $path.withLock { $0.append(.record(id: syncUp.id)) }
 
     case .denied:
       destination = .alert(.speechRecognitionDenied)
@@ -118,10 +108,15 @@ final class SyncUpDetailModel {
   }
 }
 
-extension SyncUpDetailModel: HashableObject {}
-
 struct SyncUpDetailView: View {
   @State var model: SyncUpDetailModel
+
+  init?(id: SyncUp.ID) {
+    @Shared(.syncUps) var syncUps
+    guard let syncUp = Shared($syncUps[id: id])
+    else { return nil }
+    _model = State(wrappedValue: SyncUpDetailModel(syncUp: syncUp))
+  }
 
   var body: some View {
     List {
@@ -155,9 +150,7 @@ struct SyncUpDetailView: View {
       if !model.syncUp.meetings.isEmpty {
         Section {
           ForEach(model.syncUp.meetings) { meeting in
-            Button {
-              model.meetingTapped(meeting)
-            } label: {
+            NavigationLink(value: AppPath.meeting(id: meeting.id, syncUpID: model.syncUp.id)) {
               HStack {
                 Image(systemName: "calendar")
                 Text(meeting.date, style: .date)
@@ -277,6 +270,18 @@ struct MeetingView: View {
   let meeting: Meeting
   let syncUp: SyncUp
 
+  init?(id: Meeting.ID, syncUpID: SyncUp.ID) {
+    @Shared(.syncUps) var syncUps
+    guard
+      let syncUp = syncUps[id: syncUpID],
+      let meeting = syncUp.meetings[id: id]
+    else {
+      return nil
+    }
+    self.syncUp = syncUp
+    self.meeting = meeting
+  }
+
   var body: some View {
     ScrollView {
       VStack(alignment: .leading) {
@@ -284,92 +289,78 @@ struct MeetingView: View {
           .padding(.bottom)
         Text("Attendees")
           .font(.headline)
-        ForEach(self.syncUp.attendees) { attendee in
+        ForEach(syncUp.attendees) { attendee in
           Text(attendee.name)
         }
         Text("Transcript")
           .font(.headline)
           .padding(.top)
-        Text(self.meeting.transcript)
+        Text(meeting.transcript)
       }
     }
-    .navigationTitle(Text(self.meeting.date, style: .date))
+    .navigationTitle(Text(meeting.date, style: .date))
     .padding()
   }
 }
 
-struct SyncUpDetail_Previews: PreviewProvider {
-  static var previews: some View {
-    Preview(
-      message: """
-        This preview demonstrates the "happy path" of the application where everything works \
-        perfectly. You can start a meeting, wait a few moments, end the meeting, and you will \
-        see that a new transcription was added to the past meetings. The transcript will consist \
-        of some "lorem ipsum" text because a mock speech recongizer is used for Xcode previews.
-        """
-    ) {
-      NavigationStack {
-        SyncUpDetailView(model: SyncUpDetailModel(syncUp: .mock))
-      }
-    }
-    .previewDisplayName("Happy path")
+#Preview("Happy path") {
+  let syncUp = SyncUp.mock
+  @Shared(.syncUps) var syncUps = [syncUp]
 
-    Preview(
-      message: """
-        This preview demonstrates an "unhappy path" of the application where the speech \
-        recognizer mysteriously fails after 2 seconds of recording. This gives us an opportunity \
-        to see how the application deals with this rare occurrence. To see the behavior, run the \
-        preview, tap the "Start Meeting" button and wait 2 seconds.
-        """
-    ) {
-      NavigationStack {
-        SyncUpDetailView(
-          model: withDependencies {
-            $0.speechClient = .fail(after: .seconds(2))
-          } operation: {
-            SyncUpDetailModel(syncUp: .mock)
-          }
-        )
-      }
+  Preview(
+    message: """
+      This preview demonstrates the "happy path" of the application where everything works \
+      perfectly. You can start a meeting, wait a few moments, end the meeting, and you will \
+      see that a new transcription was added to the past meetings. The transcript will consist \
+      of some "lorem ipsum" text because a mock speech recongizer is used for Xcode previews.
+      """
+  ) {
+    NavigationStack {
+      SyncUpDetailView(id: syncUp.id)
     }
-    .previewDisplayName("Speech recognition failed")
+  }
+}
 
-    Preview(
-      message: """
-        This preview demonstrates how the feature behaves when access to speech recognition has \
-        been previously denied by the user. Tap the "Start Meeting" button to see how we handle \
-        that situation.
-        """
-    ) {
-      NavigationStack {
-        SyncUpDetailView(
-          model: withDependencies {
-            $0.speechClient.authorizationStatus = { .denied }
-          } operation: {
-            SyncUpDetailModel(syncUp: .mock)
-          }
-        )
-      }
-    }
-    .previewDisplayName("Speech recognition denied")
+#Preview(
+  "Speech recognition denied",
+  traits: .dependencies {
+    $0.speechClient.authorizationStatus = { .denied }
+  }
+) {
+  let syncUp = SyncUp.mock
+  @Shared(.syncUps) var syncUps = [syncUp]
 
-    Preview(
-      message: """
-        This preview demonstrates how the feature behaves when the device restricts access to \
-        speech recognition APIs. Tap the "Start Meeting" button to see how we handle that \
-        situation.
-        """
-    ) {
-      NavigationStack {
-        SyncUpDetailView(
-          model: withDependencies {
-            $0.speechClient.authorizationStatus = { .restricted }
-          } operation: {
-            SyncUpDetailModel(syncUp: .mock)
-          }
-        )
-      }
+  Preview(
+    message: """
+      This preview demonstrates how the feature behaves when access to speech recognition has \
+      been previously denied by the user. Tap the "Start Meeting" button to see how we handle \
+      that situation.
+      """
+  ) {
+    NavigationStack {
+      SyncUpDetailView(id: syncUp.id)
     }
-    .previewDisplayName("Speech recognition restricted")
+  }
+}
+
+#Preview(
+  "Speech recognition restricted",
+  traits: .dependencies {
+    $0.speechClient.authorizationStatus = { .restricted }
+  }
+) {
+  let syncUp = SyncUp.mock
+  @Shared(.syncUps) var syncUps = [syncUp]
+
+  Preview(
+    message: """
+      This preview demonstrates how the feature behaves when the device restricts access to \
+      speech recognition APIs. Tap the "Start Meeting" button to see how we handle that \
+      situation.
+      """
+  ) {
+    NavigationStack {
+      SyncUpDetailView(id: syncUp.id)
+    }
   }
 }

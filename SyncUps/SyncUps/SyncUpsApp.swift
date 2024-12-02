@@ -1,67 +1,61 @@
 import Dependencies
+import IdentifiedCollections
+import Sharing
 import SwiftUI
 
 @main
 struct SyncUpsApp: App {
-  static let model = AppModel(syncUpsList: SyncUpsListModel())
+  init() {
+    setUpForUITest()
+  }
 
   var body: some Scene {
     WindowGroup {
-      // NB: This conditional is here only to facilitate UI testing so that we can mock out certain
-      //     dependencies for the duration of the test (e.g. the data manager). We do not really
-      //     recommend performing UI tests in general, but we do want to demonstrate how it can be
-      //     done.
-      if let testName = ProcessInfo.processInfo.environment["UI_TEST_NAME"] {
-        UITestingView(testName: testName)
-      } else {
-        AppView(model: Self.model)
-      }
+      AppView()
     }
   }
 }
 
-struct UITestingView: View {
-  let testName: String
+//// NB: During UI tests we override certain dependencies for the app and seed initial state.
+private func setUpForUITest() {
+  guard let testName = ProcessInfo.processInfo.environment["UI_TEST_NAME"]
+  else {
+    return
+  }
 
-  var body: some View {
-    withDependencies {
-      $0.continuousClock = ContinuousClock()
-      $0.date = DateGenerator { Date() }
-      $0.soundEffectClient = .noop
-      $0.uuid = UUIDGenerator { UUID() }
-      switch testName {
-      case "testAdd":
-        $0.dataManager = .mock()
-      case "testDelete", "testEdit":
-        $0.dataManager = .mock(initialData: try? JSONEncoder().encode([SyncUp.mock]))
-      case "testRecord", "testRecord_Discard":
-        $0.date = DateGenerator { Date(timeIntervalSince1970: 1_234_567_890) }
-        $0.speechClient.authorizationStatus = { .authorized }
-        $0.speechClient.startTask = { @Sendable _ in
-          AsyncThrowingStream {
-            $0.yield(
-              SpeechRecognitionResult(
-                bestTranscription: Transcription(formattedString: "Hello world!"),
-                isFinal: true
-              )
+  // Set up dependencies for UI testing.
+  prepareDependencies {
+    $0.continuousClock = ContinuousClock()
+    $0.defaultFileStorage = .inMemory
+    $0.soundEffectClient = .noop
+    $0.uuid = UUIDGenerator { UUID() }
+    switch testName {
+    case "testAdd", "testDelete", "testEdit":
+      break
+    case "testRecord", "testRecord_Discard":
+      $0.date = DateGenerator { Date(timeIntervalSince1970: 1_234_567_890) }
+      $0.speechClient.authorizationStatus = { .authorized }
+      $0.speechClient.startTask = { @Sendable _ in
+        AsyncThrowingStream {
+          $0.yield(
+            SpeechRecognitionResult(
+              bestTranscription: Transcription(formattedString: "Hello world!"),
+              isFinal: true
             )
-            $0.finish()
-          }
+          )
+          $0.finish()
         }
-        $0.dataManager = .mock(initialData: try? JSONEncoder().encode([SyncUp.mock]))
-      case "testPersistence":
-        let id = ProcessInfo.processInfo.environment["TEST_UUID"]!
-        let url = URL.documentsDirectory.appending(component: "\(id).json")
-        $0.dataManager = .init(
-          load: { _ in try Data(contentsOf: url) },
-          save: { data, _ in try data.write(to: url) }
-        )
-
-      default:
-        fatalError()
       }
-    } operation: {
-      AppView(model: AppModel(syncUpsList: SyncUpsListModel()))
+    default:
+      reportIssue("Unrecognized test: \(testName)")
     }
+  }
+
+  // Seed certain test cases with specific state.
+  switch testName {
+  case "testDelete", "testEdit", "testRecord", "testRecord_Discard":
+    @Shared(.syncUps) var syncUps = [.mock]
+  default:
+    break
   }
 }
