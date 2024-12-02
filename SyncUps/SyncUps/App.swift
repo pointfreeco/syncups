@@ -25,27 +25,21 @@ struct AppView: View {
 }
 
 #Preview("Happy path") {
-  @Shared(.syncUps) var syncUps
-  let _ = $syncUps.withLock {
-    $0 = [
-      SyncUp.mock,
-      .engineeringMock,
-      .designMock,
-    ]
-  }
+  @Shared(.syncUps) var syncUps = [
+    SyncUp.mock,
+    .engineeringMock,
+    .designMock,
+  ]
   AppView()
 }
 
 #Preview("Deep link record flow") {
   let syncUp = SyncUp.mock
-  @Shared(.syncUps) var syncUps
-  let _ = $syncUps.withLock {
-    $0 = [
-      syncUp,
-      .engineeringMock,
-      .designMock,
-    ]
-  }
+  @Shared(.syncUps) var syncUps = [
+    syncUp,
+    .engineeringMock,
+    .designMock,
+  ]
   @Shared(.path) var path = [
     .detail(id: syncUp.id),
     .record(id: syncUp.id),
