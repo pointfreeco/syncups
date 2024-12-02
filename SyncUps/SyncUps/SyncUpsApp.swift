@@ -54,8 +54,7 @@ private func setUpForUITest() {
   // Seed certain test cases with specific state.
   switch testName {
   case "testDelete", "testEdit", "testRecord", "testRecord_Discard":
-    @Shared(.syncUps) var syncUps
-    $syncUps.withLock { $0 = [SyncUp.mock] }
+    @Shared(.syncUps) var syncUps = [.mock]
   default:
     break
   }
