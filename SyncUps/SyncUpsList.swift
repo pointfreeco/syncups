@@ -11,7 +11,6 @@ final class SyncUpsListModel {
   var addSyncUp: SyncUpFormModel?
   @ObservationIgnored @Shared(.syncUps) var syncUps
 
-  @ObservationIgnored @Dependency(\.continuousClock) var clock
   @ObservationIgnored @Dependency(\.uuid) var uuid
 
   init(
