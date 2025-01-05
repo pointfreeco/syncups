@@ -5,7 +5,7 @@ import Sharing
 import Speech
 import SwiftUI
 import SwiftUINavigation
-
+import Combine
 @MainActor
 @Observable
 final class RecordMeetingModel {
@@ -27,8 +27,15 @@ final class RecordMeetingModel {
     case confirmDiscard
   }
 
+  var cancellable: AnyCancellable?
   init(syncUp: Shared<SyncUp>) {
     self._syncUp = syncUp
+    cancellable = $path.publisher.sink { @Sendable path in
+      print(path.count)
+      if path.count == 0 {
+        print("!!!")
+      }
+    }
   }
 
   var durationRemaining: Duration {

@@ -8,8 +8,8 @@ import Testing
 @testable import SyncUps
 
 @MainActor
-@Suite struct RecordMeetingTests {
-  let clock = TestClock()
+@Suite(.serialized) struct RecordMeetingTests {
+  let testClock = TestClock()
   @Shared(.path) var path
 
   @Test func timer() async throws {
@@ -26,7 +26,7 @@ import Testing
     $path.withLock { $0 = [.record(id: syncUp.id)] }
 
     let model = withDependencies {
-      $0.continuousClock = clock
+      $0.continuousClock = testClock
       $0.date.now = Date(timeIntervalSince1970: 1234567890)
       $0.soundEffectClient = .noop
       $0.soundEffectClient.play = { soundEffectPlayCount.withValue { $0 += 1 } }
@@ -53,22 +53,22 @@ import Testing
     #expect(model.speakerIndex == 0)
     #expect(model.durationRemaining == .seconds(3))
 
-    await clock.advance(by: .seconds(1))
+    await testClock.advance(by: .seconds(1))
     #expect(model.speakerIndex == 1)
     #expect(model.durationRemaining == .seconds(2))
     #expect(soundEffectPlayCount.value == 1)
 
-    await clock.advance(by: .seconds(1))
+    await testClock.advance(by: .seconds(1))
     #expect(model.speakerIndex == 2)
     #expect(model.durationRemaining == .seconds(1))
     #expect(soundEffectPlayCount.value == 2)
 
-    await clock.advance(by: .seconds(1))
+    await testClock.advance(by: .seconds(1))
     #expect(model.speakerIndex == 2)
     #expect(model.durationRemaining == .seconds(0))
     #expect(soundEffectPlayCount.value == 2)
 
-    await clock.run()
+    await testClock.run()
     await task.value
 
     #expect(soundEffectPlayCount.value == 2)
@@ -124,7 +124,7 @@ import Testing
     $path.withLock { $0 = [.detail(id: syncUp.id), .record(id: syncUp.id)] }
 
     let model = withDependencies {
-      $0.continuousClock = clock
+      $0.continuousClock = testClock
       $0.date.now = Date(timeIntervalSince1970: 1234567890)
       $0.soundEffectClient = .noop
       $0.speechClient.authorizationStatus = { .denied }
@@ -143,7 +143,7 @@ import Testing
 
     expectNoDifference(alert, .endMeeting(isDiscardable: true))
 
-    await clock.advance(by: .seconds(5))
+    await testClock.advance(by: .seconds(5))
 
     #expect(model.speakerIndex == 0)
     #expect(model.durationRemaining == .seconds(60))
@@ -151,8 +151,8 @@ import Testing
     let saveTask = Task {
       await model.alertButtonTapped(.confirmSave)
     }
-    try await Task.sleep(for: .seconds(0.1))
-    await clock.advance(by: .seconds(0.4))
+    try await Task.sleep(for: .seconds(0.2))
+    await testClock.advance(by: .seconds(0.4))
     await saveTask.value
     #expect(path == [.detail(id: syncUp.id)])
 
@@ -165,7 +165,7 @@ import Testing
     $path.withLock { $0 = [.detail(id: syncUp.id), .record(id: syncUp.id)] }
 
     let model = withDependencies {
-      $0.continuousClock = clock
+      $0.continuousClock = testClock
       $0.soundEffectClient = .noop
       $0.speechClient.authorizationStatus = { .denied }
     } operation: {
@@ -240,7 +240,7 @@ import Testing
 
     expectNoDifference(alert, .endMeeting(isDiscardable: false))
 
-    await clock.advance(by: .seconds(5))
+    await testClock.advance(by: .seconds(5))
 
     #expect(model.speakerIndex == 2)
     #expect(model.durationRemaining == .seconds(1))
@@ -317,7 +317,7 @@ import Testing
     $path.withLock { $0 = [.detail(id: syncUp.id), .record(id: syncUp.id)] }
 
     let model = withDependencies {
-      $0.continuousClock = clock
+      $0.continuousClock = testClock
       $0.soundEffectClient = .noop
       $0.speechClient.authorizationStatus = { .authorized }
       $0.speechClient.startTask = { @Sendable _ in

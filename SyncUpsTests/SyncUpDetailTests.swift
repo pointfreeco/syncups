@@ -126,7 +126,7 @@ struct SyncUpDetailTests {
       $0.continuousClock = ContinuousClock()
       $0.openSettings = { settingsOpened.setValue(true) }
     } operation: {
-      SyncUpDetailModel(syncUp: $syncUps[0])
+      SyncUpDetailModel(syncUp: Shared($syncUps[id: syncUp.id])!)
     }
 
     model.deleteButtonTapped()
