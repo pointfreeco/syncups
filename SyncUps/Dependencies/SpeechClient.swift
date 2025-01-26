@@ -16,7 +16,6 @@ struct SpeechClient {
 
 extension SpeechClient: DependencyKey {
   static var liveValue: SpeechClient {
-    let speech = Speech()
     return SpeechClient(
       authorizationStatus: { SFSpeechRecognizer.authorizationStatus() },
       requestAuthorization: {
@@ -27,7 +26,8 @@ extension SpeechClient: DependencyKey {
         }
       },
       startTask: { request in
-        await speech.startTask(request: request)
+        let speech = Speech()
+        return await speech.startTask(request: request)
       }
     )
   }
@@ -168,6 +168,7 @@ private actor Speech {
 
       continuation.onTermination = { [audioEngine, recognitionTask] _ in
         _ = speechRecognizer
+        _ = self
         audioEngine?.stop()
         audioEngine?.inputNode.removeTap(onBus: 0)
         recognitionTask?.finish()
