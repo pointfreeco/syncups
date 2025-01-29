@@ -44,6 +44,18 @@ final class SyncUpsListModel {
     }
     _ = $syncUps.withLock { $0.append(syncUp) }
   }
+
+  func loadSampleDataButtonTapped() {
+    withAnimation {
+      $syncUps.withLock {
+        $0 = [
+          .mock,
+          .engineeringMock,
+          .designMock,
+        ]
+      }
+    }
+  }
 }
 
 struct SyncUpsList: View {
@@ -51,11 +63,23 @@ struct SyncUpsList: View {
 
   var body: some View {
     List {
-      ForEach(model.syncUps) { syncUp in
-        NavigationLink(value: AppPath.detail(id: syncUp.id)) {
-          CardView(syncUp: syncUp)
+      if let loadError = model.$syncUps.loadError {
+        ContentUnavailableView {
+          Label("An error occurred", systemImage: "exclamationmark.octagon")
+        } description: {
+          Text(loadError.localizedDescription)
+        } actions: {
+          Button("Load sample data") {
+            model.loadSampleDataButtonTapped()
+          }
         }
-        .listRowBackground(syncUp.theme.mainColor)
+      } else {
+        ForEach(model.syncUps) { syncUp in
+          NavigationLink(value: AppPath.detail(id: syncUp.id)) {
+            CardView(syncUp: syncUp)
+          }
+          .listRowBackground(syncUp.theme.mainColor)
+        }
       }
     }
     .toolbar {
@@ -123,7 +147,14 @@ extension LabelStyle where Self == TrailingIconLabelStyle {
 
 extension SharedReaderKey where Self == FileStorageKey<IdentifiedArrayOf<SyncUp>>.Default {
   static var syncUps: Self {
-    Self[.fileStorage(URL.documentsDirectory.appending(component: "sync-ups.json")), default: []]
+    Self[
+      .fileStorage(dump(URL.documentsDirectory.appending(component: "sync-ups.json"))),
+      default: [
+        .mock,
+        .engineeringMock,
+        .designMock,
+      ]
+    ]
   }
 }
 
@@ -137,7 +168,7 @@ extension SharedReaderKey where Self == FileStorageKey<IdentifiedArrayOf<SyncUp>
       """
   ) {
     @Shared(.syncUps) var syncUps: IdentifiedArray = [
-      SyncUp.mock,
+      .mock,
       .engineeringMock,
       .designMock,
     ]
