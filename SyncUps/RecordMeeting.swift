@@ -8,9 +8,9 @@ import SwiftUINavigation
 
 @MainActor
 @Observable
-final class RecordMeetingModel {
+final class RecordMeetingModel: HashableObject {
   var alert: AlertState<AlertAction>?
-  @ObservationIgnored @Shared(.path) var path
+  var isDismissed = false
   var secondsElapsed = 0
   var speakerIndex = 0
   @ObservationIgnored @Shared var syncUp: SyncUp
@@ -56,7 +56,7 @@ final class RecordMeetingModel {
     case .confirmSave:
       await finishMeeting()
     case .confirmDiscard:
-      _ = $path.withLock { $0.removeLast() }
+      isDismissed = true
     case nil:
       break
     }
@@ -115,7 +115,7 @@ final class RecordMeetingModel {
   }
 
   private func finishMeeting() async {
-    _ = $path.withLock { $0.removeLast() }
+    isDismissed = true
 
     try? await clock.sleep(for: .seconds(0.4))
     _ = withAnimation {
@@ -173,14 +173,8 @@ extension AlertState where Action == RecordMeetingModel.AlertAction {
 }
 
 struct RecordMeetingView: View {
+  @Environment(\.dismiss) var dismiss
   @State var model: RecordMeetingModel
-
-  init?(id: SyncUp.ID) {
-    @Shared(.syncUps) var syncUps
-    guard let syncUp = Shared($syncUps[id: id])
-    else { return nil }
-    _model = State(wrappedValue: RecordMeetingModel(syncUp: syncUp))
-  }
 
   var body: some View {
     ZStack {
@@ -219,6 +213,9 @@ struct RecordMeetingView: View {
       await model.alertButtonTapped(action)
     }
     .task { await model.task() }
+    .onChange(of: model.isDismissed) {
+      dismiss()
+    }
   }
 }
 
@@ -371,29 +368,24 @@ struct MeetingFooterView: View {
 }
 
 #Preview("Happy path") {
-  let syncUp = SyncUp.mock
-  @Shared(.syncUps) var syncUps = [syncUp]
-
   NavigationStack {
-    RecordMeetingView(id: syncUp.id)
+    RecordMeetingView(model: RecordMeetingModel(syncUp: Shared(value: .mock)))
   }
 }
 
-#Preview(
-  "Speech failure after 2 secs",
-  traits: .dependency(\.speechClient, .fail(after: .seconds(2)))
-) {
+#Preview("Speech failure after 2 secs") {
+  let _ = prepareDependencies { $0.speechClient = .fail(after: .seconds(2)) }
   let syncUp = SyncUp.mock
   @Shared(.syncUps) var syncUps = [syncUp]
 
   Preview(
     message: """
-        This preview demonstrates how the feature behaves when the speech recognizer emits a \
-        failure after 2 seconds of transcribing.
-        """
+      This preview demonstrates how the feature behaves when the speech recognizer emits a failure \
+      after 2 seconds of transcribing.
+      """
   ) {
     NavigationStack {
-      RecordMeetingView(id: syncUp.id)
+      RecordMeetingView(model: RecordMeetingModel(syncUp: Shared(value: .mock)))
     }
   }
 }

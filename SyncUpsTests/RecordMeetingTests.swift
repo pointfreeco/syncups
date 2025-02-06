@@ -10,7 +10,6 @@ import Testing
 @MainActor
 @Suite struct RecordMeetingTests {
   let clock = TestClock()
-  @Shared(.path) var path
 
   @Test func timer() async throws {
     let soundEffectPlayCount = LockIsolated(0)
@@ -23,7 +22,6 @@ import Testing
       ],
       duration: .seconds(3)
     )
-    $path.withLock { $0 = [.record(id: syncUp.id)] }
 
     let model = withDependencies {
       $0.continuousClock = clock
@@ -80,8 +78,7 @@ import Testing
       attendees: [Attendee(id: Attendee.ID())],
       duration: .seconds(3)
     )
-    $path.withLock { $0 = [.record(id: syncUp.id)] }
-    
+
     let model = withDependencies {
       $0.continuousClock = ImmediateClock()
       $0.date.now = Date(timeIntervalSince1970: 1234567890)
@@ -121,7 +118,6 @@ import Testing
 
   @Test func endMeetingSave() async throws {
     let syncUp = SyncUp.mock
-    $path.withLock { $0 = [.detail(id: syncUp.id), .record(id: syncUp.id)] }
 
     let model = withDependencies {
       $0.continuousClock = clock
@@ -154,7 +150,7 @@ import Testing
     try await Task.sleep(for: .seconds(0.1))
     await clock.advance(by: .seconds(0.4))
     await saveTask.value
-    #expect(path == [.detail(id: syncUp.id)])
+    #expect(model.isDismissed)
 
     task.cancel()
     await task.value
@@ -162,7 +158,6 @@ import Testing
 
   @Test func endMeetingDiscard() async throws {
     let syncUp = SyncUp.mock
-    $path.withLock { $0 = [.detail(id: syncUp.id), .record(id: syncUp.id)] }
 
     let model = withDependencies {
       $0.continuousClock = clock
@@ -186,7 +181,7 @@ import Testing
 
     task.cancel()
     await task.value
-    #expect(path == [.detail(id: syncUp.id)])
+    #expect(model.isDismissed)
   }
 
   @Test func nextSpeaker() async throws {
@@ -200,8 +195,6 @@ import Testing
       duration: .seconds(3)
     )
     let soundEffectPlayCount = LockIsolated(0)
-    $path.withLock { $0 = [.record(id: syncUp.id)] }
-    print(path)
 
     let model = withDependencies {
       $0.continuousClock = ImmediateClock()
@@ -260,7 +253,6 @@ import Testing
       attendees: [Attendee(id: Attendee.ID())],
       duration: .seconds(3)
     )
-    $path.withLock { $0 = [.record(id: syncUp.id)] }
 
     let model = withDependencies {
       $0.continuousClock = ImmediateClock()
@@ -314,7 +306,6 @@ import Testing
       attendees: [Attendee(id: Attendee.ID())],
       duration: .seconds(3)
     )
-    $path.withLock { $0 = [.detail(id: syncUp.id), .record(id: syncUp.id)] }
 
     let model = withDependencies {
       $0.continuousClock = clock
@@ -344,6 +335,6 @@ import Testing
     await model.alertButtonTapped(.confirmDiscard)
     model.alert = nil  // NB: Simulate SwiftUI closing alert.
 
-    #expect(path == [.detail(id: syncUp.id)])
+    #expect(model.isDismissed)
   }
 }

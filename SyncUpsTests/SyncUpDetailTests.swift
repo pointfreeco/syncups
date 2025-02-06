@@ -10,8 +10,6 @@ import Testing
 @MainActor
 @Suite
 struct SyncUpDetailTests {
-  @Shared(.path) var path
-
   @Test func speechRestricted() async throws {
     let model = withDependencies {
       $0.speechClient.authorizationStatus = { .restricted }
@@ -63,10 +61,14 @@ struct SyncUpDetailTests {
       destination: .alert(.speechRecognitionDenied),
       syncUp: Shared(value: syncUp)
     )
+    let meetingStarted = LockIsolated(false)
+    model.onMeetingStarted = { _ in
+      meetingStarted.setValue(true)
+    }
 
     await model.alertButtonTapped(.continueWithoutRecording)
 
-    #expect(path == [.record(id: syncUp.id)])
+    #expect(meetingStarted.value)
   }
 
   @Test func speechAuthorized() async throws {
@@ -77,10 +79,14 @@ struct SyncUpDetailTests {
     } operation: {
       SyncUpDetailModel(syncUp: Shared(value: syncUp))
     }
+    let meetingStarted = LockIsolated(false)
+    model.onMeetingStarted = { _ in
+      meetingStarted.setValue(true)
+    }
 
     model.startMeetingButtonTapped()
 
-    #expect(path == [.record(id: syncUp.id)])
+    #expect(meetingStarted.value)
   }
 
   @Test(.dependency(\.uuid, .incrementing))
@@ -119,14 +125,13 @@ struct SyncUpDetailTests {
   @Test func delete() async {
     let syncUp = SyncUp.mock
     @Shared(.syncUps) var syncUps = [syncUp]
-    $path.withLock { $0 = [.detail(id: syncUp.id)] }
 
     let settingsOpened = LockIsolated(false)
     let model = withDependencies {
       $0.continuousClock = ContinuousClock()
       $0.openSettings = { settingsOpened.setValue(true) }
     } operation: {
-      SyncUpDetailModel(syncUp: $syncUps[0])
+      SyncUpDetailModel(syncUp: Shared($syncUps[id: syncUp.id])!)
     }
 
     model.deleteButtonTapped()
@@ -136,6 +141,6 @@ struct SyncUpDetailTests {
     await model.alertButtonTapped(.confirmDeletion)
 
     #expect(syncUps == [])
-    #expect(path == [])
+    #expect(model.isDismissed)
   }
 }
