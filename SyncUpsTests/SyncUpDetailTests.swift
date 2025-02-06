@@ -3,6 +3,7 @@ import CustomDump
 import Dependencies
 import DependenciesTestSupport
 import Sharing
+import Synchronization
 import Testing
 
 @testable import SyncUps
@@ -39,9 +40,9 @@ struct SyncUpDetailTests {
   }
 
   @Test func openSettings() async {
-    let settingsOpened = LockIsolated(false)
+    let settingsOpened = Mutex(false)
     let model = withDependencies {
-      $0.openSettings = { settingsOpened.setValue(true) }
+      $0.openSettings = { settingsOpened.withLock { $0 = true } }
     } operation: {
       SyncUpDetailModel(
         destination: .alert(.speechRecognitionDenied),
@@ -51,7 +52,7 @@ struct SyncUpDetailTests {
 
     await model.alertButtonTapped(.openSettings)
 
-    #expect(settingsOpened.value == true)
+    #expect(settingsOpened.withLock { $0 })
   }
 
   @Test func continueWithoutRecording() async throws {
@@ -61,14 +62,12 @@ struct SyncUpDetailTests {
       destination: .alert(.speechRecognitionDenied),
       syncUp: Shared(value: syncUp)
     )
-    let meetingStarted = LockIsolated(false)
-    model.onMeetingStarted = { _ in
-      meetingStarted.setValue(true)
-    }
+    let meetingStarted = Mutex(false)
+    model.onMeetingStarted = { _ in meetingStarted.withLock { $0 = true } }
 
     await model.alertButtonTapped(.continueWithoutRecording)
 
-    #expect(meetingStarted.value)
+    #expect(meetingStarted.withLock { $0 })
   }
 
   @Test func speechAuthorized() async throws {
@@ -79,14 +78,12 @@ struct SyncUpDetailTests {
     } operation: {
       SyncUpDetailModel(syncUp: Shared(value: syncUp))
     }
-    let meetingStarted = LockIsolated(false)
-    model.onMeetingStarted = { _ in
-      meetingStarted.setValue(true)
-    }
+    let meetingStarted = Mutex(false)
+    model.onMeetingStarted = { _ in meetingStarted.withLock { $0 = true } }
 
     model.startMeetingButtonTapped()
 
-    #expect(meetingStarted.value)
+    #expect(meetingStarted.withLock { $0 })
   }
 
   @Test(.dependency(\.uuid, .incrementing))
@@ -126,10 +123,10 @@ struct SyncUpDetailTests {
     let syncUp = SyncUp.mock
     @Shared(.syncUps) var syncUps = [syncUp]
 
-    let settingsOpened = LockIsolated(false)
+    let settingsOpened = Mutex(false)
     let model = withDependencies {
       $0.continuousClock = ContinuousClock()
-      $0.openSettings = { settingsOpened.setValue(true) }
+      $0.openSettings = { settingsOpened.withLock { $0 = true } }
     } operation: {
       SyncUpDetailModel(syncUp: Shared($syncUps[id: syncUp.id])!)
     }

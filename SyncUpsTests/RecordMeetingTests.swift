@@ -3,6 +3,7 @@ import CustomDump
 import Dependencies
 import Foundation
 import Sharing
+import Synchronization
 import Testing
 
 @testable import SyncUps
@@ -12,7 +13,7 @@ import Testing
   let clock = TestClock()
 
   @Test func timer() async throws {
-    let soundEffectPlayCount = LockIsolated(0)
+    let soundEffectPlayCount = Mutex(0)
     let syncUp = SyncUp(
       id: SyncUp.ID(),
       attendees: [
@@ -27,7 +28,7 @@ import Testing
       $0.continuousClock = clock
       $0.date.now = Date(timeIntervalSince1970: 1234567890)
       $0.soundEffectClient = .noop
-      $0.soundEffectClient.play = { soundEffectPlayCount.withValue { $0 += 1 } }
+      $0.soundEffectClient.play = { soundEffectPlayCount.withLock { $0 += 1 } }
       $0.speechClient.authorizationStatus = { .denied }
       $0.uuid = .incrementing
     } operation: {
@@ -54,22 +55,22 @@ import Testing
     await clock.advance(by: .seconds(1))
     #expect(model.speakerIndex == 1)
     #expect(model.durationRemaining == .seconds(2))
-    #expect(soundEffectPlayCount.value == 1)
+    #expect(soundEffectPlayCount.withLock { $0 } == 1)
 
     await clock.advance(by: .seconds(1))
     #expect(model.speakerIndex == 2)
     #expect(model.durationRemaining == .seconds(1))
-    #expect(soundEffectPlayCount.value == 2)
+    #expect(soundEffectPlayCount.withLock { $0 } == 2)
 
     await clock.advance(by: .seconds(1))
     #expect(model.speakerIndex == 2)
     #expect(model.durationRemaining == .seconds(0))
-    #expect(soundEffectPlayCount.value == 2)
+    #expect(soundEffectPlayCount.withLock { $0 } == 2)
 
     await clock.run()
     await task.value
 
-    #expect(soundEffectPlayCount.value == 2)
+    #expect(soundEffectPlayCount.withLock { $0 } == 2)
   }
 
   @Test func recordTranscript() async throws {
@@ -194,13 +195,13 @@ import Testing
       ],
       duration: .seconds(3)
     )
-    let soundEffectPlayCount = LockIsolated(0)
+    let soundEffectPlayCount = Mutex(0)
 
     let model = withDependencies {
       $0.continuousClock = ImmediateClock()
       $0.date.now = Date(timeIntervalSince1970: 1234567890)
       $0.soundEffectClient = .noop
-      $0.soundEffectClient.play = { soundEffectPlayCount.withValue { $0 += 1 } }
+      $0.soundEffectClient.play = { soundEffectPlayCount.withLock { $0 += 1 } }
       $0.speechClient.authorizationStatus = { .denied }
       $0.uuid = .incrementing
     } operation: {
@@ -219,13 +220,13 @@ import Testing
 
     #expect(model.speakerIndex == 1)
     #expect(model.durationRemaining == .seconds(2))
-    #expect(soundEffectPlayCount.value == 1)
+    #expect(soundEffectPlayCount.withLock { $0 } == 1)
 
     model.nextButtonTapped()
 
     #expect(model.speakerIndex == 2)
     #expect(model.durationRemaining == .seconds(1))
-    #expect(soundEffectPlayCount.value == 2)
+    #expect(soundEffectPlayCount.withLock { $0 } == 2)
 
     model.nextButtonTapped()
 
@@ -237,11 +238,11 @@ import Testing
 
     #expect(model.speakerIndex == 2)
     #expect(model.durationRemaining == .seconds(1))
-    #expect(soundEffectPlayCount.value == 2)
+    #expect(soundEffectPlayCount.withLock { $0 } == 2)
 
     await model.alertButtonTapped(.confirmSave)
 
-    #expect(soundEffectPlayCount.value == 2)
+    #expect(soundEffectPlayCount.withLock { $0 } == 2)
 
     task.cancel()
     await task.value
