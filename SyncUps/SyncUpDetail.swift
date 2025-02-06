@@ -9,10 +9,12 @@ import SwiftUINavigation
 
 @MainActor
 @Observable
-final class SyncUpDetailModel {
+final class SyncUpDetailModel: HashableObject {
   var destination: Destination?
-  @ObservationIgnored @Shared(.path) var path
+  var isDismissed = false
   @ObservationIgnored @Shared var syncUp: SyncUp
+
+  var onMeetingStarted: (Shared<SyncUp>) -> Void = unimplemented("onMeetingStarted")
 
   @ObservationIgnored @Dependency(\.continuousClock) var clock
   @ObservationIgnored @Dependency(\.date.now) var now
@@ -51,7 +53,7 @@ final class SyncUpDetailModel {
   func alertButtonTapped(_ action: AlertAction?) async {
     switch action {
     case .confirmDeletion:
-      _ = $path.withLock { $0.removeLast() }
+      isDismissed = true
       try? await clock.sleep(for: .seconds(0.4))
       @Shared(.syncUps) var syncUps
       withAnimation {
@@ -59,9 +61,7 @@ final class SyncUpDetailModel {
       }
 
     case .continueWithoutRecording:
-      $path.withLock {
-        $0.append(.record(id: syncUp.id))
-      }
+      onMeetingStarted($syncUp)
 
     case .openSettings:
       await openSettings()
@@ -94,7 +94,7 @@ final class SyncUpDetailModel {
   func startMeetingButtonTapped() {
     switch authorizationStatus() {
     case .notDetermined, .authorized:
-      $path.withLock { $0.append(.record(id: syncUp.id)) }
+      onMeetingStarted($syncUp)
 
     case .denied:
       destination = .alert(.speechRecognitionDenied)
@@ -109,14 +109,8 @@ final class SyncUpDetailModel {
 }
 
 struct SyncUpDetailView: View {
+  @Environment(\.dismiss) var dismiss
   @State var model: SyncUpDetailModel
-
-  init?(id: SyncUp.ID) {
-    @Shared(.syncUps) var syncUps
-    guard let syncUp = Shared($syncUps[id: id])
-    else { return nil }
-    _model = State(wrappedValue: SyncUpDetailModel(syncUp: syncUp))
-  }
 
   var body: some View {
     List {
@@ -150,7 +144,7 @@ struct SyncUpDetailView: View {
       if !model.syncUp.meetings.isEmpty {
         Section {
           ForEach(model.syncUp.meetings) { meeting in
-            NavigationLink(value: AppPath.meeting(id: meeting.id, syncUpID: model.syncUp.id)) {
+            NavigationLink(value: AppModel.Path.meeting(meeting, syncUp: model.syncUp)) {
               HStack {
                 Image(systemName: "calendar")
                 Text(meeting.date, style: .date)
@@ -208,6 +202,9 @@ struct SyncUpDetailView: View {
             }
           }
       }
+    }
+    .onChange(of: model.isDismissed) {
+      dismiss()
     }
   }
 }
@@ -270,18 +267,6 @@ struct MeetingView: View {
   let meeting: Meeting
   let syncUp: SyncUp
 
-  init?(id: Meeting.ID, syncUpID: SyncUp.ID) {
-    @Shared(.syncUps) var syncUps
-    guard
-      let syncUp = syncUps[id: syncUpID],
-      let meeting = syncUp.meetings[id: id]
-    else {
-      return nil
-    }
-    self.syncUp = syncUp
-    self.meeting = meeting
-  }
-
   var body: some View {
     ScrollView {
       VStack(alignment: .leading) {
@@ -304,9 +289,6 @@ struct MeetingView: View {
 }
 
 #Preview("Happy path") {
-  let syncUp = SyncUp.mock
-  @Shared(.syncUps) var syncUps = [syncUp]
-
   Preview(
     message: """
       This preview demonstrates the "happy path" of the application where everything works \
@@ -316,19 +298,15 @@ struct MeetingView: View {
       """
   ) {
     NavigationStack {
-      SyncUpDetailView(id: syncUp.id)
+      SyncUpDetailView(model: SyncUpDetailModel(syncUp: Shared(value: .mock)))
     }
   }
 }
 
-#Preview(
-  "Speech recognition denied",
-  traits: .dependencies {
+#Preview("Speech recognition denied") {
+  let _ = prepareDependencies {
     $0.speechClient.authorizationStatus = { .denied }
   }
-) {
-  let syncUp = SyncUp.mock
-  @Shared(.syncUps) var syncUps = [syncUp]
 
   Preview(
     message: """
@@ -338,19 +316,15 @@ struct MeetingView: View {
       """
   ) {
     NavigationStack {
-      SyncUpDetailView(id: syncUp.id)
+      SyncUpDetailView(model: SyncUpDetailModel(syncUp: Shared(value: .mock)))
     }
   }
 }
 
-#Preview(
-  "Speech recognition restricted",
-  traits: .dependencies {
+#Preview("Speech recognition restricted") {
+  let _ = prepareDependencies {
     $0.speechClient.authorizationStatus = { .restricted }
   }
-) {
-  let syncUp = SyncUp.mock
-  @Shared(.syncUps) var syncUps = [syncUp]
 
   Preview(
     message: """
@@ -360,7 +334,7 @@ struct MeetingView: View {
       """
   ) {
     NavigationStack {
-      SyncUpDetailView(id: syncUp.id)
+      SyncUpDetailView(model: SyncUpDetailModel(syncUp: Shared(value: .mock)))
     }
   }
 }

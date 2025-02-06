@@ -74,8 +74,10 @@ struct SyncUpsList: View {
           }
         }
       } else {
-        ForEach(model.syncUps) { syncUp in
-          NavigationLink(value: AppPath.detail(id: syncUp.id)) {
+        ForEach(Array(model.$syncUps)) { $syncUp in
+          NavigationLink(
+            value: AppModel.Path.detail(SyncUpDetailModel(syncUp: $syncUp))
+          ) {
             CardView(syncUp: syncUp)
           }
           .listRowBackground(syncUp.theme.mainColor)
@@ -149,7 +151,7 @@ extension SharedReaderKey where Self == FileStorageKey<IdentifiedArrayOf<SyncUp>
   static var syncUps: Self {
     Self[
       .fileStorage(dump(URL.documentsDirectory.appending(component: "sync-ups.json"))),
-      default: [
+      default: isTesting || ProcessInfo.processInfo.environment["UI_TEST_NAME"] != nil ? [] : [
         .mock,
         .engineeringMock,
         .designMock,

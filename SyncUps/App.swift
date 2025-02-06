@@ -4,20 +4,76 @@ import IdentifiedCollections
 import Sharing
 import SwiftUI
 
+@MainActor
+@Observable
+class AppModel {
+  var path: [Path] {
+    didSet { bind() }
+  }
+  var syncUpsList: SyncUpsListModel {
+    didSet { bind() }
+  }
+
+  @ObservationIgnored
+  @Dependency(\.continuousClock) var clock
+  @ObservationIgnored
+  @Dependency(\.date.now) var now
+  @ObservationIgnored
+  @Dependency(\.uuid) var uuid
+
+  @CasePathable
+  @dynamicMemberLookup
+  enum Path: Hashable {
+    case detail(SyncUpDetailModel)
+    case meeting(Meeting, syncUp: SyncUp)
+    case record(RecordMeetingModel)
+  }
+
+  init(
+    path: [Path] = [],
+    syncUpsList: SyncUpsListModel = SyncUpsListModel()
+  ) {
+    self.path = path
+    self.syncUpsList = syncUpsList
+    self.bind()
+  }
+
+  private func bind() {
+    for destination in path {
+      switch destination {
+      case let .detail(detailModel):
+        bindDetail(model: detailModel)
+
+      case .meeting, .record:
+        break
+      }
+    }
+  }
+
+  private func bindDetail(model: SyncUpDetailModel) {
+    model.onMeetingStarted = { [weak self] syncUp in
+      guard let self else { return }
+      withDependencies(from: self) {
+        path.append(.record(RecordMeetingModel(syncUp: syncUp)))
+      }
+    }
+  }
+}
+
 struct AppView: View {
-  @Shared(.path) var path
+  @State var model = AppModel()
 
   var body: some View {
-    NavigationStack(path: Binding($path)) {
+    NavigationStack(path: $model.path) {
       SyncUpsList()
-        .navigationDestination(for: AppPath.self) { path in
+        .navigationDestination(for: AppModel.Path.self) { path in
           switch path {
-          case let .detail(id: syncUpID):
-            SyncUpDetailView(id: syncUpID)
-          case let .meeting(id: meetingID, syncUpID: syncUpID):
-            MeetingView(id: meetingID, syncUpID: syncUpID)
-          case let .record(id: syncUpID):
-            RecordMeetingView(id: syncUpID)
+          case let .detail(model):
+            SyncUpDetailView(model: model)
+          case let .meeting(meeting, syncUp: syncUp):
+            MeetingView(meeting: meeting, syncUp: syncUp)
+          case let .record(model):
+            RecordMeetingView(model: model)
           }
         }
     }
@@ -30,11 +86,7 @@ struct AppView: View {
 
 #Preview("Deep link record flow") {
   let syncUp = SyncUp.mock
-  @Shared(.syncUps) var syncUps
-  @Shared(.path) var path = [
-    .detail(id: syncUps[0].id),
-    .record(id: syncUps[0].id),
-  ]
+  @Shared(.syncUps) var syncUps = [syncUp]
 
   Preview(
     message: """
@@ -44,6 +96,13 @@ struct AppView: View {
       for a new meeting.
       """
   ) {
-    AppView()
+    AppView(
+      model: AppModel(
+        path: [
+          .detail(SyncUpDetailModel(syncUp: Shared($syncUps[id: syncUp.id])!)),
+          .record(RecordMeetingModel(syncUp: Shared($syncUps[id: syncUp.id])!)),
+        ]
+      )
+    )
   }
 }

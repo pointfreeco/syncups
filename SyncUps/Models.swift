@@ -27,38 +27,46 @@ struct Meeting: Hashable, Identifiable, Codable {
 }
 
 enum Theme: String, CaseIterable, Equatable, Hashable, Identifiable, Codable {
+  case appIndigo
+  case appMagenta
+  case appOrange
+  case appPurple
+  case appTeal
+  case appYellow
   case bubblegum
   case buttercup
-  case indigo
   case lavender
-  case magenta
   case navy
-  case orange
   case oxblood
   case periwinkle
   case poppy
-  case purple
   case seafoam
   case sky
   case tan
-  case teal
-  case yellow
 
   var id: Self { self }
 
   var accentColor: Color {
     switch self {
-    case .bubblegum, .buttercup, .lavender, .orange, .periwinkle, .poppy, .seafoam, .sky, .tan,
-      .teal, .yellow:
+    case .appOrange, .appTeal, .appYellow, .bubblegum, .buttercup, .lavender, .periwinkle, .poppy,
+      .seafoam, .sky, .tan:
       return .black
-    case .indigo, .magenta, .navy, .oxblood, .purple:
+    case .appIndigo, .appMagenta, .appPurple, .navy, .oxblood:
       return .white
     }
   }
 
   var mainColor: Color { Color(rawValue) }
 
-  var name: String { rawValue.capitalized }
+  var name: String {
+    switch self {
+    case .appIndigo, .appMagenta, .appOrange, .appPurple, .appTeal, .appYellow:
+      rawValue.dropFirst(3).capitalized
+    case .bubblegum, .buttercup, .lavender, .navy, .oxblood, .periwinkle, .poppy, .seafoam, .sky,
+      .tan:
+      rawValue.capitalized
+    }
+  }
 }
 
 extension SyncUp {
@@ -87,7 +95,7 @@ extension SyncUp {
           """
       )
     ],
-    theme: .orange,
+    theme: .appOrange,
     title: "Design"
   )
 

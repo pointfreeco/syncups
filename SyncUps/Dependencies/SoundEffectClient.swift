@@ -1,6 +1,7 @@
 import AVFoundation
 import Dependencies
 import DependenciesMacros
+import Synchronization
 
 @DependencyClient
 struct SoundEffectClient {
@@ -10,17 +11,17 @@ struct SoundEffectClient {
 
 extension SoundEffectClient: DependencyKey {
   static var liveValue: Self {
-    let player = LockIsolated(AVPlayer())
+    let player = Mutex(AVPlayer())
     return Self(
       load: { fileName in
-        player.withValue {
+        player.withLock {
           guard let url = Bundle.main.url(forResource: fileName, withExtension: "")
           else { return }
           $0.replaceCurrentItem(with: AVPlayerItem(url: url))
         }
       },
       play: {
-        player.withValue {
+        player.withLock {
           $0.seek(to: .zero)
           $0.play()
         }
