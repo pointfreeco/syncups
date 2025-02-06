@@ -110,7 +110,7 @@ final class SyncUpDetailModel: HashableObject {
 
 struct SyncUpDetailView: View {
   @Environment(\.dismiss) var dismiss
-  @State var model: SyncUpDetailModel
+  @Bindable var model: SyncUpDetailModel
 
   var body: some View {
     List {

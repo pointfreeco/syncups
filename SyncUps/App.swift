@@ -61,11 +61,11 @@ class AppModel {
 }
 
 struct AppView: View {
-  @State var model = AppModel()
+  @Bindable var model: AppModel
 
   var body: some View {
     NavigationStack(path: $model.path) {
-      SyncUpsList()
+      SyncUpsList(model: model.syncUpsList)
         .navigationDestination(for: AppModel.Path.self) { path in
           switch path {
           case let .detail(model):
@@ -81,7 +81,7 @@ struct AppView: View {
 }
 
 #Preview("Happy path") {
-  AppView()
+  AppView(model: AppModel())
 }
 
 #Preview("Deep link record flow") {

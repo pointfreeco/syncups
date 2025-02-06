@@ -5,13 +5,15 @@ import SwiftUI
 
 @main
 struct SyncUpsApp: App {
+  static let model = AppModel()
+
   init() {
     setUpForUITest()
   }
 
   var body: some Scene {
     WindowGroup {
-      AppView()
+      AppView(model: Self.model)
     }
   }
 }

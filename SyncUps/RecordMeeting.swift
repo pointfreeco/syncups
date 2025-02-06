@@ -174,7 +174,7 @@ extension AlertState where Action == RecordMeetingModel.AlertAction {
 
 struct RecordMeetingView: View {
   @Environment(\.dismiss) var dismiss
-  @State var model: RecordMeetingModel
+  @Bindable var model: RecordMeetingModel
 
   var body: some View {
     ZStack {

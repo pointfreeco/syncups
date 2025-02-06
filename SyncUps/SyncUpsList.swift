@@ -59,7 +59,7 @@ final class SyncUpsListModel {
 }
 
 struct SyncUpsList: View {
-  @State var model = SyncUpsListModel()
+  @Bindable var model: SyncUpsListModel
 
   var body: some View {
     List {
