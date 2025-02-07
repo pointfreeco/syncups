@@ -62,7 +62,7 @@ final class RecordMeetingModel: HashableObject {
     }
   }
 
-  func task() async {
+  func onTask() async {
     soundEffectClient.load(fileName: "ding.wav")
 
     let authorization =
@@ -212,7 +212,7 @@ struct RecordMeetingView: View {
     .alert($model.alert) { action in
       await model.alertButtonTapped(action)
     }
-    .task { await model.task() }
+    .task { await model.onTask() }
     .onChange(of: model.isDismissed) {
       dismiss()
     }
