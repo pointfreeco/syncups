@@ -4,7 +4,6 @@ import Testing
 
 @testable import SyncUps
 
-@MainActor
 @Suite(.dependency(\.uuid, .incrementing))
 struct SyncUpFormTests {
   @Test func addAttendee() async {

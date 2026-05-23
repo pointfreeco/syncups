@@ -4,13 +4,13 @@ import DependenciesMacros
 import Synchronization
 
 @DependencyClient
-struct SoundEffectClient {
+nonisolated struct SoundEffectClient {
   var load: @Sendable (_ fileName: String) -> Void
   var play: @Sendable () -> Void
 }
 
-extension SoundEffectClient: DependencyKey {
-  static var liveValue: Self {
+nonisolated extension SoundEffectClient: DependencyKey {
+  nonisolated static var liveValue: Self {
     let player = Mutex(AVPlayer())
     return Self(
       load: { fileName in
@@ -38,7 +38,7 @@ extension SoundEffectClient: DependencyKey {
 }
 
 extension DependencyValues {
-  var soundEffectClient: SoundEffectClient {
+  nonisolated var soundEffectClient: SoundEffectClient {
     get { self[SoundEffectClient.self] }
     set { self[SoundEffectClient.self] = newValue }
   }

@@ -4,7 +4,6 @@ import IdentifiedCollections
 import Sharing
 import SwiftUI
 
-@MainActor
 @Observable
 class AppModel {
   var path: [Path] {

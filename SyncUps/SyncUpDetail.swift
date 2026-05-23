@@ -1,5 +1,6 @@
 import Clocks
 import CustomDump
+import DebugSnapshots
 import Dependencies
 import IdentifiedCollections
 import IssueReporting
@@ -7,8 +8,8 @@ import Sharing
 import SwiftUI
 import SwiftUINavigation
 
-@MainActor
 @Observable
+@DebugSnapshot(.logChanges)
 final class SyncUpDetailModel: HashableObject {
   var destination: Destination?
   var isDismissed = false
@@ -16,10 +17,15 @@ final class SyncUpDetailModel: HashableObject {
 
   var onMeetingStarted: (Shared<SyncUp>) -> Void = unimplemented("onMeetingStarted")
 
+  @DebugSnapshotIgnored
   @ObservationIgnored @Dependency(\.continuousClock) var clock
+  @DebugSnapshotIgnored
   @ObservationIgnored @Dependency(\.date.now) var now
+  @DebugSnapshotIgnored
   @ObservationIgnored @Dependency(\.openSettings) var openSettings
+  @DebugSnapshotIgnored
   @ObservationIgnored @Dependency(\.speechClient.authorizationStatus) var authorizationStatus
+  @DebugSnapshotIgnored
   @ObservationIgnored @Dependency(\.uuid) var uuid
 
   @CasePathable
@@ -84,7 +90,7 @@ final class SyncUpDetailModel: HashableObject {
   }
 
   func doneEditingButtonTapped() {
-    guard case let .edit(model) = destination
+    guard case .edit(let model) = destination
     else { return }
 
     $syncUp.withLock { $0 = model.syncUp }

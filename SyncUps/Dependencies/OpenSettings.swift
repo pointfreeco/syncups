@@ -2,7 +2,7 @@ import Dependencies
 import UIKit
 
 extension DependencyValues {
-  var openSettings: @Sendable () async -> Void {
+  nonisolated var openSettings: @Sendable () async -> Void {
     get { self[OpenSettingsKey.self] }
     set { self[OpenSettingsKey.self] = newValue }
   }

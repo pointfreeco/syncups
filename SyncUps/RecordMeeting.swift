@@ -1,4 +1,5 @@
 import Clocks
+import DebugSnapshots
 import Dependencies
 import IssueReporting
 import Sharing
@@ -6,8 +7,8 @@ import Speech
 import SwiftUI
 import SwiftUINavigation
 
-@MainActor
 @Observable
+@DebugSnapshot(.logChanges)
 final class RecordMeetingModel: HashableObject {
   var alert: AlertState<AlertAction>?
   var isDismissed = false
@@ -16,10 +17,15 @@ final class RecordMeetingModel: HashableObject {
   @ObservationIgnored @Shared var syncUp: SyncUp
   private var transcript = ""
 
+  @DebugSnapshotIgnored
   @ObservationIgnored @Dependency(\.continuousClock) var clock
+  @DebugSnapshotIgnored
   @ObservationIgnored @Dependency(\.date.now) var now
+  @DebugSnapshotIgnored
   @ObservationIgnored @Dependency(\.soundEffectClient) var soundEffectClient
+  @DebugSnapshotIgnored
   @ObservationIgnored @Dependency(\.speechClient) var speechClient
+  @DebugSnapshotIgnored
   @ObservationIgnored @Dependency(\.uuid) var uuid
 
   enum AlertAction {
@@ -100,6 +106,7 @@ final class RecordMeetingModel: HashableObject {
 
   private func startTimer() async {
     for await _ in clock.timer(interval: .seconds(1)) where alert == nil {
+      defer { $logChanges() }
       secondsElapsed += 1
 
       let secondsPerAttendee = Int(syncUp.durationPerAttendee.components.seconds)
@@ -168,7 +175,8 @@ extension AlertState where Action == RecordMeetingModel.AlertAction {
       """
       The speech recognizer has failed for some reason and so your meeting will no longer be \
       recorded. What do you want to do?
-      """)
+      """
+    )
   }
 }
 

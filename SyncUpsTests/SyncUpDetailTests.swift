@@ -8,7 +8,6 @@ import Testing
 
 @testable import SyncUps
 
-@MainActor
 @Suite struct SyncUpDetailTests {
   @Test func speechRestricted() async throws {
     try withDependencies {

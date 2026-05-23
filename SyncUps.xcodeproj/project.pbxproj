@@ -26,6 +26,7 @@
 		CA350CCD2984518200434F8A /* SyncUpDetailTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350CC92984518200434F8A /* SyncUpDetailTests.swift */; };
 		CA350CCF2984518A00434F8A /* SyncUpsListUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350CCE2984518A00434F8A /* SyncUpsListUITests.swift */; };
 		CA350CD2298452F300434F8A /* ding.wav in Resources */ = {isa = PBXBuildFile; fileRef = CA350CD1298452F300434F8A /* ding.wav */; };
+		CA35C3532FC20C7A002F9111 /* DebugSnapshots in Frameworks */ = {isa = PBXBuildFile; productRef = CA35C3522FC20C7A002F9111 /* DebugSnapshots */; };
 		CA763F5C2CEF9B6700C1CE55 /* DependenciesTestSupport in Frameworks */ = {isa = PBXBuildFile; productRef = CA763F5B2CEF9B6700C1CE55 /* DependenciesTestSupport */; };
 		CA8586B82C61210E00A53451 /* SwiftUINavigation in Frameworks */ = {isa = PBXBuildFile; productRef = CA8586B72C61210E00A53451 /* SwiftUINavigation */; };
 		CA99A59C2CD9172000E6F7B0 /* Sharing in Frameworks */ = {isa = PBXBuildFile; productRef = CA99A59B2CD9172000E6F7B0 /* Sharing */; };
@@ -88,6 +89,7 @@
 				CAAF4DD72C3589A700774888 /* ConcurrencyExtras in Frameworks */,
 				CAAF4DCF2C3586E200774888 /* Tagged in Frameworks */,
 				CAF8AAB12CD91A95007192A6 /* Sharing in Frameworks */,
+				CA35C3532FC20C7A002F9111 /* DebugSnapshots in Frameworks */,
 				CAAF4DD92C3589D400774888 /* DependenciesMacros in Frameworks */,
 				CA1C303F2C358FEB001EE466 /* CustomDump in Frameworks */,
 				CA8586B82C61210E00A53451 /* SwiftUINavigation in Frameworks */,
@@ -225,6 +227,7 @@
 				CA8586B72C61210E00A53451 /* SwiftUINavigation */,
 				CA99A59B2CD9172000E6F7B0 /* Sharing */,
 				CAF8AAB02CD91A95007192A6 /* Sharing */,
+				CA35C3522FC20C7A002F9111 /* DebugSnapshots */,
 			);
 			productName = SyncUps;
 			productReference = CA350C712984506E00434F8A /* SyncUps.app */;
@@ -277,7 +280,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1420;
-				LastUpgradeCheck = 1610;
+				LastUpgradeCheck = 2650;
 				TargetAttributes = {
 					CA350C702984506E00434F8A = {
 						CreatedOnToolsVersion = 14.2;
@@ -312,6 +315,7 @@
 				CA1C303D2C358FEB001EE466 /* XCRemoteSwiftPackageReference "swift-custom-dump" */,
 				CA8586B62C61210E00A53451 /* XCRemoteSwiftPackageReference "swift-navigation" */,
 				CAF8AAAF2CD91A95007192A6 /* XCRemoteSwiftPackageReference "swift-sharing" */,
+				CA35C3512FC20C7A002F9111 /* XCRemoteSwiftPackageReference "swift-debug-snapshots" */,
 			);
 			productRefGroup = CA350C722984506E00434F8A /* Products */;
 			projectDirPath = "";
@@ -461,7 +465,10 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 6.0;
 			};
@@ -517,7 +524,10 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 6.0;
 				VALIDATE_PRODUCT = YES;
@@ -718,6 +728,16 @@
 				minimumVersion = 1.0.0;
 			};
 		};
+		CA35C3512FC20C7A002F9111 /* XCRemoteSwiftPackageReference "swift-debug-snapshots" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pointfreeco/swift-debug-snapshots";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+			traits = (
+			);
+		};
 		CA8586B62C61210E00A53451 /* XCRemoteSwiftPackageReference "swift-navigation" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/pointfreeco/swift-navigation";
@@ -781,6 +801,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = CA1C303D2C358FEB001EE466 /* XCRemoteSwiftPackageReference "swift-custom-dump" */;
 			productName = CustomDump;
+		};
+		CA35C3522FC20C7A002F9111 /* DebugSnapshots */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CA35C3512FC20C7A002F9111 /* XCRemoteSwiftPackageReference "swift-debug-snapshots" */;
+			productName = DebugSnapshots;
 		};
 		CA763F5B2CEF9B6700C1CE55 /* DependenciesTestSupport */ = {
 			isa = XCSwiftPackageProductDependency;
