@@ -37,6 +37,7 @@ final class RecordMeetingModel: HashableObject {
     self._syncUp = syncUp
   }
 
+  @DebugSnapshotTracked
   var durationRemaining: Duration {
     syncUp.duration - .seconds(secondsElapsed)
   }

@@ -9,6 +9,7 @@ import SwiftUINavigation
 @Observable
 @DebugSnapshot(.logChanges)
 final class SyncUpsListModel {
+  @DebugSnapshotConvertible
   var addSyncUp: SyncUpFormModel?
 
   @DebugSnapshotIgnored
@@ -152,8 +153,10 @@ extension LabelStyle where Self == TrailingIconLabelStyle {
 
 extension SharedReaderKey where Self == FileStorageKey<IdentifiedArrayOf<SyncUp>>.Default {
   static var syncUps: Self {
-    Self[
-      .fileStorage(dump(URL.documentsDirectory.appending(component: "sync-ups.json"))),
+    let url = URL.documentsDirectory.appending(component: "sync-ups.json")
+    print(url)
+    return Self[
+      .fileStorage(url),
       default: isTesting || ProcessInfo.processInfo.environment["UI_TEST_NAME"] != nil
         ? []
         : [

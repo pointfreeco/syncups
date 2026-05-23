@@ -15,6 +15,7 @@ final class SyncUpDetailModel: HashableObject {
   var isDismissed = false
   @ObservationIgnored @Shared var syncUp: SyncUp
 
+  @DebugSnapshotIgnored
   var onMeetingStarted: (Shared<SyncUp>) -> Void = unimplemented("onMeetingStarted")
 
   @DebugSnapshotIgnored
