@@ -25,7 +25,7 @@ struct RecordMeetingTests {
       $0.speechClient.authorizationStatus = { .denied }
     }
   )
-  func timer() async throws {
+  func `let timer run out until meeting ends`() async throws {
     let soundEffectPlayCount = Mutex(0)
 
     try await withDependencies {
@@ -152,7 +152,7 @@ struct RecordMeetingTests {
       $0.speechClient.authorizationStatus = { .denied }
     }
   )
-  func endMeetingSave() async throws {
+  func `end meeting explicitly and save`() async throws {
     let syncUp = SyncUp.mock
     let model = RecordMeetingModel(syncUp: Shared(value: syncUp))
 
@@ -197,7 +197,7 @@ struct RecordMeetingTests {
       $0.speechClient.authorizationStatus = { .denied }
     }
   )
-  func endMeetingDiscard() async throws {
+  func `end meeting explicitly and discard`() async throws {
     let model = RecordMeetingModel(syncUp: Shared(value: .mock))
 
     Task.immediate { await model.onTask() }
@@ -220,7 +220,7 @@ struct RecordMeetingTests {
       $0.speechClient.authorizationStatus = { .denied }
     }
   )
-  func nextSpeaker() async throws {
+  func `tap next button until ending meeting and save`() async throws {
     let soundEffectPlayCount = Mutex(0)
 
     await withDependencies {

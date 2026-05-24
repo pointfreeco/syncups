@@ -9,11 +9,11 @@ import SwiftUINavigation
 @Observable
 @DebugSnapshot(.logChanges)
 final class SyncUpsListModel {
+  // TODO: comment out to crash app
   @DebugSnapshotConvertible
   var addSyncUp: SyncUpFormModel?
 
-  @DebugSnapshotIgnored
-  @ObservationIgnored @Shared(.syncUps) var syncUps
+  @ObservationIgnored @Shared(.syncUps) var syncUps: IdentifiedArrayOf<SyncUp>
   @DebugSnapshotIgnored
   @ObservationIgnored @Dependency(\.uuid) var uuid
 

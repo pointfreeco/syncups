@@ -11,6 +11,7 @@ import SwiftUINavigation
 @Observable
 @DebugSnapshot(.logChanges)
 final class SyncUpDetailModel: HashableObject {
+  @DebugSnapshotConvertible
   var destination: Destination?
   var isDismissed = false
   @ObservationIgnored @Shared var syncUp: SyncUp
@@ -30,9 +31,11 @@ final class SyncUpDetailModel: HashableObject {
   @ObservationIgnored @Dependency(\.uuid) var uuid
 
   @CasePathable
+  @DebugSnapshot
   @dynamicMemberLookup
   enum Destination {
     case alert(AlertState<AlertAction>)
+    @DebugSnapshotConvertible
     case edit(SyncUpFormModel)
   }
   enum AlertAction {
