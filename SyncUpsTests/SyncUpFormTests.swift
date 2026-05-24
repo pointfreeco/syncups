@@ -58,31 +58,21 @@ struct SyncUpFormTests {
       model.deleteAttendees(atOffsets: [0])
     } changes: {
       $0.focus = .attendee(Attendee.ID(uuidString: "00000000-0000-0000-0000-000000000001")!)
-      $0.syncUp.attendees =
-      [
-        Attendee(id: Attendee.ID(uuidString: "00000000-0000-0000-0000-000000000001")!),
-        Attendee(id: Attendee.ID(uuidString: "00000000-0000-0000-0000-000000000002")!),
-        Attendee(id: Attendee.ID(uuidString: "00000000-0000-0000-0000-000000000003")!),
-      ]
+      $0.syncUp.attendees.remove(at: 0)
     }
 
     expect(model) {
       model.deleteAttendees(atOffsets: [1])
     } changes: {
       $0.focus = .attendee(Attendee.ID(uuidString: "00000000-0000-0000-0000-000000000003")!)
-      $0.syncUp.attendees = [
-        Attendee(id: Attendee.ID(uuidString: "00000000-0000-0000-0000-000000000001")!),
-        Attendee(id: Attendee.ID(uuidString: "00000000-0000-0000-0000-000000000003")!),
-      ]
+      $0.syncUp.attendees.remove(at: 1)
     }
 
     expect(model) {
       model.deleteAttendees(atOffsets: [1])
     } changes: {
       $0.focus = .attendee(Attendee.ID(uuidString: "00000000-0000-0000-0000-000000000001")!)
-      $0.syncUp.attendees = [
-        Attendee(id: Attendee.ID(uuidString: "00000000-0000-0000-0000-000000000001")!)
-      ]
+      $0.syncUp.attendees.remove(at: 1)
     }
 
     expect(model) {
