@@ -15,23 +15,23 @@ Celis](https://twitter.com/stephencelis).
 
 ## Call to action!
 
-While we have built the SyncUps application in the style that makes the most sense to us, we know 
-that some of our choices aren’t for everyone. We would love if others fork this repo and rebuild 
+While we have built the SyncUps application in the style that makes the most sense to us, we know
+that some of our choices aren’t for everyone. We would love if others fork this repo and rebuild
 it in the style of their choice.
 
 Don’t like to use an observable model for each screen? Prefer to use `@EnvironmentObject` instead?
-Want to use an architectural pattern such as VIPER? Have a different way of handling dependencies? 
+Want to use an architectural pattern such as VIPER? Have a different way of handling dependencies?
 
 Please show us! Just complete the following steps:
 
-1. [Fork](https://github.com/pointfreeco/syncups/fork) our repo and rebuild the app any way you 
-see fit. If you want to start with Apple’s code rather than ours, you can [download it 
+1. [Fork](https://github.com/pointfreeco/syncups/fork) our repo and rebuild the app any way you
+see fit. If you want to start with Apple’s code rather than ours, you can [download it
 here][scrumdinger-dl].
 2. Update the Readme.md to describe your choices in rebuilding the app (see [below](#modern-swiftui)
 for ours).
 3. Open a PR to this repo where you add a link to your port in this readme.
 
-We will collect links to the other ports so that there can be a single place to reference many 
+We will collect links to the other ports so that there can be a single place to reference many
 different approaches for building the same application.
 
 ## Overview
@@ -69,11 +69,11 @@ some key additions:
  1. _All_ navigation is driven off of state, including sheets, drill-downs and alerts. This makes
     it possible to deep link into any screen of the app by just constructing a piece of state and
     handing it off to SwiftUI.
- 1. Further, when a feature can navigate to multiple destinations, an enum is used to model the 
-    destinations, which gives us compile time proof that two destinations cannot be active at the 
-    same time. This cannot be accomplished with default SwiftUI tools, but can be done with our 
+ 1. Further, when a feature can navigate to multiple destinations, an enum is used to model the
+    destinations, which gives us compile time proof that two destinations cannot be active at the
+    same time. This cannot be accomplished with default SwiftUI tools, but can be done with our
     [SwiftNavigation library][swift-nav-gh].
- 1. Persistence is handled by our [Sharing][sharing-gh] library, which allows one to hold onto 
+ 1. Persistence is handled by our [Sharing][sharing-gh] library, which allows one to hold onto
     shared state in an observable model or view, and under the hood any changes to the state will be
     persisted to external storage, such as the file system. Even the global navigation is persisted
     using the Sharing library.
@@ -88,6 +88,9 @@ some key additions:
     [IdentifiedCollections][identified-collections-gh] library. This allows you to read and modify
     elements of the collection via their ID rather than positional index, which can be error prone
     and lead to bugs or crashes.
+ 1. Observable models are annotated with [DebugSnapshots](https://github.com/pointfreeco/swift-debug-snapshots),
+    which makes it possible to exhaustively assert against the parts of application state that
+    change in tests, helping keep complex feature logic testable as the app grows.
  1. The project includes a full test suite. Since all of navigation is driven off of state, and
     because we controlled all dependencies, we can write very comprehensive and nuanced tests. For
     example, we can write a unit test that proves that when a sync-up meeting's timer runs out the
@@ -108,7 +111,7 @@ Here is a list of ports of the app:
 [scrumdinger]: https://developer.apple.com/tutorials/app-dev-training/getting-started-with-scrumdinger
 [scrumdinger-dl]: https://docs-assets.developer.apple.com/published/1ea2eec121b90031e354288912a76357/TranscribingSpeechToText.zip
 [tagged-gh]: http://github.com/pointfreeco/swift-tagged
-[identified-collections-gh]: http://github.com/pointfreeco/swift-identified-collections 
+[identified-collections-gh]: http://github.com/pointfreeco/swift-identified-collections
 [swift-nav-gh]: http://github.com/pointfreeco/swift-navigation
-[dependencies-gh]: http://github.com/pointfreeco/swift-dependencies 
+[dependencies-gh]: http://github.com/pointfreeco/swift-dependencies
 [sharing-gh]: https://github.com/pointfreeco/swift-sharing
