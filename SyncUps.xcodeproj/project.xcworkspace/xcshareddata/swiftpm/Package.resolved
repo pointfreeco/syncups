@@ -51,8 +51,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-custom-dump",
       "state" : {
-        "branch" : "main",
-        "revision" : "1c7095a8079c423bad71aae32201153dc1f29ba6"
+        "revision" : "b9b59eb58c946236d6f16305c576ad194c36444e",
+        "version" : "1.6.0"
       }
     },
     {
@@ -60,8 +60,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-debug-snapshots",
       "state" : {
-        "branch" : "main",
-        "revision" : "7e6994580d3878ab40a05871161549b9a19e6bd5"
+        "revision" : "4a2d7562e78caf0296a995660d2b042054d44ab7",
+        "version" : "0.1.1"
       }
     },
     {
