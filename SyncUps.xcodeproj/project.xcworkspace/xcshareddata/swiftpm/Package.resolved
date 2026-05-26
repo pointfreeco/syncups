@@ -1,5 +1,5 @@
 {
-  "originHash" : "0e100612fecaf97998e82f81ee2f5bb5bccf86e99d61f81b03fab45bb2c4e752",
+  "originHash" : "d1e45e0508d8d41c03847ca424dc022f8ec05cb0eef94e24a8a5c1856e8d59d7",
   "pins" : [
     {
       "identity" : "combine-schedulers",
@@ -61,7 +61,7 @@
       "location" : "https://github.com/pointfreeco/swift-debug-snapshots",
       "state" : {
         "branch" : "main",
-        "revision" : "482a788da995ea2bc4701f4a49a6869d6434254b"
+        "revision" : "3b07f8aa6325916c48ad32d732b20b465485ae83"
       }
     },
     {

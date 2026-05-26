@@ -27,7 +27,8 @@ struct SyncUpsListTests {
         focus: .title,
         syncUp: SyncUp(
           id: SyncUp.ID(UUID(0)),
-          attendees: [Attendee(id: Attendee.ID(UUID(1)))]
+          attendees: [Attendee(id: Attendee.ID(UUID(1)))],
+          title: ""
         )
       )
     }

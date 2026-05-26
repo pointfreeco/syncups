@@ -9,7 +9,6 @@ import SwiftUINavigation
 @Observable
 @DebugSnapshot(.logChanges)
 final class SyncUpsListModel {
-  // TODO: comment out to crash app
   @DebugSnapshotConvertible
   var addSyncUp: SyncUpFormModel?
 
