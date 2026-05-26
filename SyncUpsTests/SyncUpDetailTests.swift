@@ -5,7 +5,6 @@ import Dependencies
 import DependenciesTestSupport
 import Foundation
 import Sharing
-import Synchronization
 import Testing
 
 @testable import SyncUps
@@ -47,9 +46,9 @@ struct SyncUpDetailTests {
   }
 
   @Test func `open settings`() async {
-    let settingsOpened = Mutex(false)
+    nonisolated(unsafe) var settingsOpened = false
     await withDependencies {
-      $0.openSettings = { settingsOpened.withLock { $0 = true } }
+      $0.openSettings = { settingsOpened = true }
     } operation: {
       let model = SyncUpDetailModel(
         destination: .alert(.speechRecognitionDenied),
@@ -58,23 +57,23 @@ struct SyncUpDetailTests {
 
       await model.alertButtonTapped(.openSettings)
 
-      #expect(settingsOpened.withLock { $0 })
+      #expect(settingsOpened)
     }
   }
 
-  @Test func continueWithoutRecording() async throws {
+  @Test func `continue meeting without recording`() async throws {
     let syncUp = SyncUp.mock
 
     let model = SyncUpDetailModel(
       destination: .alert(.speechRecognitionDenied),
       syncUp: Shared(value: syncUp)
     )
-    let meetingStarted = Mutex(false)
-    model.onMeetingStarted = { _ in meetingStarted.withLock { $0 = true } }
+    nonisolated(unsafe) var meetingStarted = false
+    model.onMeetingStarted = { _ in meetingStarted = true }
 
     await model.alertButtonTapped(.continueWithoutRecording)
 
-    #expect(meetingStarted.withLock { $0 })
+    #expect(meetingStarted)
   }
 
   @Test(
@@ -82,15 +81,15 @@ struct SyncUpDetailTests {
       $0.speechClient.authorizationStatus = { .authorized }
     }
   )
-  func speechAuthorized() async throws {
+  func `start meeting with authorized speech recognition`() async throws {
     let model = SyncUpDetailModel(syncUp: Shared(value: .mock))
 
-    let meetingStarted = Mutex(false)
-    model.onMeetingStarted = { _ in meetingStarted.withLock { $0 = true } }
+    nonisolated(unsafe) var meetingStarted = false
+    model.onMeetingStarted = { _ in meetingStarted = true }
 
     model.startMeetingButtonTapped()
 
-    #expect(meetingStarted.withLock { $0 })
+    #expect(meetingStarted)
   }
 
   @Test
@@ -147,24 +146,19 @@ struct SyncUpDetailTests {
     let syncUp = SyncUp.mock
     @Shared(.syncUps) var syncUps = [syncUp]
 
-    let settingsOpened = Mutex(false)
-    await withDependencies {
-      $0.openSettings = { settingsOpened.withLock { $0 = true } }
-    } operation: {
-      let model = SyncUpDetailModel(syncUp: Shared($syncUps[id: syncUp.id])!)
+    let model = SyncUpDetailModel(syncUp: Shared($syncUps[id: syncUp.id])!)
 
-      expect(model) {
-        model.deleteButtonTapped()
-      } changes: {
-        $0.destination = .alert(.deleteSyncUp)
-      }
+    expect(model) {
+      model.deleteButtonTapped()
+    } changes: {
+      $0.destination = .alert(.deleteSyncUp)
+    }
 
-      await expect(model) {
-        await model.alertButtonTapped(.confirmDeletion)
-      } changes: {
-        $0.isDismissed = true
-        #expect(syncUps == [])
-      }
+    await expect(model) {
+      await model.alertButtonTapped(.confirmDeletion)
+    } changes: {
+      $0.isDismissed = true
+      #expect(syncUps == [])
     }
   }
 }

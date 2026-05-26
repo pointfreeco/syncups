@@ -4,7 +4,6 @@ import DebugSnapshots
 import Dependencies
 import Foundation
 import Sharing
-import Synchronization
 import Testing
 
 @testable import SyncUps
@@ -26,10 +25,10 @@ struct RecordMeetingTests {
     }
   )
   func `let timer run out until meeting ends`() async throws {
-    let soundEffectPlayCount = Mutex(0)
+    nonisolated(unsafe) var soundEffectPlayCount = 0
 
     try await withDependencies {
-      $0.soundEffectClient.play = { soundEffectPlayCount.withLock { $0 += 1 } }
+      $0.soundEffectClient.play = { soundEffectPlayCount += 1 }
 
     } operation: {
       let model = RecordMeetingModel(
@@ -65,7 +64,7 @@ struct RecordMeetingTests {
         $0.speakerIndex = 1
         $0.secondsElapsed = 1
         $0.durationRemaining = .seconds(2)
-        #expect(soundEffectPlayCount.withLock { $0 } == 1)
+        #expect(soundEffectPlayCount == 1)
       }
 
       await expect(model) {
@@ -74,7 +73,7 @@ struct RecordMeetingTests {
         $0.speakerIndex = 2
         $0.secondsElapsed = 2
         $0.durationRemaining = .seconds(1)
-        #expect(soundEffectPlayCount.withLock { $0 } == 2)
+        #expect(soundEffectPlayCount == 2)
       }
 
       await expect(model) {
@@ -84,7 +83,7 @@ struct RecordMeetingTests {
         $0.speakerIndex = 2
         $0.secondsElapsed = 3
         $0.durationRemaining = .seconds(0)
-        #expect(soundEffectPlayCount.withLock { $0 } == 2)
+        #expect(soundEffectPlayCount == 2)
       }
 
       await expect(model) {
@@ -98,7 +97,7 @@ struct RecordMeetingTests {
             transcript: ""
           )
         ]
-        #expect(soundEffectPlayCount.withLock { $0 } == 2)
+        #expect(soundEffectPlayCount == 2)
       }
     }
   }
@@ -221,10 +220,10 @@ struct RecordMeetingTests {
     }
   )
   func `tap next button until ending meeting and save`() async throws {
-    let soundEffectPlayCount = Mutex(0)
+    nonisolated(unsafe) var soundEffectPlayCount = 0
 
     await withDependencies {
-      $0.soundEffectClient.play = { soundEffectPlayCount.withLock { $0 += 1 } }
+      $0.soundEffectClient.play = { soundEffectPlayCount += 1 }
     } operation: {
       let model = RecordMeetingModel(
         syncUp: Shared(
@@ -248,7 +247,7 @@ struct RecordMeetingTests {
         $0.speakerIndex = 1
         $0.secondsElapsed = 1
         $0.durationRemaining = .seconds(2)
-        #expect(soundEffectPlayCount.withLock { $0 } == 1)
+        #expect(soundEffectPlayCount == 1)
       }
 
       expect(model) {
@@ -257,7 +256,7 @@ struct RecordMeetingTests {
         $0.speakerIndex = 2
         $0.secondsElapsed = 2
         $0.durationRemaining = .seconds(1)
-        #expect(soundEffectPlayCount.withLock { $0 } == 2)
+        #expect(soundEffectPlayCount == 2)
       }
 
       expect(model) {
@@ -289,7 +288,7 @@ struct RecordMeetingTests {
           ),
           at: 0
         )
-        #expect(soundEffectPlayCount.withLock { $0 } == 2)
+        #expect(soundEffectPlayCount == 2)
       }
     }
   }
