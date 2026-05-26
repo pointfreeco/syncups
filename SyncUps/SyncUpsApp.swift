@@ -18,7 +18,7 @@ struct SyncUpsApp: App {
   }
 }
 
-//// NB: During UI tests we override certain dependencies for the app and seed initial state.
+// NB: During UI tests we override certain dependencies for the app and seed initial state.
 private func setUpForUITest() {
   guard let testName = ProcessInfo.processInfo.environment["UI_TEST_NAME"]
   else {
@@ -56,7 +56,8 @@ private func setUpForUITest() {
   // Seed certain test cases with specific state.
   switch testName {
   case "testDelete", "testEdit", "testRecord", "testRecord_Discard":
-    @Shared(.syncUps) var syncUps = [.mock]
+    @Shared(.syncUps) var syncUps
+    $syncUps.withLock { $0 = [.mock] }
   default:
     break
   }

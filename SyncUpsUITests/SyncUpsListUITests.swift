@@ -55,6 +55,7 @@ nonisolated final class SyncUpsListUITests: XCTestCase {
   func testDelete() async throws {
     app.staticTexts["Design"].tap()
 
+    app.collectionViews.firstMatch.swipeUp()
     app.buttons["Delete"].tap()
     XCTAssertEqual(app.staticTexts["Delete?"].exists, true)
 
