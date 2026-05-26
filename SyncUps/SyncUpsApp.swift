@@ -29,7 +29,7 @@ private func setUpForUITest() {
   prepareDependencies {
     $0.continuousClock = ContinuousClock()
     $0.defaultFileStorage = .inMemory
-    $0.soundEffectClient = .noop
+    $0.soundEffectClient = NoopSoundEffectClient()
     $0.uuid = UUIDGenerator { UUID() }
     switch testName {
     case "testAdd", "testDelete", "testEdit":

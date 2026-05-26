@@ -15,6 +15,8 @@ import Testing
   }
 )
 struct SyncUpDetailTests {
+  @Dependency(\.openSettings, as: MockOpenSettings.self) var openSettings
+
   @Test(
     .dependencies {
       $0.speechClient.authorizationStatus = { .restricted }
@@ -45,20 +47,20 @@ struct SyncUpDetailTests {
     }
   }
 
-  @Test func `open settings`() async {
-    nonisolated(unsafe) var settingsOpened = false
-    await withDependencies {
-      $0.openSettings = { settingsOpened = true }
-    } operation: {
-      let model = SyncUpDetailModel(
-        destination: .alert(.speechRecognitionDenied),
-        syncUp: Shared(value: .mock)
-      )
-
-      await model.alertButtonTapped(.openSettings)
-
-      #expect(settingsOpened)
+  @Test(
+    .dependencies {
+      $0.openSettings = MockOpenSettings()
     }
+  )
+  func `open settings`() async {
+    let model = SyncUpDetailModel(
+      destination: .alert(.speechRecognitionDenied),
+      syncUp: Shared(value: .mock)
+    )
+
+    await model.alertButtonTapped(.openSettings)
+
+    #expect(await openSettings.hasOpened)
   }
 
   @Test func `continue meeting without recording`() async throws {

@@ -37,7 +37,7 @@ final class RecordMeetingModel: HashableObject {
     syncUp.duration - .seconds(secondsElapsed)
   }
 
-  func nextButtonTapped() {
+  func nextButtonTapped() async {
     guard speakerIndex < syncUp.attendees.count - 1
     else {
       alert = .endMeeting(isDiscardable: false)
@@ -45,7 +45,7 @@ final class RecordMeetingModel: HashableObject {
     }
 
     speakerIndex += 1
-    soundEffectClient.play()
+    await soundEffectClient.play()
     secondsElapsed = speakerIndex * Int(syncUp.durationPerAttendee.components.seconds)
   }
 
@@ -65,7 +65,7 @@ final class RecordMeetingModel: HashableObject {
   }
 
   func onTask() async {
-    soundEffectClient.load(fileName: "ding.wav")
+    await soundEffectClient.load(fileName: "ding.wav")
 
     let authorization =
       await speechClient.authorizationStatus() == .notDetermined
@@ -112,7 +112,7 @@ final class RecordMeetingModel: HashableObject {
           break
         }
         speakerIndex += 1
-        soundEffectClient.play()
+        await soundEffectClient.play()
       }
     }
   }
@@ -197,7 +197,7 @@ struct RecordMeetingView: View {
         )
         MeetingFooterView(
           syncUp: model.syncUp,
-          nextButtonTapped: { model.nextButtonTapped() },
+          nextButtonTapped: { await model.nextButtonTapped() },
           speakerIndex: model.speakerIndex
         )
       }
@@ -350,7 +350,7 @@ struct SpeakerArc: Shape {
 
 struct MeetingFooterView: View {
   let syncUp: SyncUp
-  var nextButtonTapped: () -> Void
+  var nextButtonTapped: () async -> Void
   let speakerIndex: Int
 
   var body: some View {
@@ -362,7 +362,9 @@ struct MeetingFooterView: View {
           Text("No more speakers.")
         }
         Spacer()
-        Button(action: nextButtonTapped) {
+        Button {
+          Task { await nextButtonTapped() }
+        } label: {
           Image(systemName: "forward.fill")
         }
       }
