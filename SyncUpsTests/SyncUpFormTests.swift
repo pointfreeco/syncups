@@ -1,13 +1,20 @@
 import CustomDump
+import DebugSnapshots
 import Dependencies
+import Foundation
 import Testing
 
 @testable import SyncUps
 
-@MainActor
-@Suite(.dependency(\.uuid, .incrementing))
+@Suite(
+  .dependencies {
+    $0.uuid = .incrementing
+  }
+)
 struct SyncUpFormTests {
-  @Test func addAttendee() async {
+  @Dependency(\.uuid) var uuid
+
+  @Test func `add attendee`() async {
     let model = SyncUpFormModel(
       syncUp: SyncUp(
         id: SyncUp.ID(),
@@ -16,44 +23,24 @@ struct SyncUpFormTests {
       )
     )
 
-    expectNoDifference(
-      model.syncUp.attendees,
-      [
+    expect(model) {
+      $0.syncUp.attendees = [
         Attendee(id: Attendee.ID(uuidString: "00000000-0000-0000-0000-000000000000")!)
       ]
-    )
+    }
 
-    model.addAttendeeButtonTapped()
-
-    expectNoDifference(
-      model.syncUp.attendees,
-      [
+    expect(model) {
+      model.addAttendeeButtonTapped()
+    } changes: {
+      $0.focus = .attendee(Attendee.ID(UUID(1)))
+      $0.syncUp.attendees = [
         Attendee(id: Attendee.ID(uuidString: "00000000-0000-0000-0000-000000000000")!),
         Attendee(id: Attendee.ID(uuidString: "00000000-0000-0000-0000-000000000001")!),
       ]
-    )
+    }
   }
 
-  @Test func focusAddAttendee() async {
-    let model = SyncUpFormModel(
-      syncUp: SyncUp(
-        id: SyncUp.ID(),
-        attendees: [],
-        title: "Engineering"
-      )
-    )
-
-    #expect(model.focus == .title)
-
-    model.addAttendeeButtonTapped()
-
-    #expect(
-      model.focus == .attendee(Attendee.ID(uuidString: "00000000-0000-0000-0000-000000000001")!)
-    )
-  }
-
-  @Test func focusRemoveAttendee() async {
-    @Dependency(\.uuid) var uuid
+  @Test func `remove attendee`() async {
     let model = SyncUpFormModel(
       syncUp: SyncUp(
         id: SyncUp.ID(),
@@ -67,59 +54,34 @@ struct SyncUpFormTests {
       )
     )
 
-    model.deleteAttendees(atOffsets: [0])
+    expect(model) {
+      model.deleteAttendees(atOffsets: [0])
+    } changes: {
+      $0.focus = .attendee(Attendee.ID(uuidString: "00000000-0000-0000-0000-000000000001")!)
+      $0.syncUp.attendees.remove(at: 0)
+    }
 
-    expectNoDifference(
-      model.focus,
-      .attendee(Attendee.ID(uuidString: "00000000-0000-0000-0000-000000000001")!)
-    )
-    expectNoDifference(
-      model.syncUp.attendees,
-      [
-        Attendee(id: Attendee.ID(uuidString: "00000000-0000-0000-0000-000000000001")!),
-        Attendee(id: Attendee.ID(uuidString: "00000000-0000-0000-0000-000000000002")!),
-        Attendee(id: Attendee.ID(uuidString: "00000000-0000-0000-0000-000000000003")!),
-      ]
-    )
+    expect(model) {
+      model.deleteAttendees(atOffsets: [1])
+    } changes: {
+      $0.focus = .attendee(Attendee.ID(uuidString: "00000000-0000-0000-0000-000000000003")!)
+      $0.syncUp.attendees.remove(at: 1)
+    }
 
-    model.deleteAttendees(atOffsets: [1])
+    expect(model) {
+      model.deleteAttendees(atOffsets: [1])
+    } changes: {
+      $0.focus = .attendee(Attendee.ID(uuidString: "00000000-0000-0000-0000-000000000001")!)
+      $0.syncUp.attendees.remove(at: 1)
+    }
 
-    expectNoDifference(
-      model.focus,
-      .attendee(Attendee.ID(uuidString: "00000000-0000-0000-0000-000000000003")!)
-    )
-    expectNoDifference(
-      model.syncUp.attendees,
-      [
-        Attendee(id: Attendee.ID(uuidString: "00000000-0000-0000-0000-000000000001")!),
-        Attendee(id: Attendee.ID(uuidString: "00000000-0000-0000-0000-000000000003")!),
-      ]
-    )
-
-    model.deleteAttendees(atOffsets: [1])
-
-    expectNoDifference(
-      model.focus,
-      .attendee(Attendee.ID(uuidString: "00000000-0000-0000-0000-000000000001")!)
-    )
-    expectNoDifference(
-      model.syncUp.attendees,
-      [
-        Attendee(id: Attendee.ID(uuidString: "00000000-0000-0000-0000-000000000001")!)
-      ]
-    )
-
-    model.deleteAttendees(atOffsets: [0])
-
-    expectNoDifference(
-      model.focus,
-      .attendee(Attendee.ID(uuidString: "00000000-0000-0000-0000-000000000004")!)
-    )
-    expectNoDifference(
-      model.syncUp.attendees,
-      [
+    expect(model) {
+      model.deleteAttendees(atOffsets: [0])
+    } changes: {
+      $0.focus = .attendee(Attendee.ID(uuidString: "00000000-0000-0000-0000-000000000004")!)
+      $0.syncUp.attendees = [
         Attendee(id: Attendee.ID(uuidString: "00000000-0000-0000-0000-000000000004")!)
       ]
-    )
+    }
   }
 }

@@ -2,7 +2,7 @@ import IdentifiedCollections
 import SwiftUI
 import Tagged
 
-struct SyncUp: Hashable, Identifiable, Codable {
+nonisolated struct SyncUp: Hashable, Identifiable, Codable {
   let id: Tagged<Self, UUID>
   var attendees: IdentifiedArrayOf<Attendee> = []
   var duration = Duration.seconds(60 * 5)
@@ -15,18 +15,18 @@ struct SyncUp: Hashable, Identifiable, Codable {
   }
 }
 
-struct Attendee: Hashable, Identifiable, Codable {
+nonisolated struct Attendee: Hashable, Identifiable, Codable {
   let id: Tagged<Self, UUID>
   var name = ""
 }
 
-struct Meeting: Hashable, Identifiable, Codable {
+nonisolated struct Meeting: Hashable, Identifiable, Codable {
   let id: Tagged<Self, UUID>
   let date: Date
   var transcript: String
 }
 
-enum Theme: String, CaseIterable, Equatable, Hashable, Identifiable, Codable {
+nonisolated enum Theme: String, CaseIterable, Equatable, Hashable, Identifiable, Codable {
   case appIndigo
   case appMagenta
   case appOrange
@@ -70,7 +70,7 @@ enum Theme: String, CaseIterable, Equatable, Hashable, Identifiable, Codable {
 }
 
 extension SyncUp {
-  static let mock = Self(
+  nonisolated static let mock = Self(
     id: SyncUp.ID(UUID()),
     attendees: [
       Attendee(id: Attendee.ID(UUID()), name: "Blob"),
@@ -99,7 +99,7 @@ extension SyncUp {
     title: "Design"
   )
 
-  static let engineeringMock = Self(
+  nonisolated static let engineeringMock = Self(
     id: SyncUp.ID(UUID()),
     attendees: [
       Attendee(id: Attendee.ID(UUID()), name: "Blob"),
@@ -111,7 +111,7 @@ extension SyncUp {
     title: "Engineering"
   )
 
-  static let designMock = Self(
+  nonisolated static let designMock = Self(
     id: SyncUp.ID(UUID()),
     attendees: [
       Attendee(id: Attendee.ID(UUID()), name: "Blob Sr"),

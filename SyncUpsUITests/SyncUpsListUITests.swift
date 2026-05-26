@@ -7,7 +7,7 @@ import XCTest
 // The key to doing this is to set a launch environment variable on your XCUIApplication instance,
 // and then check for that value in the entry point of the application. If the environment value
 // exists, you can use 'withDependencies' to override dependencies to be used in the UI test.
-final class SyncUpsListUITests: XCTestCase {
+nonisolated final class SyncUpsListUITests: XCTestCase {
   var app: XCUIApplication!
 
   override func setUpWithError() throws {
@@ -55,6 +55,7 @@ final class SyncUpsListUITests: XCTestCase {
   func testDelete() async throws {
     app.staticTexts["Design"].tap()
 
+    app.collectionViews.firstMatch.swipeUp()
     app.buttons["Delete"].tap()
     XCTAssertEqual(app.staticTexts["Delete?"].exists, true)
 

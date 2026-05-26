@@ -1,19 +1,43 @@
 import Dependencies
 import UIKit
 
+nonisolated protocol OpenSettings: Sendable {
+  func callAsFunction() async
+}
+
 extension DependencyValues {
-  var openSettings: @Sendable () async -> Void {
+  nonisolated var openSettings: any OpenSettings {
     get { self[OpenSettingsKey.self] }
     set { self[OpenSettingsKey.self] = newValue }
   }
+}
 
-  private enum OpenSettingsKey: DependencyKey {
-    typealias Value = @Sendable () async -> Void
-
-    static let liveValue: @Sendable () async -> Void = {
-      await MainActor.run {
-        UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
-      }
-    }
+nonisolated private enum OpenSettingsKey: DependencyKey {
+  static var liveValue: any OpenSettings {
+    LiveOpenSettings()
   }
+  static var testValue: any OpenSettings {
+    UnimplementedOpenSettings()
+  }
+}
+
+private struct LiveOpenSettings: OpenSettings {
+  @MainActor
+  func callAsFunction() {
+    UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
+  }
+}
+
+private struct UnimplementedOpenSettings: OpenSettings {
+  func callAsFunction() async {
+    reportIssue("OpenSettings() unimplemented")
+  }
+}
+
+actor MockOpenSettings: OpenSettings {
+  var openCount = 0
+  func callAsFunction() async {
+    openCount += 1
+  }
+  var hasOpened: Bool { openCount > 0 }
 }

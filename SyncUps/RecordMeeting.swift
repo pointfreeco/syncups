@@ -1,4 +1,5 @@
 import Clocks
+import DebugSnapshots
 import Dependencies
 import IssueReporting
 import Sharing
@@ -6,8 +7,8 @@ import Speech
 import SwiftUI
 import SwiftUINavigation
 
-@MainActor
 @Observable
+@DebugSnapshot(.logChanges)
 final class RecordMeetingModel: HashableObject {
   var alert: AlertState<AlertAction>?
   var isDismissed = false
@@ -31,11 +32,12 @@ final class RecordMeetingModel: HashableObject {
     self._syncUp = syncUp
   }
 
+  @DebugSnapshotTracked
   var durationRemaining: Duration {
     syncUp.duration - .seconds(secondsElapsed)
   }
 
-  func nextButtonTapped() {
+  func nextButtonTapped() async {
     guard speakerIndex < syncUp.attendees.count - 1
     else {
       alert = .endMeeting(isDiscardable: false)
@@ -43,7 +45,7 @@ final class RecordMeetingModel: HashableObject {
     }
 
     speakerIndex += 1
-    soundEffectClient.play()
+    await soundEffectClient.play()
     secondsElapsed = speakerIndex * Int(syncUp.durationPerAttendee.components.seconds)
   }
 
@@ -63,7 +65,7 @@ final class RecordMeetingModel: HashableObject {
   }
 
   func onTask() async {
-    soundEffectClient.load(fileName: "ding.wav")
+    await soundEffectClient.load(fileName: "ding.wav")
 
     let authorization =
       await speechClient.authorizationStatus() == .notDetermined
@@ -100,6 +102,7 @@ final class RecordMeetingModel: HashableObject {
 
   private func startTimer() async {
     for await _ in clock.timer(interval: .seconds(1)) where alert == nil {
+      defer { $logChanges() }
       secondsElapsed += 1
 
       let secondsPerAttendee = Int(syncUp.durationPerAttendee.components.seconds)
@@ -109,7 +112,7 @@ final class RecordMeetingModel: HashableObject {
           break
         }
         speakerIndex += 1
-        soundEffectClient.play()
+        await soundEffectClient.play()
       }
     }
   }
@@ -168,7 +171,8 @@ extension AlertState where Action == RecordMeetingModel.AlertAction {
       """
       The speech recognizer has failed for some reason and so your meeting will no longer be \
       recorded. What do you want to do?
-      """)
+      """
+    )
   }
 }
 
@@ -193,7 +197,7 @@ struct RecordMeetingView: View {
         )
         MeetingFooterView(
           syncUp: model.syncUp,
-          nextButtonTapped: { model.nextButtonTapped() },
+          nextButtonTapped: { await model.nextButtonTapped() },
           speakerIndex: model.speakerIndex
         )
       }
@@ -346,7 +350,7 @@ struct SpeakerArc: Shape {
 
 struct MeetingFooterView: View {
   let syncUp: SyncUp
-  var nextButtonTapped: () -> Void
+  var nextButtonTapped: () async -> Void
   let speakerIndex: Int
 
   var body: some View {
@@ -358,7 +362,9 @@ struct MeetingFooterView: View {
           Text("No more speakers.")
         }
         Spacer()
-        Button(action: nextButtonTapped) {
+        Button {
+          Task { await nextButtonTapped() }
+        } label: {
           Image(systemName: "forward.fill")
         }
       }

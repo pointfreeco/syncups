@@ -3,7 +3,7 @@ import DependenciesMacros
 @preconcurrency import Speech
 
 @DependencyClient
-struct SpeechClient {
+nonisolated struct SpeechClient {
   var authorizationStatus: @Sendable () -> SFSpeechRecognizerAuthorizationStatus = { .denied }
   var requestAuthorization: @Sendable () async -> SFSpeechRecognizerAuthorizationStatus = {
     .denied
@@ -14,7 +14,7 @@ struct SpeechClient {
     > = { _ in .finished() }
 }
 
-extension SpeechClient: DependencyKey {
+nonisolated extension SpeechClient: DependencyKey {
   static var liveValue: SpeechClient {
     let speech = Speech()
     return SpeechClient(
@@ -38,7 +38,7 @@ extension SpeechClient: DependencyKey {
       requestAuthorization: { .authorized },
       startTask: { _ in
         AsyncThrowingStream { continuation in
-          Task { @MainActor in
+          Task {
             var finalText = """
               Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor \
               incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud \
@@ -79,7 +79,7 @@ extension SpeechClient: DependencyKey {
       requestAuthorization: { .authorized },
       startTask: { request in
         AsyncThrowingStream { continuation in
-          Task { @MainActor in
+          Task {
             let start = ContinuousClock.now
             do {
               for try await result in await Self.previewValue.startTask(request) {
@@ -103,29 +103,29 @@ extension SpeechClient: DependencyKey {
 }
 
 extension DependencyValues {
-  var speechClient: SpeechClient {
+  nonisolated var speechClient: SpeechClient {
     get { self[SpeechClient.self] }
     set { self[SpeechClient.self] = newValue }
   }
 }
 
-struct SpeechRecognitionResult: Equatable {
+nonisolated struct SpeechRecognitionResult: Equatable {
   var bestTranscription: Transcription
   var isFinal: Bool
 }
 
-struct Transcription: Equatable {
+nonisolated struct Transcription: Equatable {
   var formattedString: String
 }
 
-extension SpeechRecognitionResult {
+nonisolated extension SpeechRecognitionResult {
   init(_ speechRecognitionResult: SFSpeechRecognitionResult) {
     self.bestTranscription = Transcription(speechRecognitionResult.bestTranscription)
     self.isFinal = speechRecognitionResult.isFinal
   }
 }
 
-extension Transcription {
+nonisolated extension Transcription {
   init(_ transcription: SFTranscription) {
     self.formattedString = transcription.formattedString
   }

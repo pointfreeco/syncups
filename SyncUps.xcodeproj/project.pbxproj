@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 100;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -26,6 +26,7 @@
 		CA350CCD2984518200434F8A /* SyncUpDetailTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350CC92984518200434F8A /* SyncUpDetailTests.swift */; };
 		CA350CCF2984518A00434F8A /* SyncUpsListUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA350CCE2984518A00434F8A /* SyncUpsListUITests.swift */; };
 		CA350CD2298452F300434F8A /* ding.wav in Resources */ = {isa = PBXBuildFile; fileRef = CA350CD1298452F300434F8A /* ding.wav */; };
+		CA35C3532FC20C7A002F9111 /* DebugSnapshots in Frameworks */ = {isa = PBXBuildFile; productRef = CA35C3522FC20C7A002F9111 /* DebugSnapshots */; };
 		CA763F5C2CEF9B6700C1CE55 /* DependenciesTestSupport in Frameworks */ = {isa = PBXBuildFile; productRef = CA763F5B2CEF9B6700C1CE55 /* DependenciesTestSupport */; };
 		CA8586B82C61210E00A53451 /* SwiftUINavigation in Frameworks */ = {isa = PBXBuildFile; productRef = CA8586B72C61210E00A53451 /* SwiftUINavigation */; };
 		CA99A59C2CD9172000E6F7B0 /* Sharing in Frameworks */ = {isa = PBXBuildFile; productRef = CA99A59B2CD9172000E6F7B0 /* Sharing */; };
@@ -82,12 +83,12 @@
 /* Begin PBXFrameworksBuildPhase section */
 		CA350C6E2984506E00434F8A /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				CA99A59C2CD9172000E6F7B0 /* Sharing in Frameworks */,
 				CAAF4DD72C3589A700774888 /* ConcurrencyExtras in Frameworks */,
 				CAAF4DCF2C3586E200774888 /* Tagged in Frameworks */,
 				CAF8AAB12CD91A95007192A6 /* Sharing in Frameworks */,
+				CA35C3532FC20C7A002F9111 /* DebugSnapshots in Frameworks */,
 				CAAF4DD92C3589D400774888 /* DependenciesMacros in Frameworks */,
 				CA1C303F2C358FEB001EE466 /* CustomDump in Frameworks */,
 				CA8586B82C61210E00A53451 /* SwiftUINavigation in Frameworks */,
@@ -95,22 +96,17 @@
 				CAAF4DCC2C3586C900774888 /* IdentifiedCollections in Frameworks */,
 				CAAF4DD42C35899500774888 /* Dependencies in Frameworks */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		CA350C7E2984506F00434F8A /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				CA763F5C2CEF9B6700C1CE55 /* DependenciesTestSupport in Frameworks */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		CA350C882984506F00434F8A /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
@@ -211,8 +207,6 @@
 			);
 			buildRules = (
 			);
-			dependencies = (
-			);
 			name = SyncUps;
 			packageProductDependencies = (
 				CAAF4DC82C3586AD00774888 /* IssueReporting */,
@@ -225,6 +219,7 @@
 				CA8586B72C61210E00A53451 /* SwiftUINavigation */,
 				CA99A59B2CD9172000E6F7B0 /* Sharing */,
 				CAF8AAB02CD91A95007192A6 /* Sharing */,
+				CA35C3522FC20C7A002F9111 /* DebugSnapshots */,
 			);
 			productName = SyncUps;
 			productReference = CA350C712984506E00434F8A /* SyncUps.app */;
@@ -277,7 +272,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1420;
-				LastUpgradeCheck = 1610;
+				LastUpgradeCheck = 2650;
 				TargetAttributes = {
 					CA350C702984506E00434F8A = {
 						CreatedOnToolsVersion = 14.2;
@@ -295,7 +290,6 @@
 				};
 			};
 			buildConfigurationList = CA350C6C2984506E00434F8A /* Build configuration list for PBXProject "SyncUps" */;
-			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -312,7 +306,9 @@
 				CA1C303D2C358FEB001EE466 /* XCRemoteSwiftPackageReference "swift-custom-dump" */,
 				CA8586B62C61210E00A53451 /* XCRemoteSwiftPackageReference "swift-navigation" */,
 				CAF8AAAF2CD91A95007192A6 /* XCRemoteSwiftPackageReference "swift-sharing" */,
+				CA35C3512FC20C7A002F9111 /* XCRemoteSwiftPackageReference "swift-debug-snapshots" */,
 			);
+			preferredProjectObjectVersion = 56;
 			productRefGroup = CA350C722984506E00434F8A /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -327,33 +323,26 @@
 /* Begin PBXResourcesBuildPhase section */
 		CA350C6F2984506E00434F8A /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				CA350CD2298452F300434F8A /* ding.wav in Resources */,
 				CA350CB9298450BF00434F8A /* Assets.xcassets in Resources */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		CA350C7F2984506F00434F8A /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		CA350C892984506F00434F8A /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		CA350C6D2984506E00434F8A /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				CA350CB7298450BF00434F8A /* Models.swift in Sources */,
 				CA350CB4298450BF00434F8A /* OpenSettings.swift in Sources */,
@@ -367,26 +356,21 @@
 				CA350CB0298450BF00434F8A /* RecordMeeting.swift in Sources */,
 				CA350CAF298450BF00434F8A /* SyncUpDetail.swift in Sources */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		CA350C7D2984506F00434F8A /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				CA350CCD2984518200434F8A /* SyncUpDetailTests.swift in Sources */,
 				CA350CCA2984518200434F8A /* RecordMeetingTests.swift in Sources */,
 				CA350CCB2984518200434F8A /* SyncUpsListTests.swift in Sources */,
 				CA350CCC2984518200434F8A /* SyncUpFormTests.swift in Sources */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		CA350C872984506F00434F8A /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				CA350CCF2984518A00434F8A /* SyncUpsListUITests.swift in Sources */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
@@ -404,7 +388,7 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		CA350C932984506F00434F8A /* Debug */ = {
+		CA350C932984506F00434F8A /* Debug configuration for PBXProject "SyncUps" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -456,18 +440,21 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 6.0;
 			};
 			name = Debug;
 		};
-		CA350C942984506F00434F8A /* Release */ = {
+		CA350C942984506F00434F8A /* Release configuration for PBXProject "SyncUps" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -513,18 +500,21 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 6.0;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
 		};
-		CA350C962984506F00434F8A /* Debug */ = {
+		CA350C962984506F00434F8A /* Debug configuration for PBXNativeTarget "SyncUps" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -551,7 +541,7 @@
 			};
 			name = Debug;
 		};
-		CA350C972984506F00434F8A /* Release */ = {
+		CA350C972984506F00434F8A /* Release configuration for PBXNativeTarget "SyncUps" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -578,7 +568,7 @@
 			};
 			name = Release;
 		};
-		CA350C992984506F00434F8A /* Debug */ = {
+		CA350C992984506F00434F8A /* Debug configuration for PBXNativeTarget "SyncUpsTests" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -601,7 +591,7 @@
 			};
 			name = Debug;
 		};
-		CA350C9A2984506F00434F8A /* Release */ = {
+		CA350C9A2984506F00434F8A /* Release configuration for PBXNativeTarget "SyncUpsTests" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -623,7 +613,7 @@
 			};
 			name = Release;
 		};
-		CA350C9C2984506F00434F8A /* Debug */ = {
+		CA350C9C2984506F00434F8A /* Debug configuration for PBXNativeTarget "SyncUpsUITests" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
@@ -646,7 +636,7 @@
 			};
 			name = Debug;
 		};
-		CA350C9D2984506F00434F8A /* Release */ = {
+		CA350C9D2984506F00434F8A /* Release configuration for PBXNativeTarget "SyncUpsUITests" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
@@ -674,37 +664,33 @@
 		CA350C6C2984506E00434F8A /* Build configuration list for PBXProject "SyncUps" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				CA350C932984506F00434F8A /* Debug */,
-				CA350C942984506F00434F8A /* Release */,
+				CA350C932984506F00434F8A /* Debug configuration for PBXProject "SyncUps" */,
+				CA350C942984506F00434F8A /* Release configuration for PBXProject "SyncUps" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 		CA350C952984506F00434F8A /* Build configuration list for PBXNativeTarget "SyncUps" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				CA350C962984506F00434F8A /* Debug */,
-				CA350C972984506F00434F8A /* Release */,
+				CA350C962984506F00434F8A /* Debug configuration for PBXNativeTarget "SyncUps" */,
+				CA350C972984506F00434F8A /* Release configuration for PBXNativeTarget "SyncUps" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 		CA350C982984506F00434F8A /* Build configuration list for PBXNativeTarget "SyncUpsTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				CA350C992984506F00434F8A /* Debug */,
-				CA350C9A2984506F00434F8A /* Release */,
+				CA350C992984506F00434F8A /* Debug configuration for PBXNativeTarget "SyncUpsTests" */,
+				CA350C9A2984506F00434F8A /* Release configuration for PBXNativeTarget "SyncUpsTests" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 		CA350C9B2984506F00434F8A /* Build configuration list for PBXNativeTarget "SyncUpsUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				CA350C9C2984506F00434F8A /* Debug */,
-				CA350C9D2984506F00434F8A /* Release */,
+				CA350C9C2984506F00434F8A /* Debug configuration for PBXNativeTarget "SyncUpsUITests" */,
+				CA350C9D2984506F00434F8A /* Release configuration for PBXNativeTarget "SyncUpsUITests" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
@@ -717,6 +703,17 @@
 				kind = upToNextMajorVersion;
 				minimumVersion = 1.0.0;
 			};
+		};
+		CA35C3512FC20C7A002F9111 /* XCRemoteSwiftPackageReference "swift-debug-snapshots" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pointfreeco/swift-debug-snapshots";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.1.1;
+			};
+			traits = (
+				IdentifiedCollections,
+			);
 		};
 		CA8586B62C61210E00A53451 /* XCRemoteSwiftPackageReference "swift-navigation" */ = {
 			isa = XCRemoteSwiftPackageReference;
@@ -781,6 +778,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = CA1C303D2C358FEB001EE466 /* XCRemoteSwiftPackageReference "swift-custom-dump" */;
 			productName = CustomDump;
+		};
+		CA35C3522FC20C7A002F9111 /* DebugSnapshots */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CA35C3512FC20C7A002F9111 /* XCRemoteSwiftPackageReference "swift-debug-snapshots" */;
+			productName = DebugSnapshots;
 		};
 		CA763F5B2CEF9B6700C1CE55 /* DependenciesTestSupport */ = {
 			isa = XCSwiftPackageProductDependency;

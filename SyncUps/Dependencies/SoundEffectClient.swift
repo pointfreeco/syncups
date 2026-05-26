@@ -3,43 +3,61 @@ import Dependencies
 import DependenciesMacros
 import Synchronization
 
-@DependencyClient
-struct SoundEffectClient {
-  var load: @Sendable (_ fileName: String) -> Void
-  var play: @Sendable () -> Void
-}
-
-extension SoundEffectClient: DependencyKey {
-  static var liveValue: Self {
-    let player = Mutex(AVPlayer())
-    return Self(
-      load: { fileName in
-        player.withLock {
-          guard let url = Bundle.main.url(forResource: fileName, withExtension: "")
-          else { return }
-          $0.replaceCurrentItem(with: AVPlayerItem(url: url))
-        }
-      },
-      play: {
-        player.withLock {
-          $0.seek(to: .zero)
-          $0.play()
-        }
-      }
-    )
-  }
-
-  static let testValue = Self()
-
-  static let noop = Self(
-    load: { _ in },
-    play: {}
-  )
+nonisolated protocol SoundEffectClient: Sendable {
+  func load(fileName: String) async
+  func play() async
 }
 
 extension DependencyValues {
-  var soundEffectClient: SoundEffectClient {
-    get { self[SoundEffectClient.self] }
-    set { self[SoundEffectClient.self] = newValue }
+  nonisolated var soundEffectClient: SoundEffectClient {
+    get { self[SoundEffectClientKey.self] }
+    set { self[SoundEffectClientKey.self] = newValue }
+  }
+}
+
+nonisolated private enum SoundEffectClientKey: DependencyKey {
+  static var liveValue: any SoundEffectClient {
+    LiveSoundEffectClient()
+  }
+  static var testValue: any SoundEffectClient {
+    UnimplementedSoundEffectClient()
+  }
+}
+
+actor MockSoundEffectClient: SoundEffectClient {
+  var loads: [String] = []
+  var playCount = 0
+  func load(fileName: String) {
+    loads.append(fileName)
+  }
+  func play() {
+    playCount += 1
+  }
+}
+
+private struct UnimplementedSoundEffectClient: SoundEffectClient {
+  func load(fileName: String) async {
+    reportIssue("SoundEffectClient.load unimplemented")
+  }
+  func play() async {
+    reportIssue("SoundEffectClient.play unimplemented")
+  }
+}
+
+struct NoopSoundEffectClient: SoundEffectClient {
+  func load(fileName: String) {}
+  func play() {}
+}
+
+private actor LiveSoundEffectClient: SoundEffectClient {
+  let player = AVPlayer()
+  func load(fileName: String) {
+    guard let url = Bundle.main.url(forResource: fileName, withExtension: "")
+    else { return }
+    player.replaceCurrentItem(with: AVPlayerItem(url: url))
+  }
+  func play() {
+    player.seek(to: .zero)
+    player.play()
   }
 }

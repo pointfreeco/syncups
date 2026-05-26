@@ -1,5 +1,6 @@
 import Clocks
 import CustomDump
+import DebugSnapshots
 import Dependencies
 import IdentifiedCollections
 import IssueReporting
@@ -7,9 +8,10 @@ import Sharing
 import SwiftUI
 import SwiftUINavigation
 
-@MainActor
 @Observable
+@DebugSnapshot(.logChanges)
 final class SyncUpDetailModel: HashableObject {
+  @DebugSnapshotConvertible
   var destination: Destination?
   var isDismissed = false
   @ObservationIgnored @Shared var syncUp: SyncUp
@@ -23,9 +25,11 @@ final class SyncUpDetailModel: HashableObject {
   @ObservationIgnored @Dependency(\.uuid) var uuid
 
   @CasePathable
+  @DebugSnapshot
   @dynamicMemberLookup
   enum Destination {
     case alert(AlertState<AlertAction>)
+    @DebugSnapshotConvertible
     case edit(SyncUpFormModel)
   }
   enum AlertAction {
@@ -84,7 +88,7 @@ final class SyncUpDetailModel: HashableObject {
   }
 
   func doneEditingButtonTapped() {
-    guard case let .edit(model) = destination
+    guard case .edit(let model) = destination
     else { return }
 
     $syncUp.withLock { $0 = model.syncUp }

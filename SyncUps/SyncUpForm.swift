@@ -1,8 +1,10 @@
+import DebugSnapshots
 import Dependencies
 import SwiftUI
 import SwiftUINavigation
 
 @Observable
+@DebugSnapshot(.logChanges)
 final class SyncUpFormModel: Identifiable {
   var focus: Field?
   var syncUp: SyncUp

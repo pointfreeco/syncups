@@ -1,3 +1,4 @@
+import DebugSnapshots
 import Dependencies
 import IdentifiedCollections
 import IssueReporting
@@ -5,12 +6,13 @@ import Sharing
 import SwiftUI
 import SwiftUINavigation
 
-@MainActor
 @Observable
+@DebugSnapshot(.logChanges)
 final class SyncUpsListModel {
+  @DebugSnapshotConvertible
   var addSyncUp: SyncUpFormModel?
-  @ObservationIgnored @Shared(.syncUps) var syncUps
 
+  @ObservationIgnored @Shared(.syncUps) var syncUps: IdentifiedArrayOf<SyncUp>
   @ObservationIgnored @Dependency(\.uuid) var uuid
 
   init(
@@ -149,13 +151,17 @@ extension LabelStyle where Self == TrailingIconLabelStyle {
 
 extension SharedReaderKey where Self == FileStorageKey<IdentifiedArrayOf<SyncUp>>.Default {
   static var syncUps: Self {
-    Self[
-      .fileStorage(dump(URL.documentsDirectory.appending(component: "sync-ups.json"))),
-      default: isTesting || ProcessInfo.processInfo.environment["UI_TEST_NAME"] != nil ? [] : [
-        .mock,
-        .engineeringMock,
-        .designMock,
-      ]
+    let url = URL.documentsDirectory.appending(component: "sync-ups.json")
+    print(url)
+    return Self[
+      .fileStorage(url),
+      default: isTesting || ProcessInfo.processInfo.environment["UI_TEST_NAME"] != nil
+        ? []
+        : [
+          .mock,
+          .engineeringMock,
+          .designMock,
+        ]
     ]
   }
 }

@@ -4,7 +4,6 @@ import IdentifiedCollections
 import Sharing
 import SwiftUI
 
-@MainActor
 @Observable
 class AppModel {
   var path: [Path] {
@@ -14,12 +13,9 @@ class AppModel {
     didSet { bind() }
   }
 
-  @ObservationIgnored
-  @Dependency(\.continuousClock) var clock
-  @ObservationIgnored
-  @Dependency(\.date.now) var now
-  @ObservationIgnored
-  @Dependency(\.uuid) var uuid
+  @ObservationIgnored @Dependency(\.continuousClock) var clock
+  @ObservationIgnored @Dependency(\.date.now) var now
+  @ObservationIgnored @Dependency(\.uuid) var uuid
 
   @CasePathable
   @dynamicMemberLookup
@@ -41,7 +37,7 @@ class AppModel {
   private func bind() {
     for destination in path {
       switch destination {
-      case let .detail(detailModel):
+      case .detail(let detailModel):
         bindDetail(model: detailModel)
 
       case .meeting, .record:
@@ -68,11 +64,11 @@ struct AppView: View {
       SyncUpsList(model: model.syncUpsList)
         .navigationDestination(for: AppModel.Path.self) { path in
           switch path {
-          case let .detail(model):
+          case .detail(let model):
             SyncUpDetailView(model: model)
-          case let .meeting(meeting, syncUp: syncUp):
+          case .meeting(let meeting, syncUp: let syncUp):
             MeetingView(meeting: meeting, syncUp: syncUp)
-          case let .record(model):
+          case .record(let model):
             RecordMeetingView(model: model)
           }
         }

@@ -1,80 +1,105 @@
 import CasePaths
 import CustomDump
+import DebugSnapshots
 import Dependencies
 import Foundation
 import Sharing
-import Synchronization
 import Testing
 
 @testable import SyncUps
 
-@MainActor
-@Suite struct RecordMeetingTests {
-  let clock = TestClock()
+@Suite(
+  .dependencies {
+    $0.continuousClock = TestClock()
+    $0.date.now = Date(timeIntervalSince1970: 1_234_567_890)
+    $0.soundEffectClient = NoopSoundEffectClient()
+    $0.uuid = .incrementing
+  }
+)
+struct RecordMeetingTests {
+  @Dependency(\.continuousClock, as: TestClock<Duration>.self) var clock
+  @Dependency(\.soundEffectClient, as: MockSoundEffectClient.self) var soundEffects
 
-  @Test func timer() async throws {
-    let soundEffectPlayCount = Mutex(0)
-
-    try await withDependencies {
-      $0.continuousClock = clock
-      $0.date.now = Date(timeIntervalSince1970: 1234567890)
-      $0.soundEffectClient = .noop
-      $0.soundEffectClient.play = { soundEffectPlayCount.withLock { $0 += 1 } }
+  @Test(
+    .dependencies {
       $0.speechClient.authorizationStatus = { .denied }
-      $0.uuid = .incrementing
-    } operation: {
-      let model = RecordMeetingModel(
-        syncUp: Shared(
-          value: SyncUp(
-            id: SyncUp.ID(),
-            attendees: [
-              Attendee(id: Attendee.ID()),
-              Attendee(id: Attendee.ID()),
-              Attendee(id: Attendee.ID()),
-            ],
-            duration: .seconds(3)
-          )
+      $0.soundEffectClient = MockSoundEffectClient()
+    }
+  )
+  func `let timer run out until meeting ends`() async throws {
+    let model = RecordMeetingModel(
+      syncUp: Shared(
+        value: SyncUp(
+          id: SyncUp.ID(),
+          attendees: [
+            Attendee(id: Attendee.ID()),
+            Attendee(id: Attendee.ID()),
+            Attendee(id: Attendee.ID()),
+          ],
+          duration: .seconds(3)
         )
       )
+    )
 
-      let task = Task { await model.onTask() }
+    let task = Task.immediate { await model.onTask() }
 
-      // NB: This should not be necessary, but it doesn't seem like there is a better way to
-      //     guarantee that the timer has started up. See this forum discussion for more information
-      //     on the difficulties of testing async code in Swift:
-      //     https://forums.swift.org/t/reliably-testing-code-that-adopts-swift-concurrency/57304
-      try await Task.sleep(for: .milliseconds(300))
+    // NB: This should not be necessary, but it doesn't seem like there is a better way to
+    //     guarantee that the timer has started up. See this forum discussion for more information
+    //     on the difficulties of testing async code in Swift:
+    //     https://forums.swift.org/t/reliably-testing-code-that-adopts-swift-concurrency/57304
+    try await Task.sleep(for: .milliseconds(300))
 
-      #expect(model.speakerIndex == 0)
-      #expect(model.durationRemaining == .seconds(3))
+    expect(model) {
+      $0.speakerIndex = 0
+      $0.durationRemaining = .seconds(3)
+    }
 
+    await expect(model) {
       await clock.advance(by: .seconds(1))
-      #expect(model.speakerIndex == 1)
-      #expect(model.durationRemaining == .seconds(2))
-      #expect(soundEffectPlayCount.withLock { $0 } == 1)
+    } changes: {
+      $0.speakerIndex = 1
+      $0.secondsElapsed = 1
+      $0.durationRemaining = .seconds(2)
+    }
+    #expect(await soundEffects.playCount == 1)
 
+    await expect(model) {
       await clock.advance(by: .seconds(1))
-      #expect(model.speakerIndex == 2)
-      #expect(model.durationRemaining == .seconds(1))
-      #expect(soundEffectPlayCount.withLock { $0 } == 2)
+    } changes: {
+      $0.speakerIndex = 2
+      $0.secondsElapsed = 2
+      $0.durationRemaining = .seconds(1)
+    }
+    #expect(await soundEffects.playCount == 2)
 
+    await expect(model) {
       await clock.advance(by: .seconds(1))
-      #expect(model.speakerIndex == 2)
-      #expect(model.durationRemaining == .seconds(0))
-      #expect(soundEffectPlayCount.withLock { $0 } == 2)
+    } changes: {
+      $0.isDismissed = true
+      $0.speakerIndex = 2
+      $0.secondsElapsed = 3
+      $0.durationRemaining = .seconds(0)
+    }
+    #expect(await soundEffects.playCount == 2)
 
+    await expect(model) {
       await clock.run()
       await task.value
-
-      #expect(soundEffectPlayCount.withLock { $0 } == 2)
+    } changes: {
+      $0.syncUp.meetings = [
+        Meeting(
+          id: Meeting.ID(UUID(0)),
+          date: Date(timeIntervalSince1970: 1_234_567_890),
+          transcript: ""
+        )
+      ]
     }
+    #expect(await soundEffects.playCount == 2)
   }
 
-  @Test func recordTranscript() async throws {
-    await withDependencies {
+  @Test(
+    .dependencies {
       $0.continuousClock = ImmediateClock()
-      $0.date.now = Date(timeIntervalSince1970: 1234567890)
-      $0.soundEffectClient = .noop
       $0.speechClient.authorizationStatus = { .authorized }
       $0.speechClient.startTask = { @Sendable _ in
         AsyncThrowingStream { continuation in
@@ -87,161 +112,175 @@ import Testing
           continuation.finish()
         }
       }
-      $0.uuid = .incrementing
-    } operation: {
-      let model = RecordMeetingModel(
-        syncUp: Shared(
-          value: SyncUp(
-            id: SyncUp.ID(),
-            attendees: [Attendee(id: Attendee.ID())],
-            duration: .seconds(3)
-          )
+    }
+  )
+  func `finish meeting with speech recognition transcript`() async throws {
+    let model = RecordMeetingModel(
+      syncUp: Shared(
+        value: SyncUp(
+          id: SyncUp.ID(),
+          attendees: [Attendee(id: Attendee.ID())],
+          duration: .seconds(3)
         )
       )
+    )
 
+    await expect(model) {
       await model.onTask()
-
-      expectNoDifference(
-        model.syncUp.meetings,
-        [
-          Meeting(
-            id: Meeting.ID(UUID(0)),
-            date: Date(timeIntervalSince1970: 1234567890),
-            transcript: "I completed the project"
-          )
-        ]
-      )
+    } changes: {
+      $0.isDismissed = true
+      $0.secondsElapsed = 3
+      $0.durationRemaining = .seconds(0)
+      $0.syncUp.meetings = [
+        Meeting(
+          id: Meeting.ID(UUID(0)),
+          date: Date(timeIntervalSince1970: 1_234_567_890),
+          transcript: "I completed the project"
+        )
+      ]
     }
   }
 
-  @Test func endMeetingSave() async throws {
-    try await withDependencies {
-      $0.continuousClock = clock
-      $0.date.now = Date(timeIntervalSince1970: 1234567890)
-      $0.soundEffectClient = .noop
+  @Test(
+    .dependencies {
       $0.speechClient.authorizationStatus = { .denied }
-      $0.uuid = .incrementing
-    } operation: {
-      let syncUp = SyncUp.mock
-      let model = RecordMeetingModel(syncUp: Shared(value: syncUp))
+    }
+  )
+  func `end meeting explicitly and save`() async throws {
+    let syncUp = SyncUp.mock
+    let model = RecordMeetingModel(syncUp: Shared(value: syncUp))
 
-      let task = Task { await model.onTask() }
+    Task.immediate { await model.onTask() }
 
+    expect(model) {
       model.endMeetingButtonTapped()
+    } changes: {
+      $0.alert = .endMeeting(isDiscardable: true)
+    }
 
-      let alert = try #require(model.alert)
-
-      expectNoDifference(alert, .endMeeting(isDiscardable: true))
-
+    await expect(model) {
       await clock.advance(by: .seconds(5))
+    } changes: { _ in
+    }
 
-      #expect(model.speakerIndex == 0)
-      #expect(model.durationRemaining == .seconds(60))
-
-      let saveTask = Task {
-        await model.alertButtonTapped(.confirmSave)
-      }
+    try await expect(model) {
+      let saveTask = Task.immediate { await model.alertButtonTapped(.confirmSave) }
       try await Task.sleep(for: .seconds(0.1))
       await clock.advance(by: .seconds(0.4))
       await saveTask.value
-      #expect(model.isDismissed)
-
-      task.cancel()
-      await task.value
+    } changes: {
+      $0.isDismissed = true
+      $0.syncUp.meetings.insert(
+        Meeting(
+          id: Meeting.ID(UUID(0)),
+          date: Date(timeIntervalSince1970: 1_234_567_890),
+          transcript: ""
+        ),
+        at: 0
+      )
     }
   }
 
-  @Test func endMeetingDiscard() async throws {
-    try await withDependencies {
-      $0.continuousClock = clock
-      $0.soundEffectClient = .noop
+  @Test(
+    .dependencies {
       $0.speechClient.authorizationStatus = { .denied }
-    } operation: {
-      let model = RecordMeetingModel(syncUp: Shared(value: .mock))
+    }
+  )
+  func `end meeting explicitly and discard`() async throws {
+    let model = RecordMeetingModel(syncUp: Shared(value: .mock))
 
-      let task = Task { await model.onTask() }
+    Task.immediate { await model.onTask() }
 
+    expect(model) {
       model.endMeetingButtonTapped()
+    } changes: {
+      $0.alert = .endMeeting(isDiscardable: true)
+    }
 
-      let alert = try #require(model.alert)
-
-      expectNoDifference(alert, .endMeeting(isDiscardable: true))
-
+    await expect(model) {
       await model.alertButtonTapped(.confirmDiscard)
-
-      task.cancel()
-      await task.value
-      #expect(model.isDismissed)
+    } changes: {
+      $0.isDismissed = true
     }
   }
 
-  @Test func nextSpeaker() async throws {
-    let soundEffectPlayCount = Mutex(0)
-
-    try await withDependencies {
-      $0.continuousClock = ImmediateClock()
-      $0.date.now = Date(timeIntervalSince1970: 1234567890)
-      $0.soundEffectClient = .noop
-      $0.soundEffectClient.play = { soundEffectPlayCount.withLock { $0 += 1 } }
+  @Test(
+    .dependencies {
       $0.speechClient.authorizationStatus = { .denied }
-      $0.uuid = .incrementing
-    } operation: {
-      let model = RecordMeetingModel(
-        syncUp: Shared(
-          value: SyncUp(
-            id: SyncUp.ID(),
-            attendees: [
-              Attendee(id: Attendee.ID()),
-              Attendee(id: Attendee.ID()),
-              Attendee(id: Attendee.ID()),
-            ],
-            duration: .seconds(3)
-          )
+      $0.soundEffectClient = MockSoundEffectClient()
+    }
+  )
+  func `tap next button until ending meeting and save`() async throws {
+    let model = RecordMeetingModel(
+      syncUp: Shared(
+        value: SyncUp(
+          id: SyncUp.ID(),
+          attendees: [
+            Attendee(id: Attendee.ID()),
+            Attendee(id: Attendee.ID()),
+            Attendee(id: Attendee.ID()),
+          ],
+          duration: .seconds(3)
         )
       )
+    )
 
-      let task = Task { await model.onTask() }
+    Task.immediate { await model.onTask() }
 
-      model.nextButtonTapped()
-
-      #expect(model.speakerIndex == 1)
-      #expect(model.durationRemaining == .seconds(2))
-      #expect(soundEffectPlayCount.withLock { $0 } == 1)
-
-      model.nextButtonTapped()
-
-      #expect(model.speakerIndex == 2)
-      #expect(model.durationRemaining == .seconds(1))
-      #expect(soundEffectPlayCount.withLock { $0 } == 2)
-
-      model.nextButtonTapped()
-
-      let alert = try #require(model.alert)
-
-      expectNoDifference(alert, .endMeeting(isDiscardable: false))
-
-      await clock.advance(by: .seconds(5))
-
-      #expect(model.speakerIndex == 2)
-      #expect(model.durationRemaining == .seconds(1))
-      #expect(soundEffectPlayCount.withLock { $0 } == 2)
-
-      await model.alertButtonTapped(.confirmSave)
-
-      #expect(soundEffectPlayCount.withLock { $0 } == 2)
-
-      task.cancel()
-      await task.value
+    await expect(model) {
+      await model.nextButtonTapped()
+    } changes: {
+      $0.speakerIndex = 1
+      $0.secondsElapsed = 1
+      $0.durationRemaining = .seconds(2)
     }
+    #expect(await soundEffects.playCount == 1)
+
+    await expect(model) {
+      await model.nextButtonTapped()
+    } changes: {
+      $0.speakerIndex = 2
+      $0.secondsElapsed = 2
+      $0.durationRemaining = .seconds(1)
+    }
+    #expect(await soundEffects.playCount == 2)
+
+    await expect(model) {
+      await model.nextButtonTapped()
+    } changes: {
+      $0.alert = .endMeeting(isDiscardable: false)
+    }
+
+      await expect(model) {
+        await clock.advance(by: .seconds(5))
+      } changes: { _ in
+        _ = $0
+      }
+    }
+
+    await expect(model) {
+      let saveTask = Task.immediate { await model.alertButtonTapped(.confirmSave) }
+      await clock.run()
+      await saveTask.value
+    } changes: {
+      $0.isDismissed = true
+      $0.syncUp.meetings.insert(
+        Meeting(
+          id: Meeting.ID(UUID(0)),
+          date: Date(timeIntervalSince1970: 1_234_567_890),
+          transcript: ""
+        ),
+        at: 0
+      )
+    }
+    #expect(await soundEffects.playCount == 2)
   }
 
-  @Test func speechRecognitionFailure_Continue() async throws {
-    try await withDependencies {
+  @Test(
+    .dependencies {
       $0.continuousClock = ImmediateClock()
-      $0.date.now = Date(timeIntervalSince1970: 1234567890)
-      $0.soundEffectClient = .noop
       $0.speechClient.authorizationStatus = { .authorized }
-      $0.speechClient.startTask = { @Sendable _ in
+      $0.speechClient.startTask = { _ in
         AsyncThrowingStream {
           $0.yield(
             SpeechRecognitionResult(
@@ -249,76 +288,91 @@ import Testing
               isFinal: true
             )
           )
-          struct SpeechRecognitionFailure: Error {}
           $0.finish(throwing: SpeechRecognitionFailure())
         }
       }
-      $0.uuid = .incrementing
-    } operation: {
-      let model = RecordMeetingModel(
-        syncUp: Shared(
-          value: SyncUp(
-            id: SyncUp.ID(),
-            attendees: [Attendee(id: Attendee.ID())],
-            duration: .seconds(3)
-          )
+    }
+  )
+  func `speech recognizer fails mid-meeting, user continues anyway`() async throws {
+    let model = RecordMeetingModel(
+      syncUp: Shared(
+        value: SyncUp(
+          id: SyncUp.ID(),
+          attendees: [Attendee(id: Attendee.ID())],
+          duration: .seconds(3)
         )
       )
+    )
 
-      let task = Task { await model.onTask() }
-
+    let task = try await expect(model) {
+      let task = Task.immediate { await model.onTask() }
       // NB: This should not be necessary, but it doesn't seem like there is a better way to
       //     guarantee that the timer has started up. See this forum discussion for more information
       //     on the difficulties of testing async code in Swift:
       //     https://forums.swift.org/t/reliably-testing-code-that-adopts-swift-concurrency/57304
       try await Task.sleep(for: .milliseconds(100))
+      return task
+    } changes: {
+      $0.secondsElapsed = 1
+      $0.durationRemaining = .seconds(2)
+      $0.alert = .speechRecognizerFailed
+    }
 
-      let alert = try #require(model.alert)
-      #expect(alert == .speechRecognizerFailed)
-
+    await expect(model) {
       model.alert = nil  // NB: Simulate SwiftUI closing alert.
-
       await task.value
-
-      #expect(model.secondsElapsed == 3)
+    } changes: {
+      $0.isDismissed = true
+      $0.alert = nil
+      $0.secondsElapsed = 3
+      $0.durationRemaining = .seconds(0)
+      $0.syncUp.meetings.insert(
+        Meeting(
+          id: Meeting.ID(UUID(0)),
+          date: Date(timeIntervalSince1970: 1_234_567_890),
+          transcript: "I completed the project ❌"
+        ),
+        at: 0
+      )
     }
   }
 
-  @Test func speechRecognitionFailure_Discard() async throws {
-    try await withDependencies {
-      $0.continuousClock = clock
-      $0.soundEffectClient = .noop
+  @Test(
+    .dependencies {
       $0.speechClient.authorizationStatus = { .authorized }
       $0.speechClient.startTask = { @Sendable _ in
-        struct SpeechRecognitionFailure: Error {}
-        return AsyncThrowingStream.finished(throwing: SpeechRecognitionFailure())
+        AsyncThrowingStream.finished(throwing: SpeechRecognitionFailure())
       }
-    } operation: {
-      let model = RecordMeetingModel(
-        syncUp: Shared(
-          value: SyncUp(
-            id: SyncUp.ID(),
-            attendees: [Attendee(id: Attendee.ID())],
-            duration: .seconds(3)
-          )
+    }
+  )
+  func `speech recognizer fails mid-meeting, user abandons meeting`() async throws {
+    let model = RecordMeetingModel(
+      syncUp: Shared(
+        value: SyncUp(
+          id: SyncUp.ID(),
+          attendees: [Attendee(id: Attendee.ID())],
+          duration: .seconds(3)
         )
       )
+    )
 
-      Task { await model.onTask() }
-
+    try await expect(model) {
       // NB: This should not be necessary, but it doesn't seem like there is a better way to
       //     guarantee that the timer has started up. See this forum discussion for more information
       //     on the difficulties of testing async code in Swift:
       //     https://forums.swift.org/t/reliably-testing-code-that-adopts-swift-concurrency/57304
+      Task.immediate { await model.onTask() }
       try await Task.sleep(for: .milliseconds(100))
+    } changes: {
+      $0.alert = .speechRecognizerFailed
+    }
 
-      let alert = try #require(model.alert)
-      #expect(alert == .speechRecognizerFailed)
-
+    await expect(model) {
       await model.alertButtonTapped(.confirmDiscard)
-      model.alert = nil  // NB: Simulate SwiftUI closing alert.
-
-      #expect(model.isDismissed)
+    } changes: {
+      $0.isDismissed = true
     }
   }
 }
+
+private struct SpeechRecognitionFailure: Error {}

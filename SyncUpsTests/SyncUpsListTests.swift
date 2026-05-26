@@ -1,5 +1,6 @@
 import CasePaths
 import CustomDump
+import DebugSnapshots
 import Dependencies
 import DependenciesTestSupport
 import Foundation
@@ -8,31 +9,40 @@ import Testing
 
 @testable import SyncUps
 
-@MainActor
-@Suite
+@Suite(
+  .dependencies {
+    $0.continuousClock = ImmediateClock()
+    $0.uuid = .incrementing
+  }
+)
 struct SyncUpsListTests {
-  @Test(
-    .dependency(\.continuousClock, ImmediateClock()),
-    .dependency(\.uuid, .incrementing)
-  )
-  func add() async throws {
+  @Test
+  func `add sync up`() async throws {
     let model = SyncUpsListModel()
 
-    model.addSyncUpButtonTapped()
+    expect(model) {
+      model.addSyncUpButtonTapped()
+    } changes: {
+      $0.addSyncUp = SyncUpFormModel.DebugSnapshot(
+        focus: .title,
+        syncUp: SyncUp(
+          id: SyncUp.ID(UUID(0)),
+          attendees: [Attendee(id: Attendee.ID(UUID(1)))],
+          title: ""
+        )
+      )
+    }
 
-    let addModel = try #require(model.addSyncUp)
-
-    addModel.syncUp.title = "Engineering"
-    addModel.syncUp.attendees[0].name = "Blob"
-    addModel.addAttendeeButtonTapped()
-    addModel.syncUp.attendees[1].name = "Blob Jr."
-    model.confirmAddSyncUpButtonTapped()
-
-    #expect(model.addSyncUp == nil)
-
-    expectNoDifference(
-      model.syncUps,
-      [
+    try expect(model) {
+      let addModel = try #require(model.addSyncUp)
+      addModel.syncUp.title = "Engineering"
+      addModel.syncUp.attendees[0].name = "Blob"
+      addModel.addAttendeeButtonTapped()
+      addModel.syncUp.attendees[1].name = "Blob Jr."
+      model.confirmAddSyncUpButtonTapped()
+    } changes: {
+      $0.addSyncUp = nil
+      $0.syncUps = [
         SyncUp(
           id: SyncUp.ID(uuidString: "00000000-0000-0000-0000-000000000000")!,
           attendees: [
@@ -48,14 +58,11 @@ struct SyncUpsListTests {
           title: "Engineering"
         )
       ]
-    )
+    }
   }
 
-  @Test(
-    .dependency(\.continuousClock, ImmediateClock()),
-    .dependency(\.uuid, .incrementing)
-  )
-  func addValidatedAttendees() async throws {
+  @Test
+  func `remove attendees with empty name`() async throws {
     let model = SyncUpsListModel(
       addSyncUp: SyncUpFormModel(
         syncUp: SyncUp(
@@ -68,13 +75,12 @@ struct SyncUpsListTests {
         )
       )
     )
-
-    model.confirmAddSyncUpButtonTapped()
-
-    #expect(model.addSyncUp == nil)
-    expectNoDifference(
-      model.syncUps,
-      [
+    
+    expect(model) {
+      model.confirmAddSyncUpButtonTapped()
+    } changes: {
+      $0.addSyncUp = nil
+      $0.syncUps = [
         SyncUp(
           id: SyncUp.ID(uuidString: "deadbeef-dead-beef-dead-beefdeadbeef")!,
           attendees: [
@@ -86,6 +92,6 @@ struct SyncUpsListTests {
           title: "Design"
         )
       ]
-    )
+    }
   }
 }
