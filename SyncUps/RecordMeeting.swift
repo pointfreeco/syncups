@@ -17,15 +17,10 @@ final class RecordMeetingModel: HashableObject {
   @ObservationIgnored @Shared var syncUp: SyncUp
   private var transcript = ""
 
-  @DebugSnapshotIgnored
   @ObservationIgnored @Dependency(\.continuousClock) var clock
-  @DebugSnapshotIgnored
   @ObservationIgnored @Dependency(\.date.now) var now
-  @DebugSnapshotIgnored
   @ObservationIgnored @Dependency(\.soundEffectClient) var soundEffectClient
-  @DebugSnapshotIgnored
   @ObservationIgnored @Dependency(\.speechClient) var speechClient
-  @DebugSnapshotIgnored
   @ObservationIgnored @Dependency(\.uuid) var uuid
 
   enum AlertAction {

@@ -13,7 +13,6 @@ final class SyncUpsListModel {
   var addSyncUp: SyncUpFormModel?
 
   @ObservationIgnored @Shared(.syncUps) var syncUps: IdentifiedArrayOf<SyncUp>
-  @DebugSnapshotIgnored
   @ObservationIgnored @Dependency(\.uuid) var uuid
 
   init(

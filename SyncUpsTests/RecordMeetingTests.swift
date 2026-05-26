@@ -163,14 +163,9 @@ struct RecordMeetingTests {
       $0.alert = .endMeeting(isDiscardable: true)
     }
 
-    // TODO: should we be allowed to assert that state did not change?
-    await withKnownIssue {
-      await expect(model) {
-        await clock.advance(by: .seconds(5))
-      } changes: {
-        // NB: State doesn't change while clock advances and alert is displayed.
-        _ = $0
-      }
+    await expect(model) {
+      await clock.advance(by: .seconds(5))
+    } changes: { _ in
     }
 
     try await expect(model) {
@@ -265,13 +260,9 @@ struct RecordMeetingTests {
         $0.alert = .endMeeting(isDiscardable: false)
       }
 
-      // TODO: should we be allowed to assert that state did not change?
-      await withKnownIssue {
-        await expect(model) {
-          await clock.advance(by: .seconds(5))
-        } changes: {
-          _ = $0
-        }
+      await expect(model) {
+        await clock.advance(by: .seconds(5))
+      } changes: { _ in
       }
 
       await expect(model) {
@@ -320,7 +311,6 @@ struct RecordMeetingTests {
         )
       )
     )
-
 
     let task = try await expect(model) {
       let task = Task.immediate { await model.onTask() }

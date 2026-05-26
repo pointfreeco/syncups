@@ -18,15 +18,10 @@ final class SyncUpDetailModel: HashableObject {
 
   var onMeetingStarted: (Shared<SyncUp>) -> Void = unimplemented("onMeetingStarted")
 
-  @DebugSnapshotIgnored
   @ObservationIgnored @Dependency(\.continuousClock) var clock
-  @DebugSnapshotIgnored
   @ObservationIgnored @Dependency(\.date.now) var now
-  @DebugSnapshotIgnored
   @ObservationIgnored @Dependency(\.openSettings) var openSettings
-  @DebugSnapshotIgnored
   @ObservationIgnored @Dependency(\.speechClient.authorizationStatus) var authorizationStatus
-  @DebugSnapshotIgnored
   @ObservationIgnored @Dependency(\.uuid) var uuid
 
   @CasePathable

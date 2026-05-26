@@ -9,7 +9,6 @@ final class SyncUpFormModel: Identifiable {
   var focus: Field?
   var syncUp: SyncUp
 
-  @DebugSnapshotIgnored
   @ObservationIgnored @Dependency(\.uuid) var uuid
 
   enum Field: Hashable {
