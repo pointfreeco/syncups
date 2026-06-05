@@ -700,8 +700,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/pointfreeco/swift-custom-dump";
 			requirement = {
-				branch = main;
-				kind = branch;
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
 			};
 		};
 		CA35C3512FC20C7A002F9111 /* XCRemoteSwiftPackageReference "swift-debug-snapshots" */ = {
