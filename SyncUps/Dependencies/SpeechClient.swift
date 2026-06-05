@@ -14,6 +14,11 @@ nonisolated struct SpeechClient {
     > = { _ in .finished() }
 }
 
+extension DependencyValues {
+  @DependencyEntry
+  nonisolated var speechClient = SpeechClient()
+}
+
 nonisolated extension SpeechClient: DependencyKey {
   static var liveValue: SpeechClient {
     let speech = Speech()
@@ -71,8 +76,6 @@ nonisolated extension SpeechClient: DependencyKey {
     )
   }
 
-  static let testValue = SpeechClient()
-
   static func fail(after duration: Duration) -> Self {
     return Self(
       authorizationStatus: { .authorized },
@@ -99,13 +102,6 @@ nonisolated extension SpeechClient: DependencyKey {
         }
       }
     )
-  }
-}
-
-extension DependencyValues {
-  nonisolated var speechClient: SpeechClient {
-    get { self[SpeechClient.self] }
-    set { self[SpeechClient.self] = newValue }
   }
 }
 

@@ -700,8 +700,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/pointfreeco/swift-custom-dump";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.0;
+				branch = main;
+				kind = branch;
 			};
 		};
 		CA35C3512FC20C7A002F9111 /* XCRemoteSwiftPackageReference "swift-debug-snapshots" */ = {
@@ -751,8 +751,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/pointfreeco/swift-dependencies";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.0;
+				branch = "nonisolated-entry-fix";
+				kind = branch;
 			};
 		};
 		CAAF4DD52C3589A700774888 /* XCRemoteSwiftPackageReference "swift-concurrency-extras" */ = {

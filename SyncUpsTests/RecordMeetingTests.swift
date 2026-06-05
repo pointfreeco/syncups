@@ -224,9 +224,9 @@ struct RecordMeetingTests {
         )
       )
     )
-
+    
     Task.immediate { await model.onTask() }
-
+    
     await expect(model) {
       await model.nextButtonTapped()
     } changes: {
@@ -235,7 +235,7 @@ struct RecordMeetingTests {
       $0.durationRemaining = .seconds(2)
     }
     #expect(await soundEffects.playCount == 1)
-
+    
     await expect(model) {
       await model.nextButtonTapped()
     } changes: {
@@ -244,20 +244,18 @@ struct RecordMeetingTests {
       $0.durationRemaining = .seconds(1)
     }
     #expect(await soundEffects.playCount == 2)
-
+    
     await expect(model) {
       await model.nextButtonTapped()
     } changes: {
       $0.alert = .endMeeting(isDiscardable: false)
     }
-
-      await expect(model) {
-        await clock.advance(by: .seconds(5))
-      } changes: { _ in
-        _ = $0
-      }
+    
+    await expect(model) {
+      await clock.advance(by: .seconds(5))
+    } changes: { _ in
     }
-
+    
     await expect(model) {
       let saveTask = Task.immediate { await model.alertButtonTapped(.confirmSave) }
       await clock.run()
