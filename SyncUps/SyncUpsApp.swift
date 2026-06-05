@@ -36,8 +36,9 @@ private func setUpForUITest() {
       break
     case "testRecord", "testRecord_Discard":
       $0.date = DateGenerator { Date(timeIntervalSince1970: 1_234_567_890) }
-      $0.speechClient.authorizationStatus = { .authorized }
-      $0.speechClient.startTask = { @Sendable _ in
+      var client = TestSpeechClient()
+      client.endpoints.authorizationStatus = { .authorized }
+      client.endpoints.startTask = { @Sendable _ in
         AsyncThrowingStream {
           $0.yield(
             SpeechRecognitionResult(
@@ -48,6 +49,7 @@ private func setUpForUITest() {
           $0.finish()
         }
       }
+      $0.speechClient = client
     default:
       reportIssue("Unrecognized test: \(testName)")
     }
