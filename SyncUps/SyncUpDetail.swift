@@ -309,9 +309,7 @@ struct MeetingView: View {
 
 #Preview("Speech recognition denied") {
   let _ = prepareDependencies {
-    var client = TestSpeechClient()
-    client.endpoints.authorizationStatus = { .denied }
-    $0.speechClient = client
+    $0.speechClient = TestSpeechClient(authorizationStatus: { .denied })
   }
 
   Preview(
@@ -329,9 +327,7 @@ struct MeetingView: View {
 
 #Preview("Speech recognition restricted") {
   let _ = prepareDependencies {
-    var client = TestSpeechClient()
-    client.endpoints.authorizationStatus = { .restricted }
-    $0.speechClient = client
+    $0.speechClient = TestSpeechClient(authorizationStatus: { .restricted })
   }
 
   Preview(
