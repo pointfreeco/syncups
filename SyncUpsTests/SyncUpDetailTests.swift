@@ -19,7 +19,7 @@ struct SyncUpDetailTests {
 
   @Test(
     .dependencies {
-      $0.speechClient.authorizationStatus = { .restricted }
+      $0.speechClient = TestSpeechClient(authorizationStatus: { .restricted })
     }
   )
   func `start meeting with restricted speech recognition`() async throws {
@@ -34,7 +34,7 @@ struct SyncUpDetailTests {
 
   @Test(
     .dependencies {
-      $0.speechClient.authorizationStatus = { .denied }
+      $0.speechClient = TestSpeechClient(authorizationStatus: { .denied })
     }
   )
   func `start meeting with denied speech recognition`() async throws {
@@ -80,7 +80,7 @@ struct SyncUpDetailTests {
 
   @Test(
     .dependencies {
-      $0.speechClient.authorizationStatus = { .authorized }
+      $0.speechClient = TestSpeechClient(authorizationStatus: { .authorized })
     }
   )
   func `start meeting with authorized speech recognition`() async throws {

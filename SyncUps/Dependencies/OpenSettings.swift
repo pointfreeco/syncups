@@ -1,4 +1,5 @@
 import Dependencies
+import DependenciesMacros
 import UIKit
 
 nonisolated protocol OpenSettings: Sendable {
@@ -6,19 +7,8 @@ nonisolated protocol OpenSettings: Sendable {
 }
 
 extension DependencyValues {
-  nonisolated var openSettings: any OpenSettings {
-    get { self[OpenSettingsKey.self] }
-    set { self[OpenSettingsKey.self] = newValue }
-  }
-}
-
-nonisolated private enum OpenSettingsKey: DependencyKey {
-  static var liveValue: any OpenSettings {
-    LiveOpenSettings()
-  }
-  static var testValue: any OpenSettings {
-    UnimplementedOpenSettings()
-  }
+  @DependencyEntry(liveValue: LiveOpenSettings())
+  nonisolated var openSettings: any OpenSettings = TestOpenSettings()
 }
 
 private struct LiveOpenSettings: OpenSettings {
@@ -28,7 +18,7 @@ private struct LiveOpenSettings: OpenSettings {
   }
 }
 
-private struct UnimplementedOpenSettings: OpenSettings {
+private struct TestOpenSettings: OpenSettings {
   func callAsFunction() async {
     reportIssue("OpenSettings() unimplemented")
   }

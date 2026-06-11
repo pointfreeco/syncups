@@ -21,7 +21,7 @@ final class SyncUpDetailModel: HashableObject {
   @ObservationIgnored @Dependency(\.continuousClock) var clock
   @ObservationIgnored @Dependency(\.date.now) var now
   @ObservationIgnored @Dependency(\.openSettings) var openSettings
-  @ObservationIgnored @Dependency(\.speechClient.authorizationStatus) var authorizationStatus
+  @ObservationIgnored @Dependency(\.speechClient) var speechClient
   @ObservationIgnored @Dependency(\.uuid) var uuid
 
   @CasePathable
@@ -96,7 +96,7 @@ final class SyncUpDetailModel: HashableObject {
   }
 
   func startMeetingButtonTapped() {
-    switch authorizationStatus() {
+    switch speechClient.authorizationStatus {
     case .notDetermined, .authorized:
       onMeetingStarted($syncUp)
 
@@ -309,7 +309,7 @@ struct MeetingView: View {
 
 #Preview("Speech recognition denied") {
   let _ = prepareDependencies {
-    $0.speechClient.authorizationStatus = { .denied }
+    $0.speechClient = TestSpeechClient(authorizationStatus: { .denied })
   }
 
   Preview(
@@ -327,7 +327,7 @@ struct MeetingView: View {
 
 #Preview("Speech recognition restricted") {
   let _ = prepareDependencies {
-    $0.speechClient.authorizationStatus = { .restricted }
+    $0.speechClient = TestSpeechClient(authorizationStatus: { .restricted })
   }
 
   Preview(

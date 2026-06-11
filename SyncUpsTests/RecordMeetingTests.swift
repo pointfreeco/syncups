@@ -22,7 +22,7 @@ struct RecordMeetingTests {
 
   @Test(
     .dependencies {
-      $0.speechClient.authorizationStatus = { .denied }
+      $0.speechClient = TestSpeechClient(authorizationStatus: { .denied })
       $0.soundEffectClient = MockSoundEffectClient()
     }
   )
@@ -100,18 +100,20 @@ struct RecordMeetingTests {
   @Test(
     .dependencies {
       $0.continuousClock = ImmediateClock()
-      $0.speechClient.authorizationStatus = { .authorized }
-      $0.speechClient.startTask = { @Sendable _ in
-        AsyncThrowingStream { continuation in
-          continuation.yield(
-            SpeechRecognitionResult(
-              bestTranscription: Transcription(formattedString: "I completed the project"),
-              isFinal: true
+      $0.speechClient = TestSpeechClient(
+        authorizationStatus: { .authorized },
+        startTask: { _ in
+          AsyncThrowingStream { continuation in
+            continuation.yield(
+              SpeechRecognitionResult(
+                bestTranscription: Transcription(formattedString: "I completed the project"),
+                isFinal: true
+              )
             )
-          )
-          continuation.finish()
+            continuation.finish()
+          }
         }
-      }
+      )
     }
   )
   func `finish meeting with speech recognition transcript`() async throws {
@@ -143,7 +145,7 @@ struct RecordMeetingTests {
 
   @Test(
     .dependencies {
-      $0.speechClient.authorizationStatus = { .denied }
+      $0.speechClient = TestSpeechClient(authorizationStatus: { .denied })
     }
   )
   func `end meeting explicitly and save`() async throws {
@@ -183,7 +185,7 @@ struct RecordMeetingTests {
 
   @Test(
     .dependencies {
-      $0.speechClient.authorizationStatus = { .denied }
+      $0.speechClient = TestSpeechClient(authorizationStatus: { .denied })
     }
   )
   func `end meeting explicitly and discard`() async throws {
@@ -206,7 +208,7 @@ struct RecordMeetingTests {
 
   @Test(
     .dependencies {
-      $0.speechClient.authorizationStatus = { .denied }
+      $0.speechClient = TestSpeechClient(authorizationStatus: { .denied })
       $0.soundEffectClient = MockSoundEffectClient()
     }
   )
@@ -224,9 +226,9 @@ struct RecordMeetingTests {
         )
       )
     )
-
+    
     Task.immediate { await model.onTask() }
-
+    
     await expect(model) {
       await model.nextButtonTapped()
     } changes: {
@@ -235,7 +237,7 @@ struct RecordMeetingTests {
       $0.durationRemaining = .seconds(2)
     }
     #expect(await soundEffects.playCount == 1)
-
+    
     await expect(model) {
       await model.nextButtonTapped()
     } changes: {
@@ -244,20 +246,18 @@ struct RecordMeetingTests {
       $0.durationRemaining = .seconds(1)
     }
     #expect(await soundEffects.playCount == 2)
-
+    
     await expect(model) {
       await model.nextButtonTapped()
     } changes: {
       $0.alert = .endMeeting(isDiscardable: false)
     }
-
-      await expect(model) {
-        await clock.advance(by: .seconds(5))
-      } changes: { _ in
-        _ = $0
-      }
+    
+    await expect(model) {
+      await clock.advance(by: .seconds(5))
+    } changes: { _ in
     }
-
+    
     await expect(model) {
       let saveTask = Task.immediate { await model.alertButtonTapped(.confirmSave) }
       await clock.run()
@@ -279,18 +279,20 @@ struct RecordMeetingTests {
   @Test(
     .dependencies {
       $0.continuousClock = ImmediateClock()
-      $0.speechClient.authorizationStatus = { .authorized }
-      $0.speechClient.startTask = { _ in
-        AsyncThrowingStream {
-          $0.yield(
-            SpeechRecognitionResult(
-              bestTranscription: Transcription(formattedString: "I completed the project"),
-              isFinal: true
+      $0.speechClient = TestSpeechClient(
+        authorizationStatus: { .authorized },
+        startTask: { _ in
+          AsyncThrowingStream {
+            $0.yield(
+              SpeechRecognitionResult(
+                bestTranscription: Transcription(formattedString: "I completed the project"),
+                isFinal: true
+              )
             )
-          )
-          $0.finish(throwing: SpeechRecognitionFailure())
+            $0.finish(throwing: SpeechRecognitionFailure())
+          }
         }
-      }
+      )
     }
   )
   func `speech recognizer fails mid-meeting, user continues anyway`() async throws {
@@ -339,10 +341,12 @@ struct RecordMeetingTests {
 
   @Test(
     .dependencies {
-      $0.speechClient.authorizationStatus = { .authorized }
-      $0.speechClient.startTask = { @Sendable _ in
-        AsyncThrowingStream.finished(throwing: SpeechRecognitionFailure())
-      }
+      $0.speechClient = TestSpeechClient(
+        authorizationStatus: { .authorized },
+        startTask: { @Sendable _ in
+          AsyncThrowingStream.finished(throwing: SpeechRecognitionFailure())
+        }
+      )
     }
   )
   func `speech recognizer fails mid-meeting, user abandons meeting`() async throws {

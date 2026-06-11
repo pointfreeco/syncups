@@ -9,18 +9,16 @@ nonisolated protocol SoundEffectClient: Sendable {
 }
 
 extension DependencyValues {
-  nonisolated var soundEffectClient: SoundEffectClient {
-    get { self[SoundEffectClientKey.self] }
-    set { self[SoundEffectClientKey.self] = newValue }
-  }
+  @DependencyEntry(liveValue: LiveSoundEffectClient())
+  nonisolated var soundEffectClient: any SoundEffectClient = TestSoundEffectClient()
 }
 
-nonisolated private enum SoundEffectClientKey: DependencyKey {
-  static var liveValue: any SoundEffectClient {
-    LiveSoundEffectClient()
+private struct TestSoundEffectClient: SoundEffectClient {
+  func load(fileName: String) async {
+    reportIssue("SoundEffectClient.load unimplemented")
   }
-  static var testValue: any SoundEffectClient {
-    UnimplementedSoundEffectClient()
+  func play() async {
+    reportIssue("SoundEffectClient.play unimplemented")
   }
 }
 
@@ -32,15 +30,6 @@ actor MockSoundEffectClient: SoundEffectClient {
   }
   func play() {
     playCount += 1
-  }
-}
-
-private struct UnimplementedSoundEffectClient: SoundEffectClient {
-  func load(fileName: String) async {
-    reportIssue("SoundEffectClient.load unimplemented")
-  }
-  func play() async {
-    reportIssue("SoundEffectClient.play unimplemented")
   }
 }
 
